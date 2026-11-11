@@ -40,5 +40,8 @@ namespace Hikigiwa.CardSystem
 
         /// <summary>お香：取り除いたカード。</summary>
         public Card RemovedCard { get; internal set; }
+
+        /// <summary>お香：取り除いたカードが、使う前の山札で上から何枚目だったか（0が一番上）。</summary>
+        public int RemovedIndex { get; internal set; } = -1;
     }
 }

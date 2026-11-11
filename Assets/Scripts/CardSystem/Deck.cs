@@ -83,6 +83,12 @@ namespace Hikigiwa.CardSystem
         /// <summary>条件に合うカードのうち、ランダムな1枚を山札から取り除きます（お香）。</summary>
         public bool TryRemoveRandom(Func<Card, bool> predicate, out Card removed)
         {
+            return TryRemoveRandom(predicate, out removed, out _);
+        }
+
+        /// <summary>TryRemoveRandomと同じですが、取り除いたカードが上から何枚目だったか（0が一番上）も返します。</summary>
+        public bool TryRemoveRandom(Func<Card, bool> predicate, out Card removed, out int removedIndex)
+        {
             var matches = new List<int>();
             for (int i = 0; i < cards.Count; i++)
                 if (predicate(cards[i])) matches.Add(i);
@@ -90,11 +96,13 @@ namespace Hikigiwa.CardSystem
             if (matches.Count == 0)
             {
                 removed = default;
+                removedIndex = -1;
                 return false;
             }
 
             int index = matches[random.Next(matches.Count)];
             removed = cards[index];
+            removedIndex = index;
             cards.RemoveAt(index);
             return true;
         }

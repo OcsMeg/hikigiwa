@@ -38,6 +38,9 @@ namespace Hikigiwa.Game
 
         // 占いの結果パネルの中身。ふつうの結果は次に引くまで、タロットは見えたカードを引き終えるまで残す
         private readonly List<string> toolNotes = new List<string>();
+        // 水晶の結果（null＝未使用）。山札の一番上が変わったら消す
+        private bool? crystalNextIsBad;
+        // タロットで見えたカードのうち、まだ引いていないもの。常に山札の上からこの枚数ぶんと一致させる
         private List<Card> tarotLeft;
         private int tarotTotal;
 
@@ -131,20 +134,25 @@ namespace Hikigiwa.Game
 
             switch (tool)
             {
+                case FortuneTool.Crystal:
+                    crystalNextIsBad = result.NextIsBad;
+                    break;
                 case FortuneTool.Tarot:
                     tarotLeft = new List<Card>(result.RevealedCards);
                     tarotTotal = tarotLeft.Count;
                     break;
                 case FortuneTool.Incense:
-                    RemoveFromTarot(result.RemovedCard);
+                    // 同じ数字が2枚あるので、数字ではなく位置で判断する。見えた範囲の外から除いたならタロットは変わらない
+                    if (tarotLeft != null && result.RemovedIndex >= 0 && result.RemovedIndex < tarotLeft.Count)
+                        RemoveFromTarot(result.RemovedCard);
+                    // 一番上が除かれたら、次のカードが変わるので水晶の結果は古くなる
+                    if (result.RemovedIndex == 0) crystalNextIsBad = null;
                     toolNotes.Add(ToolMemo(result));
                     break;
                 case FortuneTool.Palm:
-                    // 順番が変わり、タロットで見えたカードが次に来るとは限らなくなるので消す
+                    // 一番上が入れ替わるので、水晶の結果も、タロットで見えたカードが次に来るという前提も崩れる
+                    crystalNextIsBad = null;
                     tarotLeft = null;
-                    toolNotes.Add(ToolMemo(result));
-                    break;
-                default:
                     toolNotes.Add(ToolMemo(result));
                     break;
             }
@@ -157,10 +165,12 @@ namespace Hikigiwa.Game
         private void ClearMemo(bool clearTarot)
         {
             toolNotes.Clear();
+            crystalNextIsBad = null;
             if (clearTarot) tarotLeft = null;
             UpdateMemo();
         }
 
+        /// <summary>タロットで見えたカードから1枚消します。山札の上から見えた枚数の範囲内のカードであることが前提です。</summary>
         private void RemoveFromTarot(Card card)
         {
             if (tarotLeft == null) return;
@@ -179,6 +189,7 @@ namespace Hikigiwa.Game
                     ? $"タロット：次の{tarotTotal}枚は {cards}（順不同）"
                     : $"タロット：残りは {cards}（順不同）");
             }
+            if (crystalNextIsBad.HasValue) lines.Add(CrystalMemo(crystalNextIsBad.Value));
             lines.AddRange(toolNotes);
             hud.SetMemo(lines);
         }
@@ -276,7 +287,7 @@ namespace Hikigiwa.Game
             switch (result.Tool)
             {
                 case FortuneTool.Crystal:
-                    return result.NextIsBad ? "水晶：次のカードは <color=#EC6262>凶</color>" : "水晶：次のカードは凶ではない";
+                    return CrystalMemo(result.NextIsBad);
                 case FortuneTool.Tarot:
                     return "タロット：次の" + result.RevealedCards.Count + "枚は " +
                            string.Join("・", result.RevealedCards.Select(ColoredName)) + "（順不同）";
@@ -286,6 +297,9 @@ namespace Hikigiwa.Game
                     return "手相：一番上のカードを一番下へ回した";
             }
         }
+
+        private static string CrystalMemo(bool nextIsBad) =>
+            nextIsBad ? "水晶：次のカードは <color=#EC6262>凶</color>" : "水晶：次のカードは凶ではない";
 
         private string ColoredName(Card card)
         {

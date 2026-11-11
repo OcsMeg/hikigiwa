@@ -173,8 +173,9 @@ namespace Hikigiwa.CardSystem
                     result.RevealedCards = seen;
                     break;
                 case FortuneTool.Incense:
-                    Deck.TryRemoveRandom(card => Customer.Judge(card) == CardOmen.Bad, out Card removed);
+                    Deck.TryRemoveRandom(card => Customer.Judge(card) == CardOmen.Bad, out Card removed, out int removedIndex);
                     result.RemovedCard = removed;
+                    result.RemovedIndex = removedIndex;
                     break;
                 case FortuneTool.Palm:
                     Deck.MoveTopToBottom();
