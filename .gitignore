@@ -136,3 +136,7 @@ crashlytics-build.properties
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# NuGetForUnity (Placement: In Packages Folder)
+# ダウンロードされたDLLは除外。packages.config から自動でリストアされる
+/Packages/nuget-packages/InstalledPackages*
