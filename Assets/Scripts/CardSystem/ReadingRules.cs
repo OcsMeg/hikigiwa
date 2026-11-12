@@ -59,7 +59,7 @@ namespace Hikigiwa.CardSystem
     public sealed class RunRules
     {
         /// <summary>1夜の客の数。</summary>
-        public int CustomersPerNight = 6;
+        public int CustomersPerNight = 3;
 
         /// <summary>夜ごとのノルマ（スコア）。配列の長さが夜の数になる。</summary>
         public int[] Quotas = { 180, 240, 300 };
@@ -68,7 +68,7 @@ namespace Hikigiwa.CardSystem
         public int StartSpirit = 3;
 
         /// <summary>ノルマ未達でゲームオーバーにするか。falseなら最後の夜まで続く。</summary>
-        public bool QuotaFailEndsGame = true;
+        public bool QuotaFailEndsGame = false;
 
         public int Nights => Quotas.Length;
     }

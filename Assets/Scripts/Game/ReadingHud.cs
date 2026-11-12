@@ -325,6 +325,21 @@ namespace Hikigiwa.Game
         {
             resultPanel.SetActive(true);
             var body = new StringBuilder();
+
+            if (record.IsCleared)
+            {
+                // 最後の夜：夜ごとのスコアと3夜の合計
+                resultTitle.text = "すべての夜を終えた";
+                resultTitle.color = Gold;
+                foreach (NightSummary night in record.NightHistory)
+                    body.AppendLine($"第{night.Night}夜　{night.Score}" + (night.Passed ? "　ノルマ達成" : "　ノルマ未達"));
+                body.AppendLine();
+                body.AppendLine($"破綻した客　{record.BrokenCount}人");
+                body.Append($"最終スコア　{record.TotalScore}");
+                resultBody.text = body.ToString();
+                return;
+            }
+
             body.AppendLine($"今夜のスコア　{summary.Score}");
             body.AppendLine($"ノルマ　{summary.Quota}");
             body.AppendLine();
@@ -336,17 +351,10 @@ namespace Hikigiwa.Game
                 body.AppendLine("店をたたむことになった……");
                 body.Append($"最終スコア　{record.TotalScore}");
             }
-            else if (record.IsCleared)
-            {
-                resultTitle.text = "すべての夜を終えた";
-                resultTitle.color = Gold;
-                body.AppendLine($"破綻した客　{record.BrokenCount}人");
-                body.Append($"最終スコア　{record.TotalScore}");
-            }
             else
             {
-                resultTitle.text = $"第{summary.Night}夜　ノルマ達成";
-                resultTitle.color = Green;
+                resultTitle.text = $"第{summary.Night}夜　" + (summary.Passed ? "ノルマ達成" : "ノルマ未達");
+                resultTitle.color = summary.Passed ? Green : Red;
                 body.Append($"合計スコア　{record.TotalScore}");
             }
             resultBody.text = body.ToString();
