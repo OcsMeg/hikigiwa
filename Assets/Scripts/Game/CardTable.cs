@@ -39,6 +39,9 @@ namespace Hikigiwa.Game
         /// <summary>山札の束がクリックされた。</summary>
         public event Action StackClicked;
 
+        /// <summary>生成時に計測したカードの寸法（横・縦・厚み）。</summary>
+        public Vector3 CardSize { get; private set; }
+
         private readonly List<CardView> cards = new List<CardView>();
         private float cardScale = 1f;
         private float cardThickness;
@@ -93,7 +96,8 @@ namespace Hikigiwa.Game
 
             // 1枚のカードの寸法を測っておく（引いたカードの置き場所や、束の上の絵柄に使う）
             CardView probe = CardView.Create(appearance, cardScale, transform, "寸法計測用");
-            cardThickness = probe.Size.z;
+            CardSize = probe.Size;
+            cardThickness = CardSize.z;
             Vector3 cardSize = probe.Size;
             Destroy(probe.gameObject);
 
@@ -145,7 +149,8 @@ namespace Hikigiwa.Game
         }
 
         /// <summary>山札から1枚引いて、カメラの前でめくり、テーブルの列に並べます。</summary>
-        public IEnumerator PlayDraw(DrawResult draw, int remainingAfter, int total)
+        public IEnumerator PlayDraw(DrawResult draw, int remainingAfter, int total,
+            Vector3? destination = null, Quaternion? tableRotation = null)
         {
             CardView card = SpawnFromStack(draw.Card, draw.Omen, $"引いたカード {cards.Count + 1}");
             SetStackCount(remainingAfter, total);
@@ -159,7 +164,7 @@ namespace Hikigiwa.Game
                            Vector3.right * (index % cardsPerRow * rowStep) +
                            Vector3.back * (index / cardsPerRow * rowSpacing) +
                            Vector3.up * (cardThickness * 0.5f + index * 0.002f);
-            yield return card.MoveTo(slot, FaceUpOnTable, 0.4f, 0.15f);
+            yield return card.MoveTo(destination ?? slot, tableRotation ?? FaceUpOnTable, 0.4f, 0.15f);
         }
 
         /// <summary>鑑定終了時に、山札の一番上を公開します（予感的中ボーナスの判定）。</summary>
@@ -175,7 +180,7 @@ namespace Hikigiwa.Game
         {
             CardView card = CardView.Create(appearance, cardScale, transform, name);
             card.SetFace(value, omen, appearance);
-            card.transform.SetPositionAndRotation(StackTop, FaceDownOnTable);
+            card.transform.SetPositionAndRotation(StackTop, stackAnchor.rotation * FaceDownOnTable);
             cards.Add(card);
             return card;
         }
