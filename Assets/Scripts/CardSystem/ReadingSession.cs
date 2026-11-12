@@ -90,7 +90,8 @@ namespace Hikigiwa.CardSystem
         }
 
         /// <summary>鑑定を終えて売上を確定します。鑑定中でなければfalse。</summary>
-        public bool TryStop(out ReadingResult result)
+        /// <param name="allowForesight">falseなら次の札を公開せず、予感ボーナスも付けない（対戦の先行停止・山札切れ）。</param>
+        public bool TryStop(out ReadingResult result, bool allowForesight = true)
         {
             result = null;
             if (State != ReadingState.Reading) return false;
@@ -102,7 +103,7 @@ namespace Hikigiwa.CardSystem
                 BaseSales = CurrentSales,
             };
 
-            if (Deck.TryPeek(out Card top))
+            if (allowForesight && Deck.TryPeek(out Card top))
             {
                 result.ForesightCard = top;
                 result.ForesightHit = Customer.Judge(top) == CardOmen.Bad;
