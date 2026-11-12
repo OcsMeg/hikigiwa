@@ -6,11 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Main.unity
-    guid: ad58a9c730d9f46bf89202534f145eef
+    path: Assets/Scenes/Title.unity
+    guid: 5d2a9618d7bf87e45b7678556126ac6c
   - enabled: 1
+    path: Assets/Scenes/Game.unity
+    guid: 2d212237115e494992ae3ed8477dd899
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/Main.unity
+    guid: ad58a9c730d9f46bf89202534f145eef
   - enabled: 1
     path: Assets/Scenes/CPUBattle.unity
     guid: 42ff2cf19460648ccb961167eeb20e94

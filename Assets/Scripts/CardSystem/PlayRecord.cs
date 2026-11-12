@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Hikigiwa.CardSystem
 {
@@ -18,6 +19,10 @@ namespace Hikigiwa.CardSystem
     public sealed class PlayRecord
     {
         private readonly RunRules rules;
+        private readonly List<NightSummary> nightHistory = new List<NightSummary>();
+
+        /// <summary>終えた夜の結果（第1夜から順）。</summary>
+        public IReadOnlyList<NightSummary> NightHistory => nightHistory;
 
         /// <summary>今が何夜目か（1から）。</summary>
         public int Night { get; private set; } = 1;
@@ -75,6 +80,7 @@ namespace Hikigiwa.CardSystem
                 IsLastNight = Night >= rules.Nights,
             };
 
+            nightHistory.Add(summary);
             if (!summary.Passed && rules.QuotaFailEndsGame) IsGameOver = true;
             else if (summary.IsLastNight) IsCleared = true;
             return summary;
