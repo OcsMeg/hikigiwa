@@ -17,6 +17,20 @@ namespace Hikigiwa.EditorTools
         public const string ScenePath = "Assets/Scenes/CPUBattle.unity";
         /// <summary>部屋FBX・テクスチャ・生成するマテリアルの共通フォルダ。</summary>
         private const string RoomFolder = "Assets/Art/room";
+        /// <summary>
+        /// 部屋全体の拡大倍率。二人分のカードを重ねずに並べられる机の広さにするため。
+        /// 机と小物の比率を保ったまま、壁のない側の端をカメラから遠ざける効果もある。カードの大きさは変えない。
+        /// </summary>
+        private const float RoomScale = 1.5f;
+        /// <summary>同じ段で隣り合うカード中心の間隔。カードの中央の数字が隠れない重なり幅にする。</summary>
+        private const float CardColumnStep = 0.3f;
+        /// <summary>折り返した次の段へずらす奥行き間隔。上の段の数字と吉凶の字が隠れない幅にする。</summary>
+        private const float CardRowStep = 0.45f;
+        /// <summary>机の中央（山札）から、プレイヤー・CPUそれぞれの1段目までの奥行き距離。山札と重ならない幅にする。</summary>
+        private const float RowOffsetFromStack = 0.62f;
+        /// <summary>カメラの、天板の中心からの水平距離と、天板からの高さ。</summary>
+        private const float CameraDistance = 3.3f;
+        private const float CameraHeight = 2.2f;
 
         /// <summary>エディタメニューから呼ぶ入口。既存シーンの上書きと未保存内容の扱いを確認して生成する。</summary>
         [MenuItem("Hikigiwa/CPU対戦シーンを作成")]
@@ -45,6 +59,7 @@ namespace Hikigiwa.EditorTools
             var room = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>($"{RoomFolder}/UranaiRoom.fbx"));
             room.name = "占い部屋（roomモデル・机を含む）";
             ApplyRoomMaterials(room);
+            ScaleRoom(room);
             // FBXに含まれるカメラ。Mainから引き継ぐ対戦用カメラと競合しないよう除去する。
             foreach (Camera camera in room.GetComponentsInChildren<Camera>()) Object.DestroyImmediate(camera);
             // FBXに含まれるライト。対戦用に作る照明へ揃えるため除去する。
@@ -161,8 +176,8 @@ namespace Hikigiwa.EditorTools
             stack.SetPositionAndRotation(center, facing);
             var dealerData = new SerializedObject(dealer);
             dealerData.FindProperty("cardTiltDegrees").floatValue = 8f;
-            dealerData.FindProperty("columnStep").floatValue = 0.22f;
-            dealerData.FindProperty("rowStep").floatValue = 0.14f;
+            dealerData.FindProperty("columnStep").floatValue = CardColumnStep;
+            dealerData.FindProperty("rowStep").floatValue = CardRowStep;
             dealerData.ApplyModifiedPropertiesWithoutUndo();
             // 折り返し枚数とカード間隔から求め、7枚用の固定幅に依存させない。
             float halfRowWidth = dealer.RowHalfWidth;
@@ -171,8 +186,8 @@ namespace Hikigiwa.EditorTools
             // CPUの1枚目の置き場。中央から奥へ、列の左端へずらして置く。
             Transform cpu = (Transform)dealerData.FindProperty("cpuRow").objectReferenceValue;
             // カメラの右方向を列の横方向にすることで、画面上で水平に並ぶ。
-            player.SetPositionAndRotation(center - forward * 0.56f - right * halfRowWidth, facing);
-            cpu.SetPositionAndRotation(center + forward * 0.56f - right * halfRowWidth, facing);
+            player.SetPositionAndRotation(center - forward * RowOffsetFromStack - right * halfRowWidth, facing);
+            cpu.SetPositionAndRotation(center + forward * RowOffsetFromStack - right * halfRowWidth, facing);
         }
 
         /// <summary>机上の水晶玉だけを隠し、開口部から机と部屋の奥を見るカメラを設定する。</summary>
@@ -184,12 +199,38 @@ namespace Hikigiwa.EditorTools
             Transform crystal = room.GetComponentsInChildren<Transform>(true).First(t => t.name == "CrystalBall_Table");
             crystal.gameObject.SetActive(false);
 
-            // 壁のない2辺の中央方向（開いた角）から、部屋の奥へ対角線に見る。
-            view.transform.position = new Vector3(-3.4f, surfaceY + 2.0f, 3.45f);
-            view.transform.LookAt(new Vector3(0, surfaceY, 0.45f));
+            // 天板の中心。カメラはここを見る。
+            Renderer cloth = room.GetComponentsInChildren<Renderer>().First(r => r.name.StartsWith("Tablecloth"));
+            Vector3 center = new Vector3(cloth.bounds.center.x, surfaceY, cloth.bounds.center.z);
+            // 部屋の壁がある2辺（+X側と-Z側）が交わる奥の角。部屋の外が映らないよう、この角へまっすぐ向く。
+            // 横の視野（16:9で約79°）は壁どうしの角度（90°）より狭いので、角へ向けば画面の左右の端は必ず壁に当たる。
+            Renderer roomRenderer = room.GetComponentsInChildren<Renderer>().FirstOrDefault(r => r.name == "Room");
+            Vector3 corner = roomRenderer != null
+                ? new Vector3(roomRenderer.bounds.max.x, surfaceY, roomRenderer.bounds.min.z)
+                : center + new Vector3(1f, 0f, -1f);
+            // 天板の中心から奥の角へ向かう水平方向。カメラはその反対側（部屋の内側）に置く。
+            Vector3 toCorner = (corner - center).normalized;
+            view.transform.position = center - toCorner * CameraDistance + Vector3.up * CameraHeight;
+            view.transform.LookAt(center);
             view.fieldOfView = 50;
             view.nearClipPlane = 0.05f;
             view.farClipPlane = 50;
+        }
+
+        /// <summary>
+        /// 部屋全体を RoomScale 倍に拡大する。天板の中心が横方向（X・Z）で元の位置に残るよう、拡大後にずらす。
+        /// 高さは床を基準に拡大されるので、天板の高さは拡大後に測り直す。
+        /// </summary>
+        private static void ScaleRoom(GameObject room)
+        {
+            Renderer cloth = room.GetComponentsInChildren<Renderer>().First(r => r.name.StartsWith("Tablecloth"));
+            // 拡大前の天板の中心。
+            Vector3 before = cloth.bounds.center;
+            room.transform.localScale *= RoomScale;
+            // 拡大で天板の中心がずれた分を、横方向だけ戻す。
+            Vector3 shift = before - cloth.bounds.center;
+            shift.y = 0f;
+            room.transform.position += shift;
         }
 
         /// <summary>CardTableの指定したシリアライズ参照から配置用Transformを取得し、ワールド位置を設定する。</summary>
