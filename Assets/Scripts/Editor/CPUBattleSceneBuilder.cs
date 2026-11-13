@@ -175,7 +175,7 @@ namespace Hikigiwa.EditorTools
             Transform stack = (Transform)tableData.FindProperty("stackAnchor").objectReferenceValue;
             stack.SetPositionAndRotation(center, facing);
             var dealerData = new SerializedObject(dealer);
-            dealerData.FindProperty("cardTiltDegrees").floatValue = 8f;
+            dealerData.FindProperty("cardTiltDegrees").floatValue = 3f;
             dealerData.FindProperty("columnStep").floatValue = CardColumnStep;
             dealerData.FindProperty("rowStep").floatValue = CardRowStep;
             dealerData.ApplyModifiedPropertiesWithoutUndo();
