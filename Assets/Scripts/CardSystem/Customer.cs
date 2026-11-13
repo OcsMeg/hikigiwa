@@ -21,9 +21,8 @@ namespace Hikigiwa.CardSystem
         public int BadNumber { get; }
         public int? SecondBadNumber { get; }
         public IReadOnlyList<int> BadNumbers { get; }
-        public int SatisfactionLine { get; }
 
-        public Customer(int luckyNumber, int badNumber, int satisfactionLine, int? secondBadNumber = null)
+        public Customer(int luckyNumber, int badNumber, int? secondBadNumber = null)
         {
             if (luckyNumber < 1 || luckyNumber > 9) throw new ArgumentOutOfRangeException(nameof(luckyNumber));
             if (badNumber < 1 || badNumber > 9) throw new ArgumentOutOfRangeException(nameof(badNumber));
@@ -41,7 +40,6 @@ namespace Hikigiwa.CardSystem
                 ? new[] { badNumber, secondBadNumber.Value } : new[] { badNumber });
             LuckyNumber = luckyNumber;
             BadNumber = badNumber;
-            SatisfactionLine = satisfactionLine;
         }
 
         public CardOmen Judge(Card card)
@@ -51,7 +49,7 @@ namespace Hikigiwa.CardSystem
             return CardOmen.Neutral;
         }
 
-        /// <summary>吉数・凶数・満足ラインをランダムに決めた客を作ります。</summary>
+        /// <summary>吉数・凶数をランダムに決めた客を作ります。</summary>
         public static Customer CreateRandom(Random random, ReadingRules rules, int badNumberCount = 1)
         {
             if (badNumberCount != 1 && badNumberCount != 2) throw new ArgumentOutOfRangeException(nameof(badNumberCount));
@@ -59,15 +57,13 @@ namespace Hikigiwa.CardSystem
             int lucky = random.Next(1, 9);
             if (lucky >= bad) lucky++; // 凶数を飛ばして1～9から選ぶ
 
-            int steps = Math.Max(0, (rules.SatisfactionLineMax - rules.SatisfactionLineMin) / rules.SatisfactionLineStep);
-            int line = rules.SatisfactionLineMin + random.Next(steps + 1) * rules.SatisfactionLineStep;
-            if (badNumberCount == 1) return new Customer(lucky, bad, line);
+            if (badNumberCount == 1) return new Customer(lucky, bad);
             int second = random.Next(1, 8);
             // 吉数と最初の凶数を飛ばし、残った7種類から一様に選ぶ。
             for (int number = 1; number <= 9; number++)
             {
                 if (number == lucky || number == bad) continue;
-                if (--second == 0) return new Customer(lucky, bad, line, number);
+                if (--second == 0) return new Customer(lucky, bad, number);
             }
             throw new InvalidOperationException("2つ目の凶数を選べませんでした。");
         }

@@ -20,16 +20,8 @@ namespace Hikigiwa.CardSystem
         /// <summary>予感的中ボーナス：終了時に山札の一番上が凶なら売上に掛ける倍率。</summary>
         public double ForesightBonusRate = 1.5;
 
-        /// <summary>満足ラインを達成して終えたときのチップ。</summary>
-        public int Tip = 20;
-
         /// <summary>無事に終えたときに回復する霊力。</summary>
         public int SpiritOnSafeFinish = 1;
-
-        /// <summary>満足ライン（運気）の範囲と刻み。</summary>
-        public int SatisfactionLineMin = 20;
-        public int SatisfactionLineMax = 40;
-        public int SatisfactionLineStep = 5;
 
         /// <summary>占い道具に必要な霊力。</summary>
         public int CrystalCost = 1;

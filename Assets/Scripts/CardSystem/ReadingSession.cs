@@ -112,8 +112,6 @@ namespace Hikigiwa.CardSystem
             result.Sales = result.ForesightHit
                 ? (int)Math.Floor(result.BaseSales * rules.ForesightBonusRate)
                 : result.BaseSales;
-            result.SatisfactionReached = Luck >= Customer.SatisfactionLine;
-            result.Tip = result.SatisfactionReached ? rules.Tip : 0;
             result.SpiritGained = rules.SpiritOnSafeFinish;
 
             State = ReadingState.Settled;

@@ -8,7 +8,11 @@ using UnityEngine.UI;
 
 namespace Hikigiwa.Battle
 {
-    /// <summary>対戦専用のHUD。状態を表示し、操作をイベントで通知する。</summary>
+    /// <summary>
+    /// 対戦専用のHUD。状態を表示し、操作をイベントで通知する。
+    /// メニュー「Hikigiwa/UIをシーンに配置」でシーンに置いておくと、それをそのまま使う（位置や見た目をエディタで変えられる）。
+    /// 置かれていなければ、プレイ開始時にコードで組み立てる。
+    /// </summary>
     public sealed class BattleHud : MonoBehaviour
     {
         /// <summary>HUD内の日本語表示に共通で使うフォント。シーン生成時に割り当てる。</summary>
@@ -21,38 +25,46 @@ namespace Hikigiwa.Battle
         public event Action NextClicked;
         /// <summary>選択した道具を引数として通知するイベント。</summary>
         public event Action<FortuneTool> ToolClicked;
+        // 以下はシーンに置いたUIの各部品。「UIをシーンに配置」で自動で割り当てる。部品を消すと動かなくなるので、移動・変形・非表示にとどめる。
+        /// <summary>HUD全体のCanvas。シーンにUIが置かれているかの判定にも使う。</summary>
+        [Header("UIの部品（自動で割り当て）")]
+        [SerializeField] private GameObject canvasRoot;
         /// <summary>現在のラウンド番号と共有山札の残数を表示する上部ラベル。</summary>
-        private Text heading;
-        /// <summary>共通の吉数・凶数2種類・満足ラインを表示するラベル。</summary>
-        private Text conditions;
+        [SerializeField] private Text heading;
+        /// <summary>共通の吉数・凶数2種類を表示するラベル。</summary>
+        [SerializeField] private Text conditions;
         /// <summary>プレイヤーの手番状態・累計・霊力・鑑定状態を表示するラベル。</summary>
-        private Text player;
+        [SerializeField] private Text player;
         /// <summary>CPUの手番状態・累計・霊力・鑑定状態を表示するラベル。</summary>
-        private Text cpu;
+        [SerializeField] private Text cpu;
         /// <summary>今起きた行動や次の操作を案内するメッセージ。</summary>
-        private Text message;
+        [SerializeField] private Text message;
         /// <summary>道具で得た情報を表示するメモ。情報が古くなると進行側から消される。</summary>
-        private Text memo;
+        [SerializeField] private Text memo;
         /// <summary>中央の結果パネルに表示する二人分の精算と最終勝敗。</summary>
-        private Text summary;
+        [SerializeField] private Text summary;
         /// <summary>ドローボタン。自分の操作可能な手番だけ押せる。</summary>
-        private Button draw;
+        [SerializeField] private Button draw;
         /// <summary>停止ボタン。ラウンドの途中だけ表示する。</summary>
-        private Button stop;
+        [SerializeField] private Button stop;
         /// <summary>道具パネルを開閉するボタン。操作不可の手番は無効にする。</summary>
-        private Button tools;
+        [SerializeField] private Button tools;
         /// <summary>ラウンド終了後に次へ進むボタン。最終ラウンド後は再戦に使う。</summary>
-        private Button next;
+        [SerializeField] private Button next;
         /// <summary>次へボタンの文言。次ラウンドと再戦で切り替える。</summary>
-        private Text nextLabel;
+        [SerializeField] private Text nextLabel;
         /// <summary>背景のクリックを遮断する暗幕と道具一覧の親オブジェクト。</summary>
-        private GameObject toolPanel;
+        [SerializeField] private GameObject toolPanel;
         /// <summary>ラウンド結果表示の親。通常の鑑定中は非表示にする。</summary>
-        private GameObject resultPanel;
+        [SerializeField] private GameObject resultPanel;
         /// <summary>FortuneToolの列挙値に対応する4種類の使用ボタン。</summary>
-        private readonly Button[] toolButtons = new Button[4];
+        [SerializeField] private Button[] toolButtons = new Button[4];
         /// <summary>各道具の名前・必要霊力・効果・使えない理由を表示するラベル。</summary>
-        private readonly Text[] toolLabels = new Text[4];
+        [SerializeField] private Text[] toolLabels = new Text[4];
+        /// <summary>道具パネルを閉じるボタン。</summary>
+        [SerializeField] private Button closeToolsButton;
+        /// <summary>ボタンの処理をつないだか。二重につながないために使う。</summary>
+        private bool wired;
         /// <summary>本文やボタンの背景に使う紙色。</summary>
         private static readonly Color Paper = new Color32(246, 229, 199, 255);
         /// <summary>見出しや進行メッセージに使う強調色。</summary>
@@ -60,12 +72,24 @@ namespace Hikigiwa.Battle
         /// <summary>道具パネルが開いているか。キー入力や山札操作の制限にも使う。</summary>
         public bool IsToolPanelOpen => toolPanel != null && toolPanel.activeSelf;
 
-        /// <summary>Canvasと対戦用の各パネルを生成し、操作ボタンを入力イベントへ接続する。起動時に一度呼ぶ。</summary>
+        /// <summary>起動時に一度呼ぶ。シーンにUIが無ければ生成し、操作ボタンを入力イベントへ接続する。</summary>
         public void Build()
         {
+            if (wired) return;
+            if (canvasRoot == null) CreateLayout();
+            Wire();
+        }
+
+        /// <summary>UIがシーンに置かれているか。</summary>
+        public bool HasLayout => canvasRoot != null;
+
+        /// <summary>Canvasと対戦用の各パネルを生成し、参照を割り当てる。ボタンの処理はつながないので、エディタからも呼べる。</summary>
+        public void CreateLayout()
+        {
             // 画面全体のUIをまとめるCanvasオブジェクト。
-            var root = new GameObject("対戦HUD", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            var root = new GameObject("BattleCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             root.transform.SetParent(transform, false);
+            canvasRoot = root;
             root.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
             // 1920×1080を基準に、ウィンドウの大きさに合わせてHUD全体を拡縮する設定。
             var scaler = root.GetComponent<CanvasScaler>();
@@ -76,29 +100,30 @@ namespace Hikigiwa.Battle
             Transform canvas = root.transform;
 
             // ラウンドと共通条件をまとめる上部パネル。
-            RectTransform top = Panel(canvas, "ラウンドと共通条件", new Vector2(0.5f, 1), new Vector2(0, -22), new Vector2(1120, 134));
-            heading = Label(top, "", 35, Gold, new Vector2(20, -12), new Vector2(1080, 48));
-            conditions = Label(top, "", 28, Paper, new Vector2(20, -76), new Vector2(1080, 42));
+            RectTransform top = Panel(canvas, "HeaderPanel", new Vector2(0.5f, 1), new Vector2(0, -22), new Vector2(1120, 134));
+            heading = Label(top, "見出し", 35, Gold, new Vector2(20, -12), new Vector2(1080, 48), "RoundLabel");
+            conditions = Label(top, "共通条件", 28, Paper, new Vector2(20, -76), new Vector2(1080, 42), "ConditionsLabel");
             // プレイヤーの状態を表示する左側パネル。
-            RectTransform left = Panel(canvas, "プレイヤー", new Vector2(0, 1), new Vector2(24, -180), new Vector2(360, 320));
-            player = Label(left, "", 28, Paper, new Vector2(20, -18), new Vector2(320, 290));
+            RectTransform left = Panel(canvas, "PlayerPanel", new Vector2(0, 1), new Vector2(24, -180), new Vector2(360, 320));
+            player = Label(left, "プレイヤーの状態", 28, Paper, new Vector2(20, -18), new Vector2(320, 290), "StatusLabel");
             // CPUの状態を表示する右側パネル。
-            RectTransform right = Panel(canvas, "CPU", new Vector2(1, 1), new Vector2(-24, -180), new Vector2(360, 320));
-            cpu = Label(right, "", 28, Paper, new Vector2(20, -18), new Vector2(320, 290));
+            RectTransform right = Panel(canvas, "CpuPanel", new Vector2(1, 1), new Vector2(-24, -180), new Vector2(360, 320));
+            cpu = Label(right, "CPUの状態", 28, Paper, new Vector2(20, -18), new Vector2(320, 290), "StatusLabel");
             // 進行メッセージと道具メモを表示する下部パネル。
-            RectTransform bottom = Panel(canvas, "進行メッセージ", new Vector2(0.5f, 0), new Vector2(0, 22), new Vector2(1120, 130));
-            message = Label(bottom, "", 28, Gold, new Vector2(20, -14), new Vector2(1080, 45));
-            memo = Label(bottom, "", 25, Paper, new Vector2(20, -65), new Vector2(1080, 50));
-            draw = Button(canvas, "1枚引く（Space）", new Vector2(1, 0), new Vector2(-24, 280), new Vector2(350, 80), () => DrawClicked?.Invoke(), out _);
-            stop = Button(canvas, "辞める（Enter）", new Vector2(1, 0), new Vector2(-24, 184), new Vector2(350, 80), () => StopClicked?.Invoke(), out _);
-            tools = Button(canvas, "占い道具（T）", new Vector2(0, 0), new Vector2(24, 184), new Vector2(350, 80), ToggleTools, out _);
-            next = Button(canvas, "", new Vector2(1, 0), new Vector2(-24, 184), new Vector2(350, 80), () => NextClicked?.Invoke(), out nextLabel);
+            RectTransform bottom = Panel(canvas, "MessagePanel", new Vector2(0.5f, 0), new Vector2(0, 22), new Vector2(1120, 130));
+            message = Label(bottom, "メッセージ", 28, Gold, new Vector2(20, -14), new Vector2(1080, 45), "MessageLabel");
+            memo = Label(bottom, "占いの結果", 25, Paper, new Vector2(20, -65), new Vector2(1080, 50), "MemoLabel");
+            draw = Button(canvas, "1枚引く（Space）", new Vector2(1, 0), new Vector2(-24, 280), new Vector2(350, 80), out _, "DrawButton");
+            stop = Button(canvas, "辞める（Enter）", new Vector2(1, 0), new Vector2(-24, 184), new Vector2(350, 80), out _, "StopButton");
+            tools = Button(canvas, "占い道具（T）", new Vector2(0, 0), new Vector2(24, 184), new Vector2(350, 80), out _, "ToolsButton");
+            next = Button(canvas, "次のラウンド（Enter）", new Vector2(1, 0), new Vector2(-24, 184), new Vector2(350, 80), out nextLabel, "NextButton");
+            next.gameObject.SetActive(false);
 
             // 二人の精算と最終勝敗を表示する中央パネル。背景を濃くして文字を読みやすくする。
-            RectTransform result = Panel(canvas, "ラウンド結果", new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(850, 500));
+            RectTransform result = Panel(canvas, "ResultPanel", new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(850, 500));
             result.GetComponent<Image>().color = new Color32(18, 13, 29, 248);
             resultPanel = result.gameObject;
-            summary = Label(result, "", 30, Paper, new Vector2(30, -24), new Vector2(790, 450));
+            summary = Label(result, "結果", 30, Paper, new Vector2(30, -24), new Vector2(790, 450), "SummaryLabel");
             resultPanel.SetActive(false);
             BuildTools(canvas);
         }
@@ -107,23 +132,23 @@ namespace Hikigiwa.Battle
         private void BuildTools(Transform canvas)
         {
             // 画面全体を覆う暗幕。道具を選んでいる間の背後のクリックを受け止める。
-            RectTransform blocker = Rect(canvas, "占い道具パネル", Vector2.zero, Vector2.zero, Vector2.zero);
+            RectTransform blocker = Rect(canvas, "ToolOverlay", Vector2.zero, Vector2.zero, Vector2.zero);
             blocker.anchorMax = Vector2.one;
             blocker.offsetMin = blocker.offsetMax = Vector2.zero;
             blocker.gameObject.AddComponent<Image>().color = new Color(0, 0, 0, 0.7f);
             toolPanel = blocker.gameObject;
             // 暗幕の手前に置く、道具一覧と閉じるボタンの背景。
-            RectTransform panel = Panel(blocker, "道具", new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1000, 620));
-            Label(panel, "占い道具　使用後も引く／辞めるを選べます", 30, Gold, new Vector2(24, -20), new Vector2(950, 50));
+            RectTransform panel = Panel(blocker, "Panel", new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1000, 620));
+            Label(panel, "占い道具　使用後も引く／辞めるを選べます", 30, Gold, new Vector2(24, -20), new Vector2(950, 50), "Header");
             // FortuneToolの並びに対応するボタン番号（0〜3）。
             for (int i = 0; i < 4; i++)
             {
                 // このボタンに対応する道具。ボタンのコールバックへ個別に保持する。
                 FortuneTool tool = (FortuneTool)i;
-                toolButtons[i] = Button(panel, "", new Vector2(0.5f, 1), new Vector2(0, -90 - i * 105), new Vector2(930, 90),
-                    () => ToolClicked?.Invoke(tool), out toolLabels[i]);
+                toolButtons[i] = Button(panel, ReadingHud.NameOf(tool), new Vector2(0.5f, 1), new Vector2(0, -90 - i * 105),
+                    new Vector2(930, 90), out toolLabels[i], tool + "Button");
             }
-            Button(panel, "閉じる（Esc / T）", new Vector2(0.5f, 0), new Vector2(0, 20), new Vector2(420, 70), CloseTools, out _);
+            closeToolsButton = Button(panel, "閉じる（Esc / T）", new Vector2(0.5f, 0), new Vector2(0, 20), new Vector2(420, 70), out _, "CloseButton");
             CloseTools();
         }
 
@@ -131,7 +156,7 @@ namespace Hikigiwa.Battle
         public void Refresh(BattleMatch match, bool busy)
         {
             heading.text = $"CPU対戦　ラウンド {match.Round} / {BattleMatch.RoundCount}　山札 {match.Deck.Remaining}枚";
-            conditions.text = $"共通条件　吉数 {match.Conditions.LuckyNumber}　凶数 {string.Join("・", match.Conditions.BadNumbers)} ＋ ジョーカー　満足ライン {match.Conditions.SatisfactionLine}";
+            conditions.text = $"共通条件　吉数 {match.Conditions.LuckyNumber}　凶数 {string.Join("・", match.Conditions.BadNumbers)} ＋ ジョーカー";
             player.text = Participant("あなた", match.Player, match.Turn == BattleSide.Player && !match.IsRoundOver);
             cpu.text = Participant("CPU", match.Cpu, match.Turn == BattleSide.Cpu && !match.IsRoundOver);
             // 演出中ではなくプレイヤーの有効な手番か。操作ボタンの可否をまとめて揃える。
@@ -162,7 +187,7 @@ namespace Hikigiwa.Battle
             ReadingSession s = participant.Session;
             // 破綻・確定・手番・待機の優先順で決めた状態名。
             string state = s.State == ReadingState.Broken ? "破綻" : s.IsFinished ? "確定" : turn ? "手番" : "待機";
-            // 鑑定中はボーナス前の基本売上、終了後はチップ込みの確定得点を示す行。
+            // 鑑定中はボーナス前の基本売上、終了後は予感ボーナス込みの確定得点を示す行。
             string score = s.IsFinished ? $"確定得点　{s.Result.Score}" : $"基本売上　{s.CurrentSales}";
             return $"{name}　【{state}】\n累計　{participant.TotalScore}点\n霊力　{participant.Spirit}\n\n運気 {s.Luck} × 倍率 {s.Multiplier}\n{score}\n凶の印　{new string('●', s.BadMarks)}{new string('○', Math.Max(0, s.BadMarksToBreak - s.BadMarks))}";
         }
@@ -181,13 +206,43 @@ namespace Hikigiwa.Battle
             summary.text = text.ToString();
         }
 
-        /// <summary>1人分の売上・チップ・予感の有無を結果表示用に整形する。破綻時は0点だけを示す。</summary>
+        /// <summary>1人分の得点と予感の有無を結果表示用に整形する。破綻時は0点だけを示す。</summary>
         private static string ResultLine(string name, ReadingResult r)
         {
             if (r.IsBroken) return $"{name}：破綻　0点";
             // 予感判定なし・外れ・的中のどれかを示す結果文。
             string bonus = r.ForesightCard.HasValue ? r.ForesightHit ? "予感的中 ×1.5" : "予感は外れ" : "予感判定なし";
-            return $"{name}：{r.Score}点\n売上 {r.Sales} ＋ チップ {r.Tip}　{bonus}";
+            return $"{name}：{r.Score}点　{bonus}";
+        }
+
+        /// <summary>ボタンの処理をつなぎ、最初は隠しておくパネルを隠す（エディタで表示したまま保存しても大丈夫）。</summary>
+        private void Wire()
+        {
+            wired = true;
+            AddClick(draw, () => DrawClicked?.Invoke());
+            AddClick(stop, () => StopClicked?.Invoke());
+            AddClick(tools, ToggleTools);
+            AddClick(next, () => NextClicked?.Invoke());
+            AddClick(closeToolsButton, CloseTools);
+            for (int i = 0; i < toolButtons.Length; i++)
+            {
+                // このボタンに対応する道具。ボタンのコールバックへ個別に保持する。
+                FortuneTool tool = (FortuneTool)i;
+                AddClick(toolButtons[i], () => ToolClicked?.Invoke(tool));
+            }
+            resultPanel.SetActive(false);
+            CloseTools();
+        }
+
+        /// <summary>選択状態を解除してから指定の処理を呼ぶクリック処理を登録する。</summary>
+        private static void AddClick(Button button, Action action)
+        {
+            button.onClick.AddListener(() =>
+            {
+                // 選択状態が残るとSpace/Enterがボタンにも届くため、進行処理を呼ぶ前に解除する。
+                if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
+                action();
+            });
         }
 
         /// <summary>次ラウンドの開始に備えて結果パネルを隠す。</summary>
@@ -237,9 +292,11 @@ namespace Hikigiwa.Battle
         }
         /// <summary>共通フォントでラベルを生成する。操作対象ではないためレイキャストを無効にする。</summary>
         /// <param name="fontSize">基準解像度での文字サイズ。</param>
-        private Text Label(Transform parent, string value, int fontSize, Color color, Vector2 position, Vector2 size)
+        /// <param name="name">Hierarchyに表示する名前（英語）。</param>
+        private Text Label(Transform parent, string value, int fontSize, Color color, Vector2 position, Vector2 size,
+            string name = "Label")
         {
-            RectTransform rect = Rect(parent, value, new Vector2(0, 1), position, size);
+            RectTransform rect = Rect(parent, name, new Vector2(0, 1), position, size);
             var label = rect.gameObject.AddComponent<Text>();
             label.font = font;
             label.fontSize = fontSize;
@@ -252,20 +309,16 @@ namespace Hikigiwa.Battle
         }
         /// <summary>背景と中央ラベルを持つボタンを生成し、選択状態を解除してから指定の処理を呼ぶ。</summary>
         /// <param name="label">生成したボタンのラベル。文言を後から変えるための出力。</param>
-        private Button Button(Transform parent, string value, Vector2 anchor, Vector2 position, Vector2 size, Action action, out Text label)
+        /// <param name="name">Hierarchyに表示する名前（英語）。</param>
+        private Button Button(Transform parent, string value, Vector2 anchor, Vector2 position, Vector2 size, out Text label,
+            string name = "Button")
         {
-            RectTransform rect = Rect(parent, value, anchor, position, size);
+            RectTransform rect = Rect(parent, name, anchor, position, size);
             var image = rect.gameObject.AddComponent<Image>();
             image.color = Paper;
             var button = rect.gameObject.AddComponent<Button>();
             button.targetGraphic = image;
             button.navigation = new Navigation { mode = Navigation.Mode.None };
-            button.onClick.AddListener(() =>
-            {
-                // 選択状態が残るとSpace/Enterがボタンにも届くため、進行処理を呼ぶ前に解除する。
-                if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
-                action();
-            });
             label = Label(rect, value, 28, new Color32(25, 20, 34, 255), Vector2.zero, size);
             label.rectTransform.anchorMin = label.rectTransform.anchorMax = label.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             label.alignment = TextAnchor.MiddleCenter;
