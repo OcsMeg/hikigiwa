@@ -111,7 +111,7 @@ namespace Hikigiwa.EditorTools
             ConfigureCardLayout(room, view, table, dealer);
 
             // 実行時に対戦UIを作るコンポーネント。
-            var hud = new GameObject("対戦HUD").AddComponent<BattleHud>();
+            var hud = new GameObject("BattleHUD").AddComponent<BattleHud>();
             var hudData = new SerializedObject(hud);
             hudData.FindProperty("font").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Font>("Assets/Art/Fonts/NotoSansJP-Medium-Subset.ttf");
             hudData.ApplyModifiedPropertiesWithoutUndo();

@@ -38,11 +38,9 @@ namespace Hikigiwa.CardSystem
         public bool ForesightHit { get; internal set; }
         /// <summary>予感的中ボーナス込みの売上。</summary>
         public int Sales { get; internal set; }
-        public bool SatisfactionReached { get; internal set; }
-        public int Tip { get; internal set; }
         public int SpiritGained { get; internal set; }
 
-        /// <summary>この客で得たスコア（売上＋チップ）。</summary>
-        public int Score => Sales + Tip;
+        /// <summary>この客で得たスコア（＝売上）。</summary>
+        public int Score => Sales;
     }
 }

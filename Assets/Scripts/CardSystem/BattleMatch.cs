@@ -34,7 +34,7 @@ namespace Hikigiwa.CardSystem
         public const int RoundCount = 3;
         /// <summary>共通条件・山札・先手の抽選に使う乱数。CPUの停止抽選とは分離している。</summary>
         private readonly Random random;
-        /// <summary>運気・倍率・チップ・道具など、各ReadingSessionで共有する数値設定。</summary>
+        /// <summary>運気・倍率・道具など、各ReadingSessionで共有する数値設定。</summary>
         private readonly ReadingRules rules;
         /// <summary>人間側の鑑定状態と持ち越し記録。</summary>
         public BattleParticipant Player { get; } = new BattleParticipant();
@@ -42,7 +42,7 @@ namespace Hikigiwa.CardSystem
         public BattleParticipant Cpu { get; } = new BattleParticipant();
         /// <summary>二人で共有する今ラウンドの山札。どちらが引いても同じ山札から減る。</summary>
         public Deck Deck { get; private set; }
-        /// <summary>二人に共通する吉数・凶数2種類・満足ライン。</summary>
+        /// <summary>二人に共通する吉数・凶数2種類。</summary>
         public Customer Conditions { get; private set; }
         /// <summary>現在引く／辞めるを選べる側。道具の使用では変更しない。</summary>
         public BattleSide Turn { get; private set; }
