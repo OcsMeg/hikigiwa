@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Hikigiwa.CardSystem;
+using Hikigiwa.Common;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,6 +19,8 @@ namespace Hikigiwa.Battle
         [SerializeField, Tooltip("0はランダム。それ以外は再現用のシード")] private int seed;
         /// <summary>CPUの手番を知らせてから判断するまでの待ち時間（ゲーム内秒）。</summary>
         [SerializeField, Min(0)] private float cpuThinkSeconds = 0.7f;
+        /// <summary>「タイトルに戻る」で移るシーンの名前。</summary>
+        [SerializeField, Tooltip("「タイトルに戻る」で移るシーン")] private string titleSceneName = "Title";
         /// <summary>停止抽選を始める凶札率（0〜100%）。CPUへ渡す際に0〜1へ変換する。</summary>
         [Header("CPUの停止判断")]
         [SerializeField, Range(0f, 100f), InspectorName("停止判定を始める凶札率（%）")]
@@ -49,6 +53,7 @@ namespace Hikigiwa.Battle
             hud.StopClicked += RequestStop;
             hud.NextClicked += RequestNext;
             hud.ToolClicked += RequestTool;
+            hud.TitleClicked += RequestTitle;
             dealer.Table.StackClicked += RequestDraw;
             StartMatch();
         }
@@ -62,6 +67,7 @@ namespace Hikigiwa.Battle
                 hud.StopClicked -= RequestStop;
                 hud.NextClicked -= RequestNext;
                 hud.ToolClicked -= RequestTool;
+                hud.TitleClicked -= RequestTitle;
             }
             if (dealer != null && dealer.Table != null) dealer.Table.StackClicked -= RequestDraw;
         }
@@ -77,6 +83,7 @@ namespace Hikigiwa.Battle
                 if (keyboard.escapeKey.wasPressedThisFrame || keyboard.tKey.wasPressedThisFrame) hud.CloseTools();
                 return;
             }
+            if (keyboard.escapeKey.wasPressedThisFrame) RequestTitle();
             if (keyboard.spaceKey.wasPressedThisFrame) RequestDraw();
             if (keyboard.tKey.wasPressedThisFrame && !busy && Match.CanAct(BattleSide.Player)) hud.ToggleTools();
             if (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame)
@@ -122,6 +129,20 @@ namespace Hikigiwa.Battle
             if (busy || Match == null || !Match.IsRoundOver) return;
             if (Match.IsMatchOver) StartMatch();
             else if (Match.StartNextRound()) PrepareRound();
+        }
+
+        /// <summary>対戦終了後だけ、タイトル画面へ戻る。</summary>
+        public void RequestTitle()
+        {
+            if (busy || Match == null || !Match.IsMatchOver) return;
+            ReturnToTitle().Forget();
+        }
+
+        /// <summary>フェード付きでタイトルへ遷移する。遷移できなかったときは操作を戻す。</summary>
+        private async UniTaskVoid ReturnToTitle()
+        {
+            busy = true;
+            if (!await SceneTransition.Instance.LoadAsync(titleSceneName)) busy = false;
         }
 
         /// <summary>対戦が存在し、演出中ではなく、プレイヤーの有効な手番かを調べる。</summary>

@@ -28,23 +28,35 @@ namespace Hikigiwa.EditorTools
             }
 
             bool placed = false;
-            if (reading != null) placed |= Place(reading, reading.HasLayout, reading.CreateLayout);
-            if (battle != null) placed |= Place(battle, battle.HasLayout, battle.CreateLayout);
+            if (reading != null) placed |= Place(reading, reading.HasLayout, reading.CreateLayout, reading.CreateMissingParts);
+            if (battle != null) placed |= Place(battle, battle.HasLayout, battle.CreateLayout, battle.CreateMissingParts);
             if (!placed) return;
 
             EditorSceneManager.MarkSceneDirty((reading != null ? reading.gameObject : battle.gameObject).scene);
             Debug.Log("UIをシーンに配置しました。シーンを保存（Ctrl+S / Cmd+S）してください。");
         }
 
-        private static bool Place(MonoBehaviour hud, bool hasLayout, System.Action createLayout)
+        private static bool Place(MonoBehaviour hud, bool hasLayout, System.Action createLayout,
+            System.Func<bool> createMissingParts)
         {
             var data = new SerializedObject(hud);
             if (hasLayout)
             {
-                if (!EditorUtility.DisplayDialog(Title,
-                        $"{hud.gameObject.name} のUIはすでに置かれています。作り直しますか？\n（エディタで変えた位置や見た目は元に戻ります）",
-                        "作り直す", "やめる"))
-                    return false;
+                // 0：足りない部品だけ追加／1：やめる／2：作り直す
+                int choice = EditorUtility.DisplayDialogComplex(Title,
+                    $"{hud.gameObject.name} のUIはすでに置かれています。\n\n" +
+                    "・足りない部品だけ追加：エディタで変えた見た目はそのままで、後から増えた部品（タイトルに戻るボタンなど）だけを足します\n" +
+                    "・作り直す：すべて最初の見た目に戻します",
+                    "足りない部品だけ追加", "やめる", "作り直す");
+                if (choice == 1) return false;
+                if (choice == 0)
+                {
+                    Undo.RegisterFullObjectHierarchyUndo(hud.gameObject, Title);
+                    bool added = createMissingParts();
+                    EditorUtility.SetDirty(hud);
+                    if (!added) EditorUtility.DisplayDialog(Title, $"{hud.gameObject.name} に足りない部品はありませんでした。", "OK");
+                    return added;
+                }
                 var old = data.FindProperty("canvasRoot").objectReferenceValue as GameObject;
                 if (old != null) Undo.DestroyObjectImmediate(old);
             }
