@@ -10,7 +10,7 @@ namespace Hikigiwa.Title
     /// <summary>タイトル画面。「はじめる」でゲームのシーンへ、「設定」で設定画面へ進みます。</summary>
     public sealed class TitlePresenter : OverlayPresenterBase<TitleView>
     {
-        [SerializeField] private string gameSceneName = "Main";
+        [SerializeField] private string gameSceneName = "Game";
 
         protected override void SetEvent()
         {
