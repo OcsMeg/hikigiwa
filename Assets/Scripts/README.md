@@ -68,6 +68,11 @@
 | `Battle/BattleHud.cs` | 対戦状況、道具、結果の表示 |
 | `Editor/CPUBattleSceneBuilder.cs` | Mainのカード素材とroomモデルを使うシーン生成 |
 
+机とカメラはメニューの **Hikigiwa → CPU対戦シーンを作成** で配置します（数値は `CPUBattleSceneBuilder.cs` の先頭の定数）。
+- 部屋：二人分のカードが並ぶよう、部屋全体を `RoomScale`（1.5倍）に拡大する。カードの大きさは変えない
+- カード：中央の数字が隠れない間隔（`CardColumnStep`・`CardRowStep`）で並べる
+- カメラ：部屋の壁がある奥の角へまっすぐ向け、部屋の外が映らないようにする（`CameraDistance`・`CameraHeight`）
+
 CPUの確率はCPUBattleシーンの **CPU対戦進行 → Battle Game Controller → CPUの停止判断** で調整します。
 - **停止判定を始める凶札率（%）**：残り山札の凶札率がこの値以上なら停止を抽選します。初期値50。
 - **停止する確率（%）**：抽選する手番で辞める確率です。初期値50。
