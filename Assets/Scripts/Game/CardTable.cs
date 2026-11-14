@@ -158,8 +158,8 @@ namespace Hikigiwa.Game
             SetStackCount(remainingAfter, total);
 
             yield return card.MoveTo(revealAnchor.position, FacingCamera, 0.55f, 0.35f);
-            // ジョーカーは、表が見えたところで専用の音を重ねる
-            if (draw.Card.IsJoker) PlaySe(SeId.JokerDraw);
+            // ジョーカー・吉数・凶数は、表が見えたところで専用の音を重ねる
+            PlaySe(RevealSe(draw));
             FlashOmen(draw.Omen, draw.CausedBreak);
             yield return new WaitForSeconds(draw.Omen == CardOmen.Neutral ? 0.35f : 0.7f);
 
@@ -186,6 +186,15 @@ namespace Hikigiwa.Game
         /// ソロ・CPU対戦の両方、鑑定終了時の予感のカードでも鳴ります。
         /// </summary>
         private static void PlayCardDrawSound() => PlaySe(SeId.CardDraw);
+
+        /// <summary>引いたカードの表が見えたときに重ねる音。専用の音がないカードは None（鳴らさない）。</summary>
+        private static SeId RevealSe(DrawResult draw)
+        {
+            if (draw.Card.IsJoker) return SeId.JokerDraw;
+            if (draw.Omen == CardOmen.Lucky) return SeId.LuckyDraw;
+            if (draw.Omen == CardOmen.Bad) return SeId.UnluckyDraw;
+            return SeId.None;
+        }
 
         private static void PlaySe(SeId id)
         {

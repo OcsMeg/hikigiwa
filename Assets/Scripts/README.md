@@ -147,5 +147,7 @@ CPUの確率はCPUBattleシーンの **CPU対戦進行 → Battle Game Controlle
   - `SeId.CardDraw`：`CardTable.PlayDraw`（カードを引いてめくるとき）と `PlayForesight`（鑑定終了時に予感のカードをめくるとき）。ソロ・CPU対戦の両方で鳴ります
     - 素材は `Audio/SE/CardDraw.mp3`。他の効果音より約10dB小さく、頭に約0.1秒の無音があるので、BGMが大きいと聞こえにくいことがあります
   - `SeId.JokerDraw`：`CardTable.PlayDraw` で、引いたカードがジョーカーだったとき、めくって表が見えたところで CardDraw に重ねて鳴らします（ソロ・CPU対戦の両方。予感のカードでは鳴らしません）。素材は `Audio/SE/JokerDraw.mp3`（約3.5秒）
+  - `SeId.LuckyDraw`：同じく、引いたカードが吉数だったとき、表が見えたところで鳴らします。素材は `Audio/SE/LuckyDraw.mp3`（約1.6秒、音量0.5）
+  - `SeId.UnluckyDraw`：同じく、引いたカードが凶数（ジョーカー以外）だったとき、表が見えたところで鳴らします。ジョーカーは JokerDraw のままです。素材は `Audio/SE/UnluckyDraw.wav`（元の音源の後半の無音を切って2.5秒にしたもの、音量0.5）
 - WebGL ではブラウザの制限で、プレイヤーが一度クリックするまで音は出ません
 - インポート設定の目安：BGM は Load Type を Streaming、効果音は Decompress On Load で Preload Audio Data を有効（最初の1回が遅れないように）

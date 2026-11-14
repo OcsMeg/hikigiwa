@@ -36,5 +36,9 @@ namespace Hikigiwa.Common.Audio
         CardDraw,
         /// <summary>ジョーカーを引いた（めくって表が見えたときに、CardDraw に重ねて鳴らす）。</summary>
         JokerDraw,
+        /// <summary>吉数のカードを引いた（めくって表が見えたときに、CardDraw に重ねて鳴らす）。</summary>
+        LuckyDraw,
+        /// <summary>凶数のカード（ジョーカー以外）を引いた（めくって表が見えたときに、CardDraw に重ねて鳴らす）。</summary>
+        UnluckyDraw,
     }
 }
