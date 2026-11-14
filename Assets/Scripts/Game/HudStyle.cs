@@ -53,6 +53,16 @@ namespace Hikigiwa.Game
         /// <summary>ボタンの文字サイズ。背の高いボタン（2行表示など）は大きくする。</summary>
         public static int ButtonFontSize(Vector2 size) => size.y >= 120 ? 34 : 30;
 
+        /// <summary>
+        /// 吉数・凶数の表示（ソロとCPU対戦で共通の書式）。凶数が2つ以上なら「Unlucky Numbers 4 · 7」と複数形にする。
+        /// 例：「Lucky Number 1    Unlucky Number 4 + Joker」
+        /// </summary>
+        public static string NumbersText(int luckyNumber, System.Collections.Generic.IReadOnlyList<int> unluckyNumbers)
+        {
+            string plural = unluckyNumbers.Count > 1 ? "s" : "";
+            return $"Lucky Number {luckyNumber}    Unlucky Number{plural} {string.Join(" · ", unluckyNumbers)} + Joker";
+        }
+
         /// <summary>占い道具の名前。</summary>
         public static string NameOf(FortuneTool tool)
         {

@@ -1035,7 +1035,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -32, y: -32}
-  m_SizeDelta: {x: 460, y: 120}
+  m_SizeDelta: {x: 640, y: 120}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &293718718
 MonoBehaviour:
@@ -3993,7 +3993,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -24, y: -68}
-  m_SizeDelta: {x: 420, y: 40}
+  m_SizeDelta: {x: 600, y: 40}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &1329515913
 CanvasRenderer:
@@ -4016,7 +4016,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6666667, g: 0.627451, b: 0.7254902, a: 1}
+  m_Color: {r: 0.9647059, g: 0.8980392, b: 0.78039217, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4036,7 +4036,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "Lucky: 1  Unlucky: 4 + Joker"
+  m_Text: Lucky Number 1    Unlucky Number 4 + Joker
 --- !u!1 &1340039084
 GameObject:
   m_ObjectHideFlags: 0
@@ -5985,7 +5985,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -24, y: -14}
-  m_SizeDelta: {x: 420, y: 52}
+  m_SizeDelta: {x: 600, y: 52}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &2023436443
 CanvasRenderer:
