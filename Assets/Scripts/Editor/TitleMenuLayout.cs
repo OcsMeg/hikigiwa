@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace Hikigiwa.EditorTools
 {
     /// <summary>
-    /// タイトル画面のボタンを「Solo・CPU・Options・Rules」の順に縦に並べます。
+    /// タイトル画面のロゴにゲーム名を入れ、ボタンを「Solo・CPU・Options・Rules」の順に縦に並べます。
     /// CPU ボタンがまだなければ Solo ボタンを複製して作り、TitleView に割り当てます。
     /// </summary>
     /// <remarks>
@@ -18,8 +18,15 @@ namespace Hikigiwa.EditorTools
     /// </remarks>
     public static class TitleMenuLayout
     {
+        /// <summary>ゲーム名。タイトルのロゴとルール説明に使います。</summary>
+        public const string GameTitle = "Fortune OR Fold";
+
         private const string Title = "タイトルのボタンを並べる";
         private const string ScenePath = "Assets/Scenes/Title.unity";
+
+        /// <summary>ロゴの文字の大きさの上限と下限。ゲーム名が長くても枠からはみ出さないよう自動で縮めます。</summary>
+        private const float LogoMaxSize = 160f;
+        private const float LogoMinSize = 80f;
 
         /// <summary>一番上のボタンの高さ（画面中央が 0）。</summary>
         public const float FirstY = -100f;
@@ -62,6 +69,8 @@ namespace Hikigiwa.EditorTools
                 return false;
             }
 
+            SetLogo(view);
+
             Undo.RecordObject(solo.gameObject, Title);
             solo.name = "SoloButton";
             SetLabel(solo, "Solo");
@@ -95,6 +104,25 @@ namespace Hikigiwa.EditorTools
                 rect.SetSiblingIndex(firstIndex + i);
             }
             return true;
+        }
+
+        /// <summary>タイトル画面の「Logo」で始まる名前の文字にゲーム名を入れます。見つからなければ何もしません。</summary>
+        private static void SetLogo(TitleView view)
+        {
+            foreach (Transform child in view.transform)
+            {
+                if (!child.name.StartsWith("Logo")) continue;
+                var logo = child.GetComponent<TMP_Text>();
+                if (logo == null) continue;
+
+                Undo.RecordObject(logo, Title);
+                logo.text = GameTitle;
+                logo.enableAutoSizing = true;
+                logo.fontSizeMax = LogoMaxSize;
+                logo.fontSizeMin = LogoMinSize;
+                return;
+            }
+            Debug.LogWarning($"{Title}: タイトル画面にロゴ（名前が Logo で始まる文字）が見つかりません。");
         }
 
         private static void SetLabel(Button button, string text)

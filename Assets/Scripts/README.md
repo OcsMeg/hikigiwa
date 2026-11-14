@@ -38,12 +38,15 @@
 タイトル画面のボタンは上から **Solo・CPU・Options・Rules** の順です。
 - Solo：1人用（`Game` シーン）、CPU：CPU対戦（`CPUBattle` シーン）。移るシーンは `TitlePresenter` の `Solo Scene Name`・`Cpu Scene Name` で変えられます
 - メニューの **Hikigiwa → タイトルのボタンを並べる**（`Editor/TitleMenuLayout.cs`）で、CPU ボタンがなければ作り、4つを 120 間隔で縦に並べ直します。ボタンの見た目は変えません
+- 同じメニューで、ロゴにゲーム名 **Fortune OR Fold**（`TitleMenuLayout.GameTitle`）を入れます。長い名前でも枠に収まるよう、文字の大きさは自動で縮みます（最大160）
 
 ## タイトルのルール説明
 タイトル画面の **Rules** で、ルール説明（英語）をモーダルで出します。作りは設定画面（Option）と同じです。
 - 前半が **Solo**（1人用）、後半が **VS CPU**（CPU対戦。Soloとの違いだけを説明）
-- 用語：吉数＝Lucky Number、凶数＝Unlucky Number、凶の印＝Unlucky mark、運気＝Luck、倍率＝Multiplier、予感的中＝Foresight Bonus、霊力＝Spirit
-- 「ノルマ達成で霊力+2」はルール説明にだけ書いてあり、ゲームの処理はまだ実装していません
+- 用語：吉数＝Lucky Number、凶数＝Unlucky Number、凶の印（○○の表示）＝Omen Marks、運気＝Luck、倍率＝Multiplier、予感的中＝Foresight Bonus、霊力＝Spirit、鑑定を終える＝Fold（ゲーム名「Fortune OR Fold」に合わせる）
+- 次の2つは仕様の変更を先にルール説明へ書いたもので、ゲームの処理はまだ実装していません
+  - ノルマ達成で霊力+2
+  - Soloでも吉数・凶数を鑑定の最初から画面に出す（CPU対戦と同じ）
 - `UI/Rules/RulesPresenter`・`RulesView`：戻るボタンとスクロール。開くたびに先頭へ戻ります
 - 中身はメニューの **Hikigiwa → タイトルにルール画面を作成**（`Editor/TitleRulesBuilder.cs`）でシーンに書き出します。文章・カードの絵・配置はシーン上で直接編集できます
 - このメニューをもう一度実行すると RulesButton と RulesOverlay を作り直すため、シーン上で加えた変更は消えます

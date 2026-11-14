@@ -288,8 +288,9 @@ namespace Hikigiwa.EditorTools
             Body(content,
                 "You are a fortune teller. Each night, three customers come to you, and the game lasts three nights - " +
                 "nine readings in all.\n" +
-                "In each reading you draw cards to build up the customer's fortune. Draw too greedily and the reading " +
-                "falls apart. Knowing when to stop is everything.\n" +
+                "In each reading you draw cards to build up the customer's fortune, and every draw asks the same " +
+                "question: chase more fortune, or fold and keep what you have? Draw too greedily and the reading " +
+                "falls apart. Knowing when to fold is everything.\n" +
                 "Your final score is the total of all nine readings. Each night also has a target score: missing it " +
                 "does not end the game, but reaching it earns you 2 Spirit.");
 
@@ -305,8 +306,9 @@ namespace Hikigiwa.EditorTools
             // 3. 吉数と凶数
             Heading(content, "Lucky and Unlucky Cards");
             Body(content,
-                $"Each customer has a secret {Lucky("Lucky Number")} and a secret {Unlucky("Unlucky Number")}. " +
-                "You will not know them until you draw them.\n" +
+                $"Each customer has a {Lucky("Lucky Number")} and an {Unlucky("Unlucky Number")}. " +
+                "Both are shown on screen when the reading begins, so you always know which cards to hope for " +
+                "and which to fear.\n" +
                 $"- {Lucky("Lucky Number")}: 2 cards in the deck.\n" +
                 $"- {Unlucky("Unlucky Number")}: 2 cards in the deck. The Joker is always unlucky too, " +
                 "so there are 3 unlucky cards in all.\n" +
@@ -325,30 +327,30 @@ namespace Hikigiwa.EditorTools
             Body(content,
                 "Each card you draw adds its number to the customer's <b>Luck</b>.\n" +
                 $"- {Lucky("Lucky card")}: your <b>Multiplier</b> goes up by 1. It starts at 1.\n" +
-                $"- {Unlucky("Unlucky card")}: you receive an <b>Unlucky mark</b>. Its number still adds to Luck " +
+                $"- {Unlucky("Unlucky card")}: you receive an <b>Omen Mark</b>. Its number still adds to Luck " +
                 "(the Joker adds 0).\n" +
-                $"Collect 2 Unlucky marks and the reading breaks: {Unlucky("this customer gives you 0 points")}.");
+                $"Collect 2 Omen Marks and the reading breaks: {Unlucky("this customer gives you 0 points")}.");
             var breakRow = Row(content, "BreakCards", 16f);
             Card(breakRow, 4, Omen.Unlucky, 110f, Unlucky("Mark 1"));
             Card(breakRow, 0, Omen.Unlucky, 110f, Unlucky("Mark 2"));
             Word(breakRow, Unlucky("Broken!\n0 points"), 220f, 110f);
 
             // 5. 引き際
-            Heading(content, "Knowing When to Stop");
+            Heading(content, TitleMenuLayout.GameTitle);
             Body(content,
-                "You may stop at any time. This customer's score is:");
+                "You may <b>fold</b> at any time to end the reading. This customer's score is:");
             Formula(content, "Luck  x  Multiplier");
             Body(content,
-                "When you stop, the next card in the deck is turned over. If it is an unlucky card, you stopped just " +
+                "When you fold, the next card in the deck is turned over. If it is an unlucky card, you folded just " +
                 "in time: the <b>Foresight Bonus</b> multiplies your score by 1.5.\n" +
-                "If the deck runs out, you have to stop.");
+                "If the deck runs out, you have to fold.");
             Caption(content, "Example (Lucky Number 7):");
-            var stopRow = Row(content, "StopExample", 16f);
-            Card(stopRow, 5, Omen.Neutral, 110f, "+5");
-            Card(stopRow, 7, Omen.Lucky, 110f, Lucky("+7, x2"));
-            Card(stopRow, 3, Omen.Neutral, 110f, "+3");
-            Word(stopRow, $"<color=#{ColorUtility.ToHtmlStringRGB(Gold)}>Stop</color>", 160f, 110f);
-            Card(stopRow, 0, Omen.Unlucky, 110f, "Next card");
+            var foldRow = Row(content, "FoldExample", 16f);
+            Card(foldRow, 5, Omen.Neutral, 110f, "+5");
+            Card(foldRow, 7, Omen.Lucky, 110f, Lucky("+7, x2"));
+            Card(foldRow, 3, Omen.Neutral, 110f, "+3");
+            Word(foldRow, $"<color=#{ColorUtility.ToHtmlStringRGB(Gold)}>Fold</color>", 160f, 110f);
+            Card(foldRow, 0, Omen.Unlucky, 110f, "Next card");
             Body(content,
                 "Luck 5 + 7 + 3 = 15 and Multiplier 2, so 15 x 2 = 30 points.\n" +
                 "The next card is the Joker, so the Foresight Bonus makes it 30 x 1.5 = 45 points.");
@@ -369,7 +371,7 @@ namespace Hikigiwa.EditorTools
             Heading(content, "Controls");
             Body(content,
                 "Draw a card<pos=48%>Click the deck, or Space\n" +
-                "Stop the reading<pos=48%>Enter\n" +
+                "Fold (end the reading)<pos=48%>Enter\n" +
                 "Fortune tools<pos=48%>T  (close with T or Esc)\n" +
                 "Next customer<pos=48%>Enter\n" +
                 "You can also use the buttons on the screen.");
@@ -386,15 +388,16 @@ namespace Hikigiwa.EditorTools
             Body(content,
                 "A match has 3 rounds. In each round, you and the CPU take turns drawing from one shared deck, " +
                 "which is freshly shuffled every round. Who goes first is decided at random each round.\n" +
-                "On your turn, either draw a card or stop. Using fortune tools does not end your turn.\n" +
-                "Once one of you stops or breaks, the other keeps drawing alone until they stop too.");
+                "On your turn, either draw a card or fold. Using fortune tools does not end your turn.\n" +
+                "Once one of you folds or breaks, the other keeps drawing alone until they fold too.");
 
             // 2. 共通の数字
             Heading(content, "Shared Numbers");
             Body(content,
-                $"You and the CPU share the same secret numbers: one {Lucky("Lucky Number")} and " +
+                "You and the CPU share the same numbers, shown at the top of the screen: " +
+                $"one {Lucky("Lucky Number")} and " +
                 $"<b>two</b> {Unlucky("Unlucky Numbers")}. With the Joker, that makes 5 unlucky cards in the deck.\n" +
-                "Luck, Multiplier and Unlucky marks are kept separately for each of you.");
+                "Luck, Multiplier and Omen Marks are kept separately for each of you.");
             Caption(content, "For example, Lucky Number 7 and Unlucky Numbers 4 and 8:");
             var sharedRow = Row(content, "SharedNumberCards", 14f);
             Card(sharedRow, 7, Omen.Lucky, 100f, Lucky("Lucky"));
@@ -409,9 +412,9 @@ namespace Hikigiwa.EditorTools
             // 3. 予感
             Heading(content, "Who Gets the Foresight Bonus");
             Body(content,
-                "Only the one who stops <b>last</b> can get the Foresight Bonus. If you stop first, your score is " +
+                "Only the one who folds <b>last</b> can get the Foresight Bonus. If you fold first, your score is " +
                 "fixed right away and no card is turned over.\n" +
-                "Wait until the CPU has stopped or broken, then stop: the next card is turned over, and if it is " +
+                "Wait until the CPU has folded or broken, then fold: the next card is turned over, and if it is " +
                 "unlucky, your score is multiplied by 1.5.\n" +
                 "If the deck runs out, anyone still reading is scored without the bonus.");
 
@@ -541,7 +544,7 @@ namespace Hikigiwa.EditorTools
             AddLayout(NewRect("Spacer", row), preferredWidth: width, preferredHeight: 1f);
         }
 
-        /// <summary>行の中に置く文字（「Stop」「Broken!」など）。カードと同じ高さの中央に出します。</summary>
+        /// <summary>行の中に置く文字（「Fold」「Broken!」など）。カードと同じ高さの中央に出します。</summary>
         private static void Word(RectTransform row, string text, float width, float cardWidth)
         {
             float height = CardHeight(cardWidth) + CaptionHeight;
