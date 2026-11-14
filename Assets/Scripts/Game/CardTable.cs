@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Hikigiwa.CardSystem;
+using Hikigiwa.Common.Audio;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -153,6 +154,7 @@ namespace Hikigiwa.Game
             Vector3? destination = null, Quaternion? tableRotation = null)
         {
             CardView card = SpawnFromStack(draw.Card, draw.Omen, $"引いたカード {cards.Count + 1}");
+            PlayCardDrawSound();
             SetStackCount(remainingAfter, total);
 
             yield return card.MoveTo(revealAnchor.position, FacingCamera, 0.55f, 0.35f);
@@ -171,9 +173,19 @@ namespace Hikigiwa.Game
         public IEnumerator PlayForesight(Card top, CardOmen omen)
         {
             CardView card = SpawnFromStack(top, omen, "予感のカード");
+            PlayCardDrawSound();
             yield return card.MoveTo(foresightAnchor.position, FacingCamera, 0.6f, 0.3f);
             FlashOmen(omen, false);
             yield return new WaitForSeconds(0.6f);
+        }
+
+        /// <summary>
+        /// カードをめくる音（SeId.CardDraw）を鳴らします。山札から1枚取り、めくり始めるときに呼びます。
+        /// ソロ・CPU対戦の両方、鑑定終了時の予感のカードでも鳴ります。
+        /// </summary>
+        private static void PlayCardDrawSound()
+        {
+            if (AudioManager.HasInstance) AudioManager.Instance.PlaySe(SeId.CardDraw);
         }
 
         private CardView SpawnFromStack(Card value, CardOmen omen, string name)
