@@ -81,10 +81,10 @@ namespace Hikigiwa.EditorTools
 
             // 制作メンバー
             Section(content, "Created by");
-            Entry(content, "Naoto Kumazawa");
-            Entry(content, "Yamato Shitijo");
-            Entry(content, "Kazuki Niwa");
-            Entry(content, "Keisuke Sonoyama");
+            Entry(content, "CobanzaMeg3");
+            Entry(content, "aoba5550o0");
+            Entry(content, "KZ");
+            Entry(content, "Kei");
 
             // 音楽（OpenTracks）。曲名の英字は公式の表記がないため、読みをそのままローマ字にしている
             Section(content, "Music");

@@ -10073,7 +10073,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Kazuki Niwa
+  m_text: KZ
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dfdfbb81a1e632e4e943931cba6a0c09, type: 2}
   m_sharedMaterial: {fileID: -2096482529580773300, guid: dfdfbb81a1e632e4e943931cba6a0c09, type: 2}
@@ -12336,7 +12336,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Yamato Shitijo
+  m_text: aoba5550o0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dfdfbb81a1e632e4e943931cba6a0c09, type: 2}
   m_sharedMaterial: {fileID: -2096482529580773300, guid: dfdfbb81a1e632e4e943931cba6a0c09, type: 2}
@@ -12913,7 +12913,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Naoto Kumazawa
+  m_text: CobanzaMeg3
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dfdfbb81a1e632e4e943931cba6a0c09, type: 2}
   m_sharedMaterial: {fileID: -2096482529580773300, guid: dfdfbb81a1e632e4e943931cba6a0c09, type: 2}
@@ -31434,7 +31434,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Keisuke Sonoyama
+  m_text: Kei
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dfdfbb81a1e632e4e943931cba6a0c09, type: 2}
   m_sharedMaterial: {fileID: -2096482529580773300, guid: dfdfbb81a1e632e4e943931cba6a0c09, type: 2}
