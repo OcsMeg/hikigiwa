@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using Hikigiwa.Common.Audio;
 using Hikigiwa.UI.Overlay;
 using R3;
+using UnityEngine;
 
 namespace Hikigiwa.UI.Option
 {
@@ -30,7 +31,12 @@ namespace Hikigiwa.UI.Option
                 // OnValueChangedAsObservable() は購読した瞬間に今の値を流し、保存済みの音量を上書きしてしまうため、
                 // 値が変わったときだけ流れる onValueChanged.AsObservable() を使う
                 row.Slider.onValueChanged.AsObservable(destroyCancellationToken)
-                    .Subscribe(v => settings.Set(channel, v))
+                    .Subscribe(v =>
+                    {
+                        settings.Set(channel, v);
+                        // SEは、変えた音量で試し音を鳴らす（先に音量を変えてから鳴らす）
+                        if (channel == VolumeChannel.Se) PlaySePreview();
+                    })
                     .AddTo(this);
             }
 
@@ -66,6 +72,19 @@ namespace Hikigiwa.UI.Option
         {
             if (IsVisible) VolumeSettings.Instance.Save();
             return base.HideAsync(animate, ct);
+        }
+
+        /// <summary>スライダーを動かし続けても鳴りすぎないよう、試し音はこの秒数に1回まで。</summary>
+        private const float SePreviewInterval = 0.15f;
+        private float lastSePreviewTime = float.NegativeInfinity;
+
+        /// <summary>SEの音量を変えたときの試し音。</summary>
+        private void PlaySePreview()
+        {
+            float now = Time.unscaledTime;
+            if (now - lastSePreviewTime < SePreviewInterval) return;
+            lastSePreviewTime = now;
+            if (AudioManager.HasInstance) AudioManager.Instance.PlaySe(SeId.Decide);
         }
 
         private void OnDestroy()

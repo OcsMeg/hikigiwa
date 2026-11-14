@@ -419,6 +419,7 @@ GameObject:
   - component: {fileID: 96703772}
   - component: {fileID: 96703774}
   - component: {fileID: 96703775}
+  - component: {fileID: 926921767}
   m_Layer: 0
   m_Name: StartButton
   m_TagString: Untagged
@@ -1938,6 +1939,7 @@ GameObject:
   - component: {fileID: 860121042}
   - component: {fileID: 860121041}
   - component: {fileID: 860121045}
+  - component: {fileID: 775467689}
   m_Layer: 0
   m_Name: OptionButton
   m_TagString: Untagged
@@ -3603,6 +3605,7 @@ GameObject:
   - component: {fileID: 1624950583}
   - component: {fileID: 1624950582}
   - component: {fileID: 1624950586}
+  - component: {fileID: 243273606}
   m_Layer: 0
   m_Name: ResetButton
   m_TagString: Untagged
@@ -3742,6 +3745,7 @@ GameObject:
   - component: {fileID: 1653781184}
   - component: {fileID: 1653781186}
   - component: {fileID: 1653781187}
+  - component: {fileID: 238114990}
   m_Layer: 0
   m_Name: BackButton
   m_TagString: Untagged
@@ -4792,6 +4796,62 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2124737783}
   m_CullTransparentMesh: 1
+--- !u!114 &926921767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96703770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &775467689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860121040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &243273606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1624950581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &238114990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1653781182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

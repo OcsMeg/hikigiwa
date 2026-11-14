@@ -14,7 +14,8 @@ namespace Hikigiwa.Common.Audio
     /// <summary>
     /// 音量の設定。値は ReadOnlyReactiveProperty で公開し、PlayerPrefs に保存します。
     /// 全体（Master）は AudioListener.volume に自動で反映します。
-    /// BGM・SE は、AudioSource に VolumeBinder を付けると反映されます。
+    /// BGM・SE は AudioManager が鳴らす音に自動で反映されます。
+    /// シーンに直接置いた AudioSource（環境音など）は、VolumeBinder を付けると反映されます。
     /// </summary>
     public sealed class VolumeSettings
     {
