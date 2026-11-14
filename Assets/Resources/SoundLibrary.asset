@@ -17,10 +17,10 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: de1ad32f87e09d54bb65b86c364c6c8f, type: 3}
     volume: 1
   - id: 2
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: de1ad32f87e09d54bb65b86c364c6c8f, type: 3}
     volume: 1
   - id: 3
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: de1ad32f87e09d54bb65b86c364c6c8f, type: 3}
     volume: 1
   ses:
   - id: 1
