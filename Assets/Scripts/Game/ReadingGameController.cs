@@ -70,17 +70,17 @@ namespace Hikigiwa.Game
 
             if (hud.IsToolPanelOpen)
             {
-                if (keyboard.tKey.wasPressedThisFrame)
+                // T・Esc で閉じる（閉じるボタンと同じ決定音を鳴らす）
+                if (keyboard.tKey.wasPressedThisFrame || keyboard.escapeKey.wasPressedThisFrame)
                 {
                     hud.CloseToolPanel();
                     PlayKeyDecide();
                 }
-                else if (keyboard.escapeKey.wasPressedThisFrame) hud.CloseToolPanel();
                 return;
             }
 
             // キーでの操作も、受け付けられたときだけボタンのクリックと同じ決定音を鳴らす
-            if (keyboard.escapeKey.wasPressedThisFrame) RequestTitle();
+            if (keyboard.escapeKey.wasPressedThisFrame && TryTitle()) PlayKeyDecide();
             if (keyboard.spaceKey.wasPressedThisFrame && TryDraw()) PlayKeyDecide();
             if (keyboard.tKey.wasPressedThisFrame && phase == Phase.Reading && !busy)
             {
@@ -253,10 +253,14 @@ namespace Hikigiwa.Game
         }
 
         /// <summary>ゲームを最後まで遊んだあとだけ、タイトル画面に戻ります。</summary>
-        private void RequestTitle()
+        private void RequestTitle() => TryTitle();
+
+        /// <summary>ゲームを最後まで遊んだあとだけ、タイトル画面に戻ります。受け付けたときは true。</summary>
+        private bool TryTitle()
         {
-            if (busy || phase != Phase.NightResult || !record.IsFinished) return;
+            if (busy || phase != Phase.NightResult || !record.IsFinished) return false;
             ReturnToTitle().Forget();
+            return true;
         }
 
         private async UniTaskVoid ReturnToTitle()

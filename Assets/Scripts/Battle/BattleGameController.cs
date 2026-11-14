@@ -83,16 +83,16 @@ namespace Hikigiwa.Battle
             if (keyboard == null || Match == null) return;
             if (hud.IsToolPanelOpen)
             {
-                if (keyboard.tKey.wasPressedThisFrame)
+                // T・Esc で閉じる（閉じるボタンと同じ決定音を鳴らす）
+                if (keyboard.tKey.wasPressedThisFrame || keyboard.escapeKey.wasPressedThisFrame)
                 {
                     hud.CloseTools();
                     PlayKeyDecide();
                 }
-                else if (keyboard.escapeKey.wasPressedThisFrame) hud.CloseTools();
                 return;
             }
             // キーでの操作も、受け付けられたときだけボタンのクリックと同じ決定音を鳴らす
-            if (keyboard.escapeKey.wasPressedThisFrame) RequestTitle();
+            if (keyboard.escapeKey.wasPressedThisFrame && TryTitle()) PlayKeyDecide();
             if (keyboard.spaceKey.wasPressedThisFrame && TryDraw()) PlayKeyDecide();
             if (keyboard.tKey.wasPressedThisFrame && !busy && Match.CanAct(BattleSide.Player))
             {
@@ -169,10 +169,14 @@ namespace Hikigiwa.Battle
         }
 
         /// <summary>対戦終了後だけ、タイトル画面へ戻る。</summary>
-        public void RequestTitle()
+        public void RequestTitle() => TryTitle();
+
+        /// <summary>対戦終了後だけ、タイトル画面へ戻る。受け付けたときは true。</summary>
+        private bool TryTitle()
         {
-            if (busy || Match == null || !Match.IsMatchOver) return;
+            if (busy || Match == null || !Match.IsMatchOver) return false;
             ReturnToTitle().Forget();
+            return true;
         }
 
         /// <summary>フェード付きでタイトルへ遷移する。遷移できなかったときは操作を戻す。</summary>
