@@ -32,15 +32,27 @@ namespace Hikigiwa.Common.Audio
 
         private SoundLibrary library;
 
-        // BGMは2つの AudioSource を交互に使い、片方を消しながらもう片方を出す（クロスフェード）
-        private readonly AudioSource[] bgmSources = new AudioSource[2];
-        /// <summary>各BGM音源のフェードの進み具合（0〜1）。</summary>
-        private readonly float[] bgmFade = new float[2];
-        /// <summary>各BGM音源で流している曲そのものの大きさ。</summary>
-        private readonly float[] bgmBaseVolume = new float[2];
-        private readonly Tween[] bgmTweens = new Tween[2];
-        /// <summary>今流している（または最後に流し始めた）BGM音源の番号。</summary>
-        private int activeBgm;
+        /// <summary>BGMの音源1つ分。フェードの進み具合と、使用中かどうかを自分で持つ。</summary>
+        private sealed class BgmChannel
+        {
+            public AudioSource Source;
+            /// <summary>フェードの進み具合（0〜1）。</summary>
+            public float Fade;
+            /// <summary>流している曲そのものの大きさ。</summary>
+            public float BaseVolume;
+            public Tween Tween;
+            /// <summary>
+            /// 再生中（フェードアウト中を含む）か。AudioSource.isPlaying は WebGL では Play() の直後に
+            /// false のことがある（読み込みが非同期のため）ので、自分で記録する。
+            /// </summary>
+            public bool Busy;
+        }
+
+        // BGMの音源。切り替えるたびに空いている音源で次の曲を流し、前の曲は別の音源でフェードアウトさせる（クロスフェード）。
+        // フェードアウト中にさらに切り替えても、その音源には触らず空いている音源を使う（足りなければ増やす）ので、音が途切れない。
+        private readonly List<BgmChannel> bgmChannels = new List<BgmChannel>();
+        /// <summary>今流している（フェードイン中を含む）曲の音源。止めているときは null。</summary>
+        private BgmChannel currentChannel;
 
         private AudioSource seSource;
         /// <summary>効果音ごとに、最後に鳴らした時刻。</summary>
@@ -65,11 +77,6 @@ namespace Hikigiwa.Common.Audio
             if (library == null)
                 Debug.LogWarning($"Resources/{LibraryPath} が見つからないため、音は鳴りません。", this);
 
-            for (int i = 0; i < bgmSources.Length; i++)
-            {
-                bgmSources[i] = CreateSource($"Bgm{i}");
-                bgmSources[i].loop = true;
-            }
             seSource = CreateSource("Se");
 
             VolumeSettings settings = VolumeSettings.Instance;
@@ -88,39 +95,46 @@ namespace Hikigiwa.Common.Audio
         protected override void OnDestroyed()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
-            foreach (Tween tween in bgmTweens) tween?.Kill();
+            foreach (BgmChannel channel in bgmChannels) channel.Tween?.Kill();
         }
 
         /// <summary>
         /// BGMを流します。同じ曲が流れていれば何もしません。前の曲とはクロスフェードで入れ替えます。
+        /// 曲が SoundLibrary に未登録なら、今の曲をそのまま流し続けます（CurrentBgm も変えません）。
         /// </summary>
         /// <param name="id">流す曲。None なら止める。</param>
         /// <param name="fadeSeconds">切り替えにかける秒数。0 ならすぐに切り替える。</param>
         public void PlayBgm(BgmId id, float fadeSeconds = DefaultBgmFadeSeconds)
         {
             if (id == CurrentBgm) return;
-            CurrentBgm = id;
 
-            // 今の曲を消していく
-            FadeBgm(activeBgm, 0f, fadeSeconds, stopWhenDone: true);
-
-            if (id == BgmId.None) return;
-            if (library == null || !library.TryGetBgm(id, out SoundLibrary.BgmEntry entry))
+            // 先に曲があるかを確かめる（無いのに今の曲を消すと、無音になってしまうため）
+            SoundLibrary.BgmEntry entry = null;
+            if (id != BgmId.None && (library == null || !library.TryGetBgm(id, out entry)))
             {
                 WarnMissing($"BGM「{id}」");
                 return;
             }
+            CurrentBgm = id;
 
-            // もう片方の音源で、新しい曲を出していく
-            activeBgm = 1 - activeBgm;
-            AudioSource source = bgmSources[activeBgm];
-            bgmTweens[activeBgm]?.Kill();
-            source.clip = entry.clip;
-            bgmBaseVolume[activeBgm] = entry.volume;
-            bgmFade[activeBgm] = fadeSeconds > 0f ? 0f : 1f;
-            ApplyBgmVolume(activeBgm);
-            source.Play();
-            FadeBgm(activeBgm, 1f, fadeSeconds, stopWhenDone: false);
+            // 今の曲を消していく（すでにフェードアウト中の音源はそのまま続ける）
+            if (currentChannel != null)
+            {
+                FadeOutAndStop(currentChannel, fadeSeconds);
+                currentChannel = null;
+            }
+            if (id == BgmId.None) return;
+
+            // 空いている音源で、新しい曲を出していく
+            BgmChannel channel = GetIdleChannel();
+            channel.Source.clip = entry.clip;
+            channel.BaseVolume = entry.volume;
+            channel.Fade = fadeSeconds > 0f ? 0f : 1f;
+            channel.Busy = true;
+            ApplyBgmVolume(channel);
+            channel.Source.Play();
+            if (fadeSeconds > 0f) channel.Tween = Fade(channel, 1f, fadeSeconds).OnComplete(() => channel.Tween = null);
+            currentChannel = channel;
         }
 
         /// <summary>BGMを止めます。</summary>
@@ -156,26 +170,44 @@ namespace Hikigiwa.Common.Audio
             if (library.TryGetSceneBgm(scene.name, out BgmId bgm)) PlayBgm(bgm);
         }
 
-        private void FadeBgm(int index, float target, float seconds, bool stopWhenDone)
+        /// <summary>今の大きさから消していき、消えたら止めて空きにする。</summary>
+        private void FadeOutAndStop(BgmChannel channel, float seconds)
         {
-            bgmTweens[index]?.Kill();
-            AudioSource source = bgmSources[index];
-            if (!source.isPlaying) return;
-
+            channel.Tween?.Kill();
             if (seconds <= 0f)
             {
-                bgmFade[index] = target;
-                ApplyBgmVolume(index);
-                if (stopWhenDone) source.Stop();
+                Stop(channel);
                 return;
             }
+            channel.Tween = Fade(channel, 0f, seconds).OnComplete(() => Stop(channel));
+        }
 
-            bgmTweens[index] = DOTween
-                .To(() => bgmFade[index], v => { bgmFade[index] = v; ApplyBgmVolume(index); }, target, seconds)
-                .SetEase(Ease.Linear)
-                .SetUpdate(true) // ポーズ中（Time.timeScale = 0）でも動かす
-                .OnComplete(() => { if (stopWhenDone) source.Stop(); })
-                .SetLink(gameObject);
+        private void Stop(BgmChannel channel)
+        {
+            channel.Tween?.Kill();
+            channel.Tween = null;
+            channel.Source.Stop();
+            channel.Source.clip = null;
+            channel.Fade = 0f;
+            channel.Busy = false;
+        }
+
+        private Tween Fade(BgmChannel channel, float target, float seconds) => DOTween
+            .To(() => channel.Fade, v => { channel.Fade = v; ApplyBgmVolume(channel); }, target, seconds)
+            .SetEase(Ease.Linear)
+            .SetUpdate(true) // ポーズ中（Time.timeScale = 0）でも動かす
+            .SetLink(gameObject);
+
+        /// <summary>使っていない音源を返す。すべて使用中（フェードアウト中を含む）なら新しく作る。</summary>
+        private BgmChannel GetIdleChannel()
+        {
+            foreach (BgmChannel channel in bgmChannels)
+                if (!channel.Busy) return channel;
+
+            var created = new BgmChannel { Source = CreateSource($"Bgm{bgmChannels.Count}") };
+            created.Source.loop = true;
+            bgmChannels.Add(created);
+            return created;
         }
 
         /// <summary>クリップが未登録の音を鳴らそうとしたことを、音ごとに1回だけ知らせる。</summary>
@@ -187,14 +219,13 @@ namespace Hikigiwa.Common.Audio
 
         private void ApplyBgmVolumes()
         {
-            for (int i = 0; i < bgmSources.Length; i++) ApplyBgmVolume(i);
+            foreach (BgmChannel channel in bgmChannels) ApplyBgmVolume(channel);
         }
 
         /// <summary>BGM音源の音量＝フェードの進み具合 × 曲そのものの大きさ × オプションのBGM音量。</summary>
-        private void ApplyBgmVolume(int index)
+        private static void ApplyBgmVolume(BgmChannel channel)
         {
-            if (bgmSources[index] == null) return;
-            bgmSources[index].volume = bgmFade[index] * bgmBaseVolume[index] * VolumeSettings.Instance.Bgm.CurrentValue;
+            channel.Source.volume = channel.Fade * channel.BaseVolume * VolumeSettings.Instance.Bgm.CurrentValue;
         }
 
         private AudioSource CreateSource(string name)

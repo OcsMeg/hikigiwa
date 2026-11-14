@@ -1,4 +1,5 @@
 using Hikigiwa.Common.Audio;
+using R3;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,7 +12,8 @@ namespace Hikigiwa.UI
     /// </summary>
     /// <remarks>
     /// ・押せない状態（interactable が false、CanvasGroup で操作不可など）のときは、カーソルを合わせても鳴らしません。
-    /// ・クリックの音は Button.onClick に合わせて鳴らすので、実際に押されたときだけ鳴ります。
+    /// ・クリックの音は Button.onClick に合わせて鳴らします。Presenter と同じ間隔（UiConstants.ButtonThrottle）で
+    ///   連打を間引くので、処理されなかったクリックでは鳴りません。
     /// ・音は AudioManager が鳴らすので、クリックでシーンが切り替わっても途中で切れません。
     /// </remarks>
     [RequireComponent(typeof(Selectable))]
@@ -23,26 +25,24 @@ namespace Hikigiwa.UI
         [SerializeField] private SeId clickSe = SeId.Decide;
 
         private Selectable selectable;
-        private Button button;
 
         private void Awake()
         {
             selectable = GetComponent<Selectable>();
-            button = selectable as Button;
-            if (button != null) button.onClick.AddListener(OnClick);
-        }
-
-        private void OnDestroy()
-        {
-            if (button != null) button.onClick.RemoveListener(OnClick);
+            if (selectable is Button button)
+            {
+                // Presenter の ThrottleFirst と同じ間隔で間引き、処理されるクリックのときだけ鳴らす
+                button.OnClickAsObservable()
+                    .ThrottleFirst(UiConstants.ButtonThrottle)
+                    .Subscribe(_ => Play(clickSe))
+                    .AddTo(this);
+            }
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
             if (selectable.IsInteractable()) Play(hoverSe);
         }
-
-        private void OnClick() => Play(clickSe);
 
         private static void Play(SeId id)
         {
