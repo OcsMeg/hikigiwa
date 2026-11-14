@@ -5,7 +5,6 @@ using Hikigiwa.Game;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 namespace Hikigiwa.EditorTools
@@ -71,22 +70,7 @@ namespace Hikigiwa.EditorTools
             // 対戦を映すメインカメラ。カードの列や公開位置もこのカメラを基準に決める。
             Camera view = Camera.main;
             ConfigureView(room, view, surfaceY);
-            RenderSettings.fog = false;
-            RenderSettings.ambientMode = AmbientMode.Flat;
-            RenderSettings.ambientLight = new Color(0.36f, 0.32f, 0.44f);
-            // 部屋全体を照らす暖色の主光源。
-            Light key = new GameObject("部屋の灯り", typeof(Light)).GetComponent<Light>();
-            key.type = LightType.Directional;
-            key.transform.rotation = Quaternion.Euler(55, -25, 0);
-            key.color = new Color(1, 0.86f, 0.7f);
-            key.intensity = 1.2f;
-            key.shadows = LightShadows.Soft;
-            // 机上のカードを読みやすく照らす補助の点光源。
-            Light fill = new GameObject("机の灯り", typeof(Light)).GetComponent<Light>();
-            fill.type = LightType.Point;
-            fill.transform.position = new Vector3(0, surfaceY + 1.7f, 0.5f);
-            fill.range = 6;
-            fill.intensity = 5;
+            ConfigureLighting(scene, room);
 
             // Mainから引き継いだカード表示コンポーネント。カード素材と演出を再利用する。
             CardTable table = Object.FindAnyObjectByType<CardTable>();
@@ -96,7 +80,7 @@ namespace Hikigiwa.EditorTools
             SetAnchor(tableData, "revealAnchor", view.transform.position + view.transform.forward * 1.45f);
             SetAnchor(tableData, "rowAnchor", new Vector3(-0.7f, surfaceY, 0.65f));
             SetAnchor(tableData, "foresightAnchor", view.transform.position + view.transform.forward * 1.5f);
-            ((Light)tableData.FindProperty("omenLight").objectReferenceValue).transform.position = new Vector3(0, surfaceY + 0.7f, 0.5f);
+            ConfigureOmenLight(tableData);
             tableData.ApplyModifiedPropertiesWithoutUndo();
 
             // 二人分のカード配置と既存のCardTableをつなぐ表示担当。
@@ -133,6 +117,82 @@ namespace Hikigiwa.EditorTools
             Debug.Log("CPU対戦シーンを作成しました：" + ScenePath);
         }
 
+        /// <summary>カード・カメラ・HUDを保ち、既存の対戦シーンの照明だけをソロに合わせる。</summary>
+        public static void ApplyLightingChanges()
+        {
+            Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            GameObject room = scene.GetRootGameObjects().First(g => g.name.StartsWith("占い部屋"));
+            ConfigureLighting(scene, room);
+            ConfigureOmenLight(new SerializedObject(Object.FindAnyObjectByType<CardTable>()));
+            EditorSceneManager.SaveScene(scene);
+        }
+
+        /// <summary>ソロの環境設定と光源を引き継ぎ、部屋モデルの座標と倍率の違いを補正する。</summary>
+        private static void ConfigureLighting(Scene target, GameObject room)
+        {
+            Scene solo = EditorSceneManager.OpenScene("Assets/Scenes/Game.unity", OpenSceneMode.Additive);
+            try
+            {
+                EditorSceneManager.SetActiveScene(solo);
+                Transform environment = solo.GetRootGameObjects().First(g => g.name.StartsWith("環境")).transform;
+                Transform soloRoom = environment.GetComponentsInChildren<Transform>()
+                    .First(t => PrefabUtility.GetCorrespondingObjectFromSource(t.gameObject) ==
+                        AssetDatabase.LoadAssetAtPath<GameObject>($"{RoomFolder}/UranaiRoom.fbx"));
+                float scale = room.transform.lossyScale.x / soloRoom.lossyScale.x;
+                var ambientMode = RenderSettings.ambientMode;
+                Color ambientLight = RenderSettings.ambientLight;
+                bool fog = RenderSettings.fog;
+                FogMode fogMode = RenderSettings.fogMode;
+                Color fogColor = RenderSettings.fogColor;
+                float fogDensity = RenderSettings.fogDensity;
+                Material skybox = RenderSettings.skybox;
+
+                EditorSceneManager.SetActiveScene(target);
+                RenderSettings.skybox = skybox;
+                RenderSettings.ambientMode = ambientMode;
+                RenderSettings.ambientLight = ambientLight;
+                RenderSettings.fog = fog;
+                RenderSettings.fogMode = fogMode;
+                RenderSettings.fogColor = fogColor;
+                // 同じ部屋の相対距離で同じ濃さに見えるよう、霧も倍率に合わせる。
+                RenderSettings.fogDensity = fogDensity / scale;
+
+                // 吉凶の演出光はCardTableが参照するため、そのまま残す。
+                foreach (GameObject root in target.GetRootGameObjects())
+                    if (root.name == "部屋の灯り" || root.name == "机の灯り" || root.name == "部屋の照明（ソロ準拠）")
+                        Object.DestroyImmediate(root);
+                var lighting = new GameObject("部屋の照明（ソロ準拠）");
+                foreach (Light source in environment.GetComponentsInChildren<Light>())
+                {
+                    GameObject copy = Object.Instantiate(source.gameObject);
+                    copy.name = source.name;
+                    SceneManager.MoveGameObjectToScene(copy, target);
+                    copy.transform.SetParent(lighting.transform, false);
+                    copy.transform.position = room.transform.TransformPoint(soloRoom.InverseTransformPoint(source.transform.position));
+                    copy.transform.rotation = room.transform.rotation * Quaternion.Inverse(soloRoom.rotation) * source.transform.rotation;
+                    Light light = copy.GetComponent<Light>();
+                    if (light.type != LightType.Directional)
+                    {
+                        light.range *= scale;
+                        // 距離の二乗に応じて光量を補正し、机や壁の明るさを保つ。
+                        light.intensity *= scale * scale;
+                    }
+                    if (source.name == "テーブルの灯り")
+                    {
+                        // 机の奥のキャラクターまで暖色の光を広げる。
+                        light.range = 8f;
+                        light.spotAngle = 120f;
+                        light.innerSpotAngle = 90f;
+                    }
+                }
+            }
+            finally
+            {
+                EditorSceneManager.SetActiveScene(target);
+                EditorSceneManager.CloseScene(solo, true);
+            }
+        }
+
         /// <summary>既存のカード配置を保ち、カメラと机上の水晶玉の表示設定を保存する。</summary>
         public static void ApplyLayoutChanges()
         {
@@ -144,7 +204,21 @@ namespace Hikigiwa.EditorTools
             var data = new SerializedObject(Object.FindAnyObjectByType<CardTable>());
             SetAnchor(data, "revealAnchor", view.transform.position + view.transform.forward * 1.45f);
             SetAnchor(data, "foresightAnchor", view.transform.position + view.transform.forward * 1.5f);
+            ConfigureOmenLight(data);
             EditorSceneManager.SaveScene(scene);
+        }
+
+        /// <summary>ソロと同じワールド座標差で、公開カードの近くに吉凶の演出光を置く。</summary>
+        private static void ConfigureOmenLight(SerializedObject tableData)
+        {
+            var reveal = (Transform)tableData.FindProperty("revealAnchor").objectReferenceValue;
+            var light = (Light)tableData.FindProperty("omenLight").objectReferenceValue;
+            // Game.unityの「吉凶の光」(0, 1.6, -0.9) − カード提示位置(0, 1.3134962, -1.0074127)。
+            Vector3 soloOmenOffset = new Vector3(0f, 0.2865038f, 0.1074127f);
+            light.transform.position = reveal.position + soloOmenOffset;
+            // CPU対戦用に調整した控えめな光量を保つ。
+            tableData.FindProperty("omenLightIntensity").floatValue = 4.5f;
+            tableData.ApplyModifiedPropertiesWithoutUndo();
         }
 
         /// <summary>既存シーンのカード列と山札だけをカメラ基準の配置へ更新する。</summary>
