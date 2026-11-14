@@ -173,7 +173,7 @@ namespace Hikigiwa.Game
         }
 
         /// <summary>
-        /// 後から追加した部品が、シーンに置いたUIに無ければ作ります。作ったときは true を返します。
+        /// 後から追加した部品が、シーンに置いたUIに無ければ作ります（ボタンの見た目の動き・効果音も付けます）。変えたときは true を返します。
         /// </summary>
         public bool CreateMissingParts()
         {
@@ -188,6 +188,9 @@ namespace Hikigiwa.Game
                 titleButton.gameObject.SetActive(false);
                 created = true;
             }
+            // 以前にシーンへ置いたボタンには、見た目の動きと効果音が付いていないので付ける
+            foreach (Button button in canvasRoot.GetComponentsInChildren<Button>(true))
+                created |= HudFactory.AddButtonEffects(button);
             return created;
         }
 
