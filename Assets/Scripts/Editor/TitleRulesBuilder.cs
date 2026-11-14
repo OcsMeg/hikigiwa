@@ -1,5 +1,6 @@
 using Hikigiwa.Title;
 using Hikigiwa.UI.Option;
+using Hikigiwa.UI.Overlay;
 using Hikigiwa.UI.Rules;
 using TMPro;
 using UnityEditor;
@@ -26,9 +27,9 @@ namespace Hikigiwa.EditorTools
         private const string JokerPath = "Assets/Art/Cards/Joker.png";
 
         // タイトル画面と同じ色
-        private static readonly Color Gold = new(0.9254902f, 0.76862746f, 0.4392157f);
-        private static readonly Color Cream = new(0.9647059f, 0.8980392f, 0.78039217f);
-        private static readonly Color CreamDim = new(0.9647059f, 0.8980392f, 0.78039217f, 0.7f);
+        internal static readonly Color Gold = new(0.9254902f, 0.76862746f, 0.4392157f);
+        internal static readonly Color Cream = new(0.9647059f, 0.8980392f, 0.78039217f);
+        internal static readonly Color CreamDim = new(0.9647059f, 0.8980392f, 0.78039217f, 0.7f);
         private static readonly Color DividerColor = new(0.9254902f, 0.76862746f, 0.4392157f, 0.3f);
 
         // 文中の色（ゲーム中のHUDと同じ）
@@ -86,11 +87,37 @@ namespace Hikigiwa.EditorTools
 
         private static bool BuildInto(TitleCanvas canvas)
         {
-            var titleView = canvas.GetComponentInChildren<TitleView>(true);
-            var optionView = canvas.GetComponentInChildren<OptionView>(true);
+            if (!Prepare(canvas, Title, out TitleView titleView, out OptionView optionView)) return false;
+
+            cardFace = AssetDatabase.LoadAssetAtPath<Texture2D>(CardFacePath);
+            joker = AssetDatabase.LoadAssetAtPath<Texture2D>(JokerPath);
+
+            Button rulesButton = CreateMenuButton(titleView, "RulesButton", "Rules", Title);
+            RulesPresenter rules = CreateOverlay<RulesView, RulesPresenter>(canvas, optionView, "RulesOverlay", "Rules",
+                new Vector2(PanelWidth, PanelHeight), Title, out RectTransform content);
+            BuildContent(content);
+
+            SetReference(titleView, "rulesButton", rulesButton, Title);
+            SetReference(canvas, "rules", rules, Title);
+
+            // Rules ボタンを含めて、タイトルのボタンを決まった順番・間隔に並べ直す
+            TitleMenuLayout.Arrange(titleView);
+            return true;
+        }
+
+        // ───────────── 共通：準備・ボタン・画面の枠（クレジット画面からも使う） ─────────────
+
+        /// <summary>
+        /// 画面を作る前の準備。タイトルと設定画面を探し、設定画面の見出しから文字のフォントを受け取ります。
+        /// 必要なものが見つからなければ false。
+        /// </summary>
+        internal static bool Prepare(TitleCanvas canvas, string title, out TitleView titleView, out OptionView optionView)
+        {
+            titleView = canvas.GetComponentInChildren<TitleView>(true);
+            optionView = canvas.GetComponentInChildren<OptionView>(true);
             if (titleView == null || optionView == null || titleView.OptionButton == null)
             {
-                Debug.LogError($"{Title}: TitleView・OptionView・OptionButton のどれかが見つかりません。");
+                Debug.LogError($"{title}: TitleView・OptionView・OptionButton のどれかが見つかりません。");
                 return false;
             }
 
@@ -100,87 +127,79 @@ namespace Hikigiwa.EditorTools
             var headerText = header != null ? header.GetComponent<TMP_Text>() : null;
             if (optionPanel == null || optionDim == null || headerText == null || optionView.BackButton == null)
             {
-                Debug.LogError($"{Title}: 設定画面の Dim・Panel・Header・BackButton のどれかが見つかりません。");
+                Debug.LogError($"{title}: 設定画面の Dim・Panel・Header・BackButton のどれかが見つかりません。");
                 return false;
             }
 
             font = headerText.font;
             fontMaterial = headerText.fontSharedMaterial;
-            cardFace = AssetDatabase.LoadAssetAtPath<Texture2D>(CardFacePath);
-            joker = AssetDatabase.LoadAssetAtPath<Texture2D>(JokerPath);
-
-            Button rulesButton = CreateRulesButton(titleView);
-            RulesPresenter rules = CreateRulesOverlay(canvas, optionView, optionDim, optionPanel);
-
-            SetReference(titleView, "rulesButton", rulesButton);
-            SetReference(canvas, "rules", rules);
-
-            // Rules ボタンを含めて、タイトルのボタンを決まった順番・間隔に並べ直す
-            TitleMenuLayout.Arrange(titleView);
             return true;
         }
 
-        // ───────────── タイトルのボタン ─────────────
-
-        /// <summary>Option ボタンを複製して Rules ボタンを作ります。位置は TitleMenuLayout が決めます。</summary>
-        private static Button CreateRulesButton(TitleView titleView)
+        /// <summary>
+        /// Option ボタンを複製して、タイトルのボタンを1つ作ります（同じ名前のものがあれば作り直す）。
+        /// 位置は TitleMenuLayout が決めます。
+        /// </summary>
+        internal static Button CreateMenuButton(TitleView titleView, string name, string label, string title)
         {
             Transform parent = titleView.OptionButton.transform.parent;
-            DestroyChild(parent, "RulesButton");
+            DestroyChild(parent, name);
 
             var option = (RectTransform)titleView.OptionButton.transform;
             var rect = (RectTransform)Object.Instantiate(option.gameObject, parent).transform;
-            rect.name = "RulesButton";
-            rect.SetSiblingIndex(option.GetSiblingIndex() + 1);
-            rect.anchoredPosition = option.anchoredPosition - new Vector2(0f, TitleMenuLayout.Step);
+            rect.name = name;
+            rect.SetAsLastSibling();
 
-            var label = rect.GetComponentInChildren<TMP_Text>(true);
-            if (label != null) label.text = "Rules";
+            var text = rect.GetComponentInChildren<TMP_Text>(true);
+            if (text != null) text.text = label;
 
-            Undo.RegisterCreatedObjectUndo(rect.gameObject, Title);
+            Undo.RegisterCreatedObjectUndo(rect.gameObject, title);
             return rect.GetComponent<Button>();
         }
 
-        // ───────────── ルール画面 ─────────────
-
-        private static RulesPresenter CreateRulesOverlay(TitleCanvas canvas, OptionView optionView, Transform optionDim,
-            Transform optionPanel)
+        /// <summary>
+        /// 設定画面と同じ見た目の画面（暗転・パネル・見出し・戻るボタン＋縦スクロールの領域）を作ります。
+        /// 同じ名前の画面があれば作り直します。中身は、返ってきた content に並べます。
+        /// </summary>
+        internal static TPresenter CreateOverlay<TView, TPresenter>(TitleCanvas canvas, OptionView optionView,
+            string overlayName, string headerLabel, Vector2 panelSize, string title, out RectTransform content)
+            where TView : ScrollOverlayViewBase
+            where TPresenter : ScrollOverlayPresenterBase<TView>
         {
-            DestroyChild(canvas.transform, "RulesOverlay");
+            DestroyChild(canvas.transform, overlayName);
 
-            var overlay = NewRect("RulesOverlay", canvas.transform);
+            var overlay = NewRect(overlayName, canvas.transform);
             Stretch(overlay);
-            overlay.SetSiblingIndex(optionView.transform.GetSiblingIndex() + 1);
+            overlay.SetAsLastSibling();
             // 一番手前に重なるので、シーン上では透明にしてタイトルや設定画面の編集を邪魔しないようにする。
             // 確認したいときは CanvasGroup の Alpha を 1 にする（プレイ時は CanvasBase が表示を切り替える）
             var group = overlay.gameObject.AddComponent<CanvasGroup>();
             group.alpha = 0f;
             group.interactable = false;
             group.blocksRaycasts = false;
-            var view = overlay.gameObject.AddComponent<RulesView>();
-            var presenter = overlay.gameObject.AddComponent<RulesPresenter>();
+            var view = overlay.gameObject.AddComponent<TView>();
+            var presenter = overlay.gameObject.AddComponent<TPresenter>();
 
             // 暗転とパネルは設定画面のものを複製し、パネルの中は見出しと戻るボタンだけを残す
-            Object.Instantiate(optionDim.gameObject, overlay).name = "Dim";
-            var panel = (RectTransform)Object.Instantiate(optionPanel.gameObject, overlay).transform;
+            Object.Instantiate(optionView.transform.Find("Dim").gameObject, overlay).name = "Dim";
+            var panel = (RectTransform)Object.Instantiate(optionView.transform.Find("Panel").gameObject, overlay).transform;
             panel.name = "Panel";
             for (int i = panel.childCount - 1; i >= 0; i--)
             {
                 Transform child = panel.GetChild(i);
                 if (child.name != "Header" && child.name != optionView.BackButton.name) Object.DestroyImmediate(child.gameObject);
             }
-            panel.sizeDelta = new Vector2(PanelWidth, PanelHeight);
+            panel.sizeDelta = panelSize;
 
             var header = (RectTransform)panel.Find("Header");
-            header.anchoredPosition = new Vector2(0f, PanelHeight / 2f - 75f);
-            header.GetComponent<TMP_Text>().text = "Rules";
+            header.anchoredPosition = new Vector2(0f, panelSize.y / 2f - 75f);
+            header.GetComponent<TMP_Text>().text = headerLabel;
 
             var back = (RectTransform)panel.Find(optionView.BackButton.name);
             back.name = "BackButton";
-            back.anchoredPosition = new Vector2(0f, -PanelHeight / 2f + 75f);
+            back.anchoredPosition = new Vector2(0f, -panelSize.y / 2f + 75f);
 
-            ScrollRect scroll = CreateScrollView(panel, out RectTransform content);
-            BuildContent(content);
+            ScrollRect scroll = CreateScrollView(panel, panelSize, out content);
 
             var viewData = new SerializedObject(view);
             viewData.FindProperty("scrollRect").objectReferenceValue = scroll;
@@ -191,17 +210,17 @@ namespace Hikigiwa.EditorTools
             presenterData.FindProperty("view").objectReferenceValue = view;
             presenterData.ApplyModifiedPropertiesWithoutUndo();
 
-            Undo.RegisterCreatedObjectUndo(overlay.gameObject, Title);
+            Undo.RegisterCreatedObjectUndo(overlay.gameObject, title);
             return presenter;
         }
 
         /// <summary>見出しと戻るボタンの間に、縦スクロールの領域を作ります。</summary>
-        private static ScrollRect CreateScrollView(RectTransform panel, out RectTransform content)
+        private static ScrollRect CreateScrollView(RectTransform panel, Vector2 panelSize, out RectTransform content)
         {
             var root = NewRect("ScrollView", panel);
             root.anchorMin = root.anchorMax = new Vector2(0.5f, 0.5f);
             root.anchoredPosition = new Vector2(0f, 2f);
-            root.sizeDelta = new Vector2(PanelWidth - 100f, PanelHeight - 290f);
+            root.sizeDelta = new Vector2(panelSize.x - 100f, panelSize.y - 290f);
             root.SetSiblingIndex(1);
             var scroll = root.gameObject.AddComponent<ScrollRect>();
             scroll.horizontal = false;
@@ -458,7 +477,7 @@ namespace Hikigiwa.EditorTools
         }
 
         /// <summary>章の見出し。最初の章以外は、上に金色の細い線を引きます。</summary>
-        private static void Heading(RectTransform parent, string text, bool first = false)
+        internal static void Heading(RectTransform parent, string text, bool first = false)
         {
             if (!first)
             {
@@ -507,7 +526,7 @@ namespace Hikigiwa.EditorTools
             label.lineSpacing = 6f;
         }
 
-        private static TextMeshProUGUI MakeText(RectTransform parent, string name, string text, float size, Color color,
+        internal static TextMeshProUGUI MakeText(RectTransform parent, string name, string text, float size, Color color,
             TextAlignmentOptions alignment)
         {
             var rect = NewRect(name, parent);
@@ -659,13 +678,13 @@ namespace Hikigiwa.EditorTools
             if (old != null) Undo.DestroyObjectImmediate(old.gameObject);
         }
 
-        private static void SetReference(Object target, string property, Object value)
+        internal static void SetReference(Object target, string property, Object value, string title)
         {
             var data = new SerializedObject(target);
             var field = data.FindProperty(property);
             if (field == null)
             {
-                Debug.LogError($"{Title}: {target.GetType().Name} に {property} がありません。");
+                Debug.LogError($"{title}: {target.GetType().Name} に {property} がありません。");
                 return;
             }
             field.objectReferenceValue = value;

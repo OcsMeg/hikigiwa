@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace Hikigiwa.EditorTools
 {
     /// <summary>
-    /// タイトル画面のロゴにゲーム名を入れ（仮置きのサブタイトルは消す）、ボタンを「Solo・CPU・Options・Rules」の順に縦に並べます。
+    /// タイトル画面のロゴにゲーム名を入れ（仮置きのサブタイトルは消す）、ボタンを「Solo・CPU・Options・Rules」の順に縦に並べます。Credits ボタンがあれば、画面の右下の端に小さめに置きます。
     /// CPU ボタンがまだなければ Solo ボタンを複製して作り、TitleView に割り当てます。
     /// </summary>
     /// <remarks>
@@ -31,7 +31,7 @@ namespace Hikigiwa.EditorTools
         /// <summary>ロゴの高さ（画面中央が 0）。</summary>
         private const float LogoY = 290f;
 
-        /// <summary>ボタンの文字の大きさ。4つともこの大きさにそろえます。</summary>
+        /// <summary>ボタンの文字の大きさ。すべてこの大きさにそろえます。</summary>
         private const float ButtonFontSize = 50f;
 
         /// <summary>一番上のボタンの高さ（画面中央が 0）。</summary>
@@ -39,6 +39,11 @@ namespace Hikigiwa.EditorTools
 
         /// <summary>ボタンの縦の間隔。</summary>
         public const float Step = 120f;
+
+        /// <summary>Credits ボタンは縦の並びに入れず、画面の右下の端に小さめに置きます。</summary>
+        private static readonly Vector2 CreditsSize = new(240f, 70f);
+        private static readonly Vector2 CreditsMargin = new(50f, 36f); // 右端・下端からの余白
+        private const float CreditsFontSize = 36f;
 
         [MenuItem("Hikigiwa/タイトルのボタンを並べる")]
         public static void Arrange()
@@ -110,7 +115,25 @@ namespace Hikigiwa.EditorTools
                 rect.SetSiblingIndex(firstIndex + i);
                 SetFontSize(order[i], ButtonFontSize);
             }
+
+            PlaceCredits(view, firstIndex + order.Count);
             return true;
+        }
+
+        /// <summary>Credits ボタンを画面の右下の端に置きます。ボタンがなければ何もしません。</summary>
+        private static void PlaceCredits(TitleView view, int siblingIndex)
+        {
+            Button credits = view.CreditsButton;
+            if (credits == null) return;
+
+            var rect = (RectTransform)credits.transform;
+            Undo.RecordObject(rect, Title);
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(1f, 0f);
+            rect.sizeDelta = CreditsSize;
+            rect.anchoredPosition = new Vector2(-CreditsMargin.x, CreditsMargin.y);
+            // 縦に並ぶボタンのあとに置き、キーボード操作では最後に選ばれるようにする
+            rect.SetSiblingIndex(siblingIndex);
+            SetFontSize(credits, CreditsFontSize);
         }
 
         /// <summary>タイトル画面の「Logo」で始まる名前の文字にゲーム名を入れます。見つからなければ何もしません。</summary>
