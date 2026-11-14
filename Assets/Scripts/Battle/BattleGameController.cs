@@ -91,9 +91,10 @@ namespace Hikigiwa.Battle
                 }
                 return;
             }
-            // キーでの操作も、受け付けられたときだけボタンのクリックと同じ決定音を鳴らす
+            // ボタンと同じ操作をキーでしたときは、受け付けられたときだけボタンのクリックと同じ決定音を鳴らす
+            // （Space は山札をクリックするのと同じ操作で、ボタンではないので鳴らさない）
             if (keyboard.escapeKey.wasPressedThisFrame && TryTitle()) PlayKeyDecide();
-            if (keyboard.spaceKey.wasPressedThisFrame && TryDraw()) PlayKeyDecide();
+            if (keyboard.spaceKey.wasPressedThisFrame) RequestDraw();
             if (keyboard.tKey.wasPressedThisFrame && !busy && Match.CanAct(BattleSide.Player))
             {
                 hud.ToggleTools();
@@ -124,14 +125,10 @@ namespace Hikigiwa.Battle
         }
 
         /// <summary>山札クリック・Spaceからのドロー要求を受け、操作可能なときだけ演出付きで実行する。</summary>
-        public void RequestDraw() => TryDraw();
-
-        /// <summary>1枚引く。受け付けたときは true。</summary>
-        private bool TryDraw()
+        public void RequestDraw()
         {
-            if (!CanPlayerAct() || hud.IsToolPanelOpen) return false;
+            if (!CanPlayerAct() || hud.IsToolPanelOpen) return;
             StartCoroutine(ResolveAction(BattleSide.Player, false));
-            return true;
         }
 
         /// <summary>キー操作が受け付けられたときの決定音（ボタンのクリック音と同じ）。</summary>

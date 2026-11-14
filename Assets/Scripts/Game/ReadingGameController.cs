@@ -79,9 +79,10 @@ namespace Hikigiwa.Game
                 return;
             }
 
-            // キーでの操作も、受け付けられたときだけボタンのクリックと同じ決定音を鳴らす
+            // ボタンと同じ操作をキーでしたときは、受け付けられたときだけボタンのクリックと同じ決定音を鳴らす
+            // （Space は山札をクリックするのと同じ操作で、ボタンではないので鳴らさない）
             if (keyboard.escapeKey.wasPressedThisFrame && TryTitle()) PlayKeyDecide();
-            if (keyboard.spaceKey.wasPressedThisFrame && TryDraw()) PlayKeyDecide();
+            if (keyboard.spaceKey.wasPressedThisFrame) RequestDraw();
             if (keyboard.tKey.wasPressedThisFrame && phase == Phase.Reading && !busy)
             {
                 OpenTools();
@@ -134,15 +135,11 @@ namespace Hikigiwa.Game
             if (AudioManager.HasInstance) AudioManager.Instance.PlaySe(SeId.Decide);
         }
 
-        private void RequestDraw() => TryDraw();
-
-        /// <summary>1枚引きます。受け付けたときは true。</summary>
-        private bool TryDraw()
+        private void RequestDraw()
         {
-            if (busy || phase != Phase.Reading || hud.IsToolPanelOpen || !session.CanDraw) return false;
-            if (!session.TryDraw(out DrawResult draw)) return false;
+            if (busy || phase != Phase.Reading || hud.IsToolPanelOpen || !session.CanDraw) return;
+            if (!session.TryDraw(out DrawResult draw)) return;
             StartCoroutine(DrawRoutine(draw));
-            return true;
         }
 
         private void RequestStop() => TryStop();
