@@ -136,6 +136,6 @@ CPUの確率はCPUBattleシーンの **CPU対戦進行 → Battle Game Controlle
 - 音量：全体は AudioListener、BGM・SE はオプションのスライダーの値がすぐに反映されます。SE のスライダーを動かすと試し音（`SeId.Decide`）が鳴ります
 - 鳴らしている場所
   - `SeId.CardDraw`：`CardTable.PlayDraw`（カードを引いてめくるとき）と `PlayForesight`（鑑定終了時に予感のカードをめくるとき）。ソロ・CPU対戦の両方で鳴ります
-    - 素材は `Audio/SE/CardDraw.mp3`。他の効果音より約10dB小さく、頭に約0.1秒の無音があります。聞こえにくい場合は、無音を詰めて音量を上げた `Audio/SE/CardDraw_Loud.wav` を SoundLibrary の CardDraw に割り当てて使えます
+    - 素材は `Audio/SE/CardDraw.mp3`。他の効果音より約10dB小さく、頭に約0.1秒の無音があるので、BGMが大きいと聞こえにくいことがあります
 - WebGL ではブラウザの制限で、プレイヤーが一度クリックするまで音は出ません
 - インポート設定の目安：BGM は Load Type を Streaming、効果音は Decompress On Load で Preload Audio Data を有効（最初の1回が遅れないように）
