@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Hikigiwa.Title
 {
-    /// <summary>タイトル画面。「はじめる」でゲームのシーンへ、「設定」で設定画面へ進みます。</summary>
+    /// <summary>タイトル画面。「はじめる」でゲームのシーンへ、「設定」で設定画面へ、「ルール」でルール説明へ進みます。</summary>
     public sealed class TitlePresenter : OverlayPresenterBase<TitleView>
     {
         [SerializeField] private string gameSceneName = "Game";
@@ -23,6 +23,15 @@ namespace Hikigiwa.Title
                 .ThrottleFirst(UiConstants.ButtonThrottle)
                 .Subscribe(_ => TitleCanvas.Instance.SwitchAsync(OverlayType.Option).Forget())
                 .AddTo(this);
+
+            // ルール画面をまだシーンに作っていなくても動くよう、ボタンがあるときだけつなぐ
+            if (View.RulesButton != null)
+            {
+                View.RulesButton.OnClickAsObservable()
+                    .ThrottleFirst(UiConstants.ButtonThrottle)
+                    .Subscribe(_ => TitleCanvas.Instance.SwitchAsync(OverlayType.Rules).Forget())
+                    .AddTo(this);
+            }
         }
 
         private async UniTaskVoid StartGameAsync()

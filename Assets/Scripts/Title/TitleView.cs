@@ -9,8 +9,10 @@ namespace Hikigiwa.Title
     {
         [SerializeField] private Button startButton;
         [SerializeField] private Button optionButton;
+        [SerializeField] private Button rulesButton;
 
         public Button StartButton => startButton;
         public Button OptionButton => optionButton;
+        public Button RulesButton => rulesButton;
     }
 }

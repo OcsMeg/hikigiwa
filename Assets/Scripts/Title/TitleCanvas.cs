@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using Hikigiwa.UI;
 using Hikigiwa.UI.Option;
 using Hikigiwa.UI.Overlay;
+using Hikigiwa.UI.Rules;
 using R3;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ namespace Hikigiwa.Title
     {
         [SerializeField] private TitlePresenter title;
         [SerializeField] private OptionPresenter option;
+        [SerializeField] private RulesPresenter rules;
 
         protected override OverlayType InitialOverlay => OverlayType.Title;
 
@@ -22,6 +24,7 @@ namespace Hikigiwa.Title
             {
                 yield return title;
                 yield return option;
+                yield return rules;
             }
         }
 
@@ -29,6 +32,7 @@ namespace Hikigiwa.Title
         {
             OverlayType.Title => title,
             OverlayType.Option => option,
+            OverlayType.Rules => rules,
             _ => null,
         };
 
@@ -40,6 +44,14 @@ namespace Hikigiwa.Title
             if (option != null)
             {
                 option.CloseRequested
+                    .Subscribe(_ => SwitchAsync(OverlayType.Title).Forget())
+                    .AddTo(this);
+            }
+
+            // ルール画面も同じく、閉じたらタイトルへ戻る
+            if (rules != null)
+            {
+                rules.CloseRequested
                     .Subscribe(_ => SwitchAsync(OverlayType.Title).Forget())
                     .AddTo(this);
             }
