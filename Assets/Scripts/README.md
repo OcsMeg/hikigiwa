@@ -134,5 +134,8 @@ CPUの確率はCPUBattleシーンの **CPU対戦進行 → Battle Game Controlle
 - クリップは `Assets/Resources/SoundLibrary.asset` に登録します（ID ごとにクリップと、その音そのものの大きさ）。未登録の音は鳴らさず、エラーにもなりません
 - シーンごとのBGMは同じアセットの「Scene Bgms」に書きます（初期値：Title→Title、Game→Solo、CPUBattle→Battle）。書いていないシーンでは流れている曲を続けます
 - 音量：全体は AudioListener、BGM・SE はオプションのスライダーの値がすぐに反映されます。SE のスライダーを動かすと試し音（`SeId.Decide`）が鳴ります
+- 鳴らしている場所
+  - `SeId.CardDraw`：`CardTable.PlayDraw`（カードを引いてめくるとき）と `PlayForesight`（鑑定終了時に予感のカードをめくるとき）。ソロ・CPU対戦の両方で鳴ります
+    - 素材は `Audio/SE/CardDraw.mp3`。他の効果音より約10dB小さく、頭に約0.1秒の無音があるので、BGMが大きいと聞こえにくいことがあります
 - WebGL ではブラウザの制限で、プレイヤーが一度クリックするまで音は出ません
 - インポート設定の目安：BGM は Load Type を Streaming、効果音は Decompress On Load で Preload Audio Data を有効（最初の1回が遅れないように）
