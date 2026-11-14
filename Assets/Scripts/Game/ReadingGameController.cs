@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Hikigiwa.CardSystem;
+using Hikigiwa.Common;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -27,6 +29,8 @@ namespace Hikigiwa.Game
         [SerializeField] private ReadingHud hud;
         [Tooltip("0ならランダム。数値を入れると毎回同じ並びになる（デバッグ用）")]
         [SerializeField] private int seed;
+        [Tooltip("「タイトルに戻る」で移るシーン")]
+        [SerializeField] private string titleSceneName = "Title";
 
         private readonly ReadingRules rules = new ReadingRules();
         private readonly RunRules runRules = new RunRules();
@@ -50,6 +54,7 @@ namespace Hikigiwa.Game
             hud.Build();
             hud.StopClicked += RequestStop;
             hud.NextClicked += RequestNext;
+            hud.TitleClicked += RequestTitle;
             hud.ToolClicked += RequestTool;
             table.StackClicked += RequestDraw;
             StartRun();
@@ -66,6 +71,7 @@ namespace Hikigiwa.Game
                 return;
             }
 
+            if (keyboard.escapeKey.wasPressedThisFrame) RequestTitle();
             if (keyboard.spaceKey.wasPressedThisFrame) RequestDraw();
             if (keyboard.tKey.wasPressedThisFrame && phase == Phase.Reading && !busy) OpenTools();
             if (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame)
@@ -214,6 +220,20 @@ namespace Hikigiwa.Game
             }
         }
 
+        /// <summary>ゲームを最後まで遊んだあとだけ、タイトル画面に戻ります。</summary>
+        private void RequestTitle()
+        {
+            if (busy || phase != Phase.NightResult || !record.IsFinished) return;
+            ReturnToTitle().Forget();
+        }
+
+        private async UniTaskVoid ReturnToTitle()
+        {
+            busy = true;
+            // 遷移できなかったとき（シーンが Build Settings に無いなど）は操作を戻す
+            if (!await SceneTransition.Instance.LoadAsync(titleSceneName)) busy = false;
+        }
+
         private IEnumerator DrawRoutine(DrawResult draw)
         {
             busy = true;
@@ -265,7 +285,8 @@ namespace Hikigiwa.Game
             phase = Phase.NightResult;
             NightSummary summary = record.EndNight();
             hud.ShowNightSummary(summary, record);
-            hud.SetNextLabel(record.IsFinished ? "最初から" : "次の夜へ");
+            hud.SetNextLabel(record.IsFinished ? "もう一度遊ぶ" : "次の夜へ");
+            hud.SetTitleButtonVisible(record.IsFinished);
             hud.SetMessage(summary.Passed ? "ノルマを達成しました" : "ノルマに届きませんでした");
         }
 

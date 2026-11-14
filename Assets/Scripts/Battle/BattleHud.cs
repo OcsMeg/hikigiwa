@@ -23,6 +23,8 @@ namespace Hikigiwa.Battle
         public event Action StopClicked;
         /// <summary>次ラウンドまたは再戦ボタンを押した通知。</summary>
         public event Action NextClicked;
+        /// <summary>対戦終了後にタイトルへ戻るボタンを押した通知。</summary>
+        public event Action TitleClicked;
         /// <summary>選択した道具を引数として通知するイベント。</summary>
         public event Action<FortuneTool> ToolClicked;
         // 以下はシーンに置いたUIの各部品。「UIをシーンに配置」で自動で割り当てる。部品を消すと動かなくなるので、移動・変形・非表示にとどめる。
@@ -63,6 +65,8 @@ namespace Hikigiwa.Battle
         [SerializeField] private Text[] toolLabels = new Text[4];
         /// <summary>道具パネルを閉じるボタン。</summary>
         [SerializeField] private Button closeToolsButton;
+        /// <summary>対戦終了後にだけ表示する、タイトルへ戻るボタン。</summary>
+        [SerializeField] private Button titleButton;
         /// <summary>ボタンの処理をつないだか。二重につながないために使う。</summary>
         private bool wired;
         /// <summary>本文やボタンの背景に使う紙色。</summary>
@@ -77,6 +81,7 @@ namespace Hikigiwa.Battle
         {
             if (wired) return;
             if (canvasRoot == null) CreateLayout();
+            else CreateMissingParts();
             Wire();
         }
 
@@ -126,6 +131,24 @@ namespace Hikigiwa.Battle
             summary = Label(result, "結果", 30, Paper, new Vector2(30, -24), new Vector2(790, 450), "SummaryLabel");
             resultPanel.SetActive(false);
             BuildTools(canvas);
+            CreateMissingParts();
+        }
+
+        /// <summary>後から追加した部品が、シーンに置いたUIに無ければ作る。作ったときは true を返す。</summary>
+        public bool CreateMissingParts()
+        {
+            bool created = false;
+            if (titleButton == null)
+            {
+                // 対戦終了後に「もう一度対戦」の下に出す。
+                titleButton = Button(canvasRoot.transform, "タイトルに戻る（Esc）", new Vector2(1, 0), new Vector2(-24, 88),
+                    new Vector2(350, 80), out _, "TitleButton");
+                // 道具パネルの暗幕より後ろ（手前に描かれない位置）に置く。
+                titleButton.transform.SetSiblingIndex(toolPanel.transform.GetSiblingIndex());
+                titleButton.gameObject.SetActive(false);
+                created = true;
+            }
+            return created;
         }
 
         /// <summary>背景操作を遮る暗幕と、4種類の道具ボタン・閉じるボタンを生成する。</summary>
@@ -165,6 +188,7 @@ namespace Hikigiwa.Battle
             stop.gameObject.SetActive(!match.IsRoundOver);
             draw.interactable = stop.interactable = tools.interactable = canAct;
             next.gameObject.SetActive(match.IsRoundOver && !busy);
+            titleButton.gameObject.SetActive(match.IsMatchOver && !busy);
             nextLabel.text = match.IsMatchOver ? "もう一度対戦（Enter）" : "次のラウンド（Enter）";
             if (!canAct) CloseTools();
             for (int i = 0; i < 4; i++)
@@ -224,6 +248,7 @@ namespace Hikigiwa.Battle
             AddClick(tools, ToggleTools);
             AddClick(next, () => NextClicked?.Invoke());
             AddClick(closeToolsButton, CloseTools);
+            AddClick(titleButton, () => TitleClicked?.Invoke());
             for (int i = 0; i < toolButtons.Length; i++)
             {
                 // このボタンに対応する道具。ボタンのコールバックへ個別に保持する。
@@ -231,6 +256,7 @@ namespace Hikigiwa.Battle
                 AddClick(toolButtons[i], () => ToolClicked?.Invoke(tool));
             }
             resultPanel.SetActive(false);
+            titleButton.gameObject.SetActive(false);
             CloseTools();
         }
 

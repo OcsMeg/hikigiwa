@@ -31,6 +31,7 @@ namespace Hikigiwa.Game
 
         public event Action StopClicked;
         public event Action NextClicked;
+        public event Action TitleClicked;
         public event Action<FortuneTool> ToolClicked;
 
         /// <summary>占い道具のパネルが開いているか。</summary>
@@ -72,6 +73,7 @@ namespace Hikigiwa.Game
         [SerializeField] private GameObject toolPanel;
         [SerializeField] private Text toolPanelSpirit;
         [SerializeField] private Button closeToolButton;
+        [SerializeField] private Button titleButton;
         // Tools と同じ順（水晶・タロット・お香・手相）
         [SerializeField] private ToolTile[] toolTiles = new ToolTile[0];
         private bool wired;
@@ -133,6 +135,7 @@ namespace Hikigiwa.Game
         {
             if (wired) return;
             if (canvasRoot == null) CreateLayout();
+            else CreateMissingParts();
             Wire();
         }
 
@@ -205,6 +208,7 @@ namespace Hikigiwa.Game
             resultPanel.SetActive(false);
 
             BuildToolPanel(root);
+            CreateMissingParts();
             // 道具パネルの暗幕より手前に出し、開いている間も押して閉じられるようにする
             toolsButton.transform.SetAsLastSibling();
         }
@@ -260,6 +264,25 @@ namespace Hikigiwa.Game
             toolPanel.SetActive(false);
         }
 
+        /// <summary>
+        /// 後から追加した部品が、シーンに置いたUIに無ければ作ります。作ったときは true を返します。
+        /// </summary>
+        public bool CreateMissingParts()
+        {
+            bool created = false;
+            if (titleButton == null)
+            {
+                // ゲームを最後まで遊んだあとに「次へ（もう一度遊ぶ）」の下に出す
+                titleButton = Named(MakeButton(canvasRoot.transform, "タイトルに戻る\n（Esc）", Paper, new Vector2(1, 0.5f),
+                    new Vector2(-40, -150), new Vector2(340, 110), out _), "TitleButton");
+                // 道具パネルの暗幕より後ろ（手前に描かれない位置）に置く
+                titleButton.transform.SetSiblingIndex(toolPanel.transform.GetSiblingIndex());
+                titleButton.gameObject.SetActive(false);
+                created = true;
+            }
+            return created;
+        }
+
         /// <summary>ボタンの処理をつなぎ、最初は隠しておくパネルを隠します（エディタで表示したまま保存しても大丈夫）。</summary>
         private void Wire()
         {
@@ -268,6 +291,7 @@ namespace Hikigiwa.Game
             AddClick(nextButton, () => NextClicked?.Invoke());
             AddClick(toolsButton, ToggleToolPanel);
             AddClick(closeToolButton, CloseToolPanel);
+            AddClick(titleButton, () => TitleClicked?.Invoke());
             for (int i = 0; i < Tools.Length; i++)
             {
                 FortuneTool tool = Tools[i];
@@ -277,6 +301,7 @@ namespace Hikigiwa.Game
             memoPanel.SetActive(false);
             resultPanel.SetActive(false);
             toolPanel.SetActive(false);
+            titleButton.gameObject.SetActive(false);
         }
 
         private static void AddClick(Button button, Action onClick)
@@ -296,7 +321,11 @@ namespace Hikigiwa.Game
             stopButton.interactable = mode == Mode.Reading;
             toolsButton.interactable = mode == Mode.Reading;
             if (mode != Mode.Reading) CloseToolPanel();
+            if (mode != Mode.Finished) titleButton.gameObject.SetActive(false);
         }
+
+        /// <summary>「タイトルに戻る」ボタンを出すか。ゲームを最後まで遊んだときだけ出します。</summary>
+        public void SetTitleButtonVisible(bool visible) => titleButton.gameObject.SetActive(visible);
 
         public void SetNextLabel(string label) => nextLabel.text = $"{label}\n（Enter）";
 
