@@ -1,3 +1,6 @@
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 using Hikigiwa.Title;
 using Hikigiwa.UI.Credits;
 using Hikigiwa.UI.Option;
@@ -115,12 +118,88 @@ namespace Hikigiwa.EditorTools
 
             // ライブラリ
             Section(content, "Libraries");
-            Entry(content, "UniTask  /  R3");
-            Note(content, "(c) Cysharp, Inc.  -  MIT License");
+            Entry(content, "UniTask");
+            Note(content, "Copyright (c) 2019 Yoshifumi Kawai / Cysharp, Inc.  -  MIT License");
+            Entry(content, "R3");
+            Note(content, "Copyright (c) 2024 Cysharp, Inc.  -  MIT License");
+            Entry(content, ".NET Libraries");
+            Note(content, "Microsoft.Bcl.TimeProvider / System.Threading.Channels / System.ComponentModel.Annotations");
+            Note(content, "Copyright (c) .NET Foundation and Contributors  -  MIT License");
             Entry(content, "DOTween");
-            Note(content, "(c) Demigiant");
+            Note(content, "Copyright (c) 2014 Daniele Giardini - Demigiant");
 
             Section(content, "Thank you for playing!");
+
+            // ライセンスの全文（ライブラリとフォント）。長いので一番最後に、小さい文字で左寄せにして並べる
+            BuildLicenses(content);
+        }
+
+        // ───────────── ライセンスの全文 ─────────────
+
+        /// <summary>ライブラリの通知文。「====」の行で、名前と本文が交互に区切られています。</summary>
+        private const string NoticesPath = "Assets/Art/Licenses/ThirdPartyNotices.txt";
+
+        /// <summary>フォントのライセンス文（名前と、ライセンス文のファイル）。</summary>
+        private static readonly (string name, string path)[] FontLicenses =
+        {
+            ("Yeseva One (font)", "Assets/Art/Fonts/OFL.txt"),
+            ("Liberation Sans (font)", "Assets/TextMesh Pro/Fonts/LiberationSans - OFL.txt"),
+        };
+
+        private static void BuildLicenses(RectTransform content)
+        {
+            Section(content, "Third-Party Licenses");
+
+            if (File.Exists(NoticesPath))
+            {
+                // parts[0] は前書き。そのあとは「名前」「本文」「名前」「本文」… の順に並ぶ
+                string[] parts = Regex.Split(File.ReadAllText(NoticesPath), @"^=+\s*$", RegexOptions.Multiline);
+                for (int i = 1; i + 1 < parts.Length; i += 2) License(content, parts[i], parts[i + 1]);
+            }
+            else
+            {
+                Debug.LogWarning($"{Title}: ライセンスの通知文（{NoticesPath}）が見つかりません。");
+            }
+
+            foreach ((string name, string path) in FontLicenses)
+            {
+                if (File.Exists(path)) License(content, name, File.ReadAllText(path));
+                else Debug.LogWarning($"{Title}: フォントのライセンス文（{path}）が見つかりません。");
+            }
+        }
+
+        /// <summary>ライセンス1つ分。名前を少し大きく、本文を小さい文字で左寄せにして出します。</summary>
+        private static void License(RectTransform parent, string name, string body)
+        {
+            var title = TitleRulesBuilder.MakeText(parent, "LicenseName", Clean(name), 26f, TitleRulesBuilder.Cream,
+                TextAlignmentOptions.TopLeft);
+            title.richText = false;
+            title.fontStyle = FontStyles.Bold;
+
+            var text = TitleRulesBuilder.MakeText(parent, "LicenseText", Clean(body), 18f, TitleRulesBuilder.CreamDim,
+                TextAlignmentOptions.TopLeft);
+            // ライセンス文は原文のまま出す（「<」「>」などをタグとして解釈させない）
+            text.richText = false;
+        }
+
+        /// <summary>
+        /// タイトルのフォント（Yeseva One）で表示できる形に整えます。
+        /// 前後の空行を取り、タブを空白にし、ASCII 以外の文字は近い ASCII の文字に置き換えます。
+        /// </summary>
+        private static string Clean(string text)
+        {
+            var result = new StringBuilder(text.Length);
+            foreach (char c in text.Replace("\r\n", "\n").Trim('\n', ' ', '\t'))
+            {
+                if (c == '\t') result.Append("    ");
+                else if (c == '\n' || (c >= ' ' && c <= '~')) result.Append(c);
+                else if (c == '‘' || c == '’') result.Append('\'');
+                else if (c == '“' || c == '”') result.Append('"');
+                else if (c == '–' || c == '—') result.Append('-');
+                else if (c == '©') result.Append("(c)");
+                else result.Append('?');
+            }
+            return result.ToString();
         }
 
         // ───────────── 部品（どれも中央寄せ） ─────────────
