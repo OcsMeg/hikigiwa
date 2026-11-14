@@ -119,25 +119,25 @@ namespace Hikigiwa.Battle
 
             // ラウンドと共通条件をまとめる上部パネル。
             RectTransform top = Panel(canvas, "HeaderPanel", new Vector2(0.5f, 1), new Vector2(0, -22), new Vector2(1120, 134));
-            heading = Label(top, "見出し", 35, Gold, new Vector2(20, -12), new Vector2(1080, 48), "RoundLabel");
-            conditions = Label(top, "共通条件", 28, Paper, new Vector2(20, -76), new Vector2(1080, 42), "ConditionsLabel");
+            heading = Label(top, "Round", 35, Gold, new Vector2(20, -12), new Vector2(1080, 48), "RoundLabel");
+            conditions = Label(top, "Conditions", 28, Paper, new Vector2(20, -76), new Vector2(1080, 42), "ConditionsLabel");
             // プレイヤーの状態を表示する左側パネル。
             RectTransform left = Panel(canvas, "PlayerPanel", new Vector2(0, 1), new Vector2(24, -180), new Vector2(360, 320));
-            player = Label(left, "プレイヤーの状態", 28, Paper, new Vector2(20, -18), new Vector2(320, 290), "StatusLabel");
+            player = Label(left, "You", 28, Paper, new Vector2(20, -18), new Vector2(320, 290), "StatusLabel");
             // CPUの状態を表示する右側パネル。
             RectTransform right = Panel(canvas, "CpuPanel", new Vector2(1, 1), new Vector2(-24, -180), new Vector2(360, 320));
-            cpu = Label(right, "CPUの状態", 28, Paper, new Vector2(20, -18), new Vector2(320, 290), "StatusLabel");
+            cpu = Label(right, "CPU", 28, Paper, new Vector2(20, -18), new Vector2(320, 290), "StatusLabel");
             // 進行メッセージと道具メモを表示する下部パネル。
             RectTransform bottom = Panel(canvas, "MessagePanel", new Vector2(0.5f, 0), new Vector2(0, 22), new Vector2(1120, 130));
-            message = Label(bottom, "メッセージ", 28, Gold, new Vector2(20, -14), new Vector2(1080, 45), "MessageLabel");
-            memo = Label(bottom, "占いの結果", 25, Paper, new Vector2(20, -65), new Vector2(1080, 50), "MemoLabel");
+            message = Label(bottom, "Message", 28, Gold, new Vector2(20, -14), new Vector2(1080, 45), "MessageLabel");
+            memo = Label(bottom, "Reading Notes", 25, Paper, new Vector2(20, -65), new Vector2(1080, 50), "MemoLabel");
             // 鑑定を終える／次へは右下の同じ場所に入れ替わりで出る。位置と大きさはソロと共通（HudStyle）。
-            stop = Button(canvas, "鑑定を終える\n（Enter）", HudStyle.MainButtonAnchor, HudStyle.MainButtonPosition,
+            stop = Button(canvas, "End Reading\n(Enter)", HudStyle.MainButtonAnchor, HudStyle.MainButtonPosition,
                 HudStyle.MainButtonSize, out _, "StopButton");
             // 位置と大きさはソロと同じ（左下）。
-            tools = Button(canvas, "占い道具（T）", HudStyle.ToolsButtonAnchor, HudStyle.ToolsButtonPosition, HudStyle.ToolsButtonSize,
+            tools = Button(canvas, "Fortune Tools\n(T)", HudStyle.ToolsButtonAnchor, HudStyle.ToolsButtonPosition, HudStyle.ToolsButtonSize,
                 out _, "ToolsButton", Gold);
-            next = Button(canvas, "次のラウンド\n（Enter）", HudStyle.MainButtonAnchor, HudStyle.MainButtonPosition,
+            next = Button(canvas, "Next Round\n(Enter)", HudStyle.MainButtonAnchor, HudStyle.MainButtonPosition,
                 HudStyle.MainButtonSize, out nextLabel, "NextButton", Gold);
             next.gameObject.SetActive(false);
 
@@ -145,7 +145,7 @@ namespace Hikigiwa.Battle
             RectTransform result = Panel(canvas, "ResultPanel", new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(850, 500));
             result.GetComponent<Image>().color = HudStyle.ResultPanelColor;
             resultPanel = result.gameObject;
-            summary = Label(result, "結果", 30, Paper, new Vector2(30, -24), new Vector2(790, 450), "SummaryLabel");
+            summary = Label(result, "Result", 30, Paper, new Vector2(30, -24), new Vector2(790, 450), "SummaryLabel");
             resultPanel.SetActive(false);
             BuildTools(canvas);
             CreateMissingParts();
@@ -180,7 +180,7 @@ namespace Hikigiwa.Battle
             if (titleButton == null)
             {
                 // 対戦終了後に「もう一度対戦」の上に出す。
-                titleButton = Button(canvasRoot.transform, "タイトルに戻る\n（Esc）", HudStyle.MainButtonAnchor,
+                titleButton = Button(canvasRoot.transform, "Back to Title\n(Esc)", HudStyle.MainButtonAnchor,
                     HudStyle.TitleButtonPosition, HudStyle.TitleButtonSize, out _, "TitleButton");
                 // 道具パネルの暗幕より後ろ（手前に描かれない位置）に置く。
                 titleButton.transform.SetSiblingIndex(toolPanel.transform.GetSiblingIndex());
@@ -206,7 +206,7 @@ namespace Hikigiwa.Battle
             // 上下の縁に引く金色の細い線。
             BannerLine("TopLine", 1);
             BannerLine("BottomLine", 0);
-            turnBannerLabel = HudFactory.Named(HudFactory.Label(font, turnBanner, "あなたの番", 64, Gold, new Vector2(0, -35),
+            turnBannerLabel = HudFactory.Named(HudFactory.Label(font, turnBanner, "Your Turn", 64, Gold, new Vector2(0, -35),
                 new Vector2(1400, 80), TextAnchor.MiddleCenter), "BannerLabel");
             // 道具パネルの暗幕より後ろに置く（道具を選んでいる間は暗幕の下になる）。
             turnBanner.SetSiblingIndex(toolPanel.transform.GetSiblingIndex());
@@ -251,9 +251,9 @@ namespace Hikigiwa.Battle
         /// <summary>対戦状態から表示と操作可否を更新する。得点や手番の状態そのものは変更しない。</summary>
         public void Refresh(BattleMatch match, bool busy)
         {
-            heading.text = $"CPU対戦　ラウンド {match.Round} / {BattleMatch.RoundCount}　山札 {match.Deck.Remaining}枚";
-            conditions.text = $"共通条件　吉数 {match.Conditions.LuckyNumber}　凶数 {string.Join("・", match.Conditions.BadNumbers)} ＋ ジョーカー";
-            player.text = Participant("あなた", match.Player, match.Turn == BattleSide.Player && !match.IsRoundOver);
+            heading.text = $"VS CPU  —  Round {match.Round} / {BattleMatch.RoundCount}  —  Deck: {match.Deck.Remaining} left";
+            conditions.text = $"Lucky Number {match.Conditions.LuckyNumber}    Unlucky Numbers {string.Join(" · ", match.Conditions.BadNumbers)} + Joker";
+            player.text = Participant("You", match.Player, match.Turn == BattleSide.Player && !match.IsRoundOver);
             cpu.text = Participant("CPU", match.Cpu, match.Turn == BattleSide.Cpu && !match.IsRoundOver);
             // 演出中ではなくプレイヤーの有効な手番か。操作ボタンの可否をまとめて揃える。
             bool canAct = !busy && match.CanAct(BattleSide.Player);
@@ -261,7 +261,7 @@ namespace Hikigiwa.Battle
             stop.interactable = tools.interactable = canAct;
             next.gameObject.SetActive(match.IsRoundOver && !busy);
             titleButton.gameObject.SetActive(match.IsMatchOver && !busy);
-            nextLabel.text = match.IsMatchOver ? "もう一度対戦\n（Enter）" : "次のラウンド\n（Enter）";
+            nextLabel.text = match.IsMatchOver ? "Rematch\n(Enter)" : "Next Round\n(Enter)";
             if (!canAct) CloseTools();
             ToolPanelView.Refresh(toolTiles, toolPanelSpirit, match.Player.Session, match.Player.Spirit, canAct);
         }
@@ -272,10 +272,10 @@ namespace Hikigiwa.Battle
             // 表示対象の本人の鑑定。運気・倍率・凶の印・精算結果を読むための参照。
             ReadingSession s = participant.Session;
             // 破綻・確定・手番・待機の優先順で決めた状態名。
-            string state = s.State == ReadingState.Broken ? "破綻" : s.IsFinished ? "確定" : turn ? "手番" : "待機";
+            string state = s.State == ReadingState.Broken ? "Ruined" : s.IsFinished ? "Settled" : turn ? "Turn" : "Waiting";
             // 鑑定中はボーナス前の基本売上、終了後は予感ボーナス込みの確定得点を示す行。
-            string score = s.IsFinished ? $"確定得点　{s.Result.Score}" : $"基本売上　{s.CurrentSales}";
-            return $"{name}　【{state}】\n累計　{participant.TotalScore}点\n霊力　{participant.Spirit}\n\n運気 {s.Luck} × 倍率 {s.Multiplier}\n{score}\n凶の印　{new string('●', s.BadMarks)}{new string('○', Math.Max(0, s.BadMarksToBreak - s.BadMarks))}";
+            string score = s.IsFinished ? $"Final  {s.Result.Score}" : $"Base Earnings  {s.CurrentSales}";
+            return $"{name}  [{state}]\nTotal  {participant.TotalScore} pts\nSpirit Power  {participant.Spirit}\n\nLuck {s.Luck} × Mult. {s.Multiplier}\n{score}\nOmen Marks  {s.BadMarks} / {s.BadMarksToBreak}";
         }
 
         /// <summary>二人の精算を表示する。最終ラウンドだけ累計を比較して勝敗・引き分けも表示する。</summary>
@@ -286,22 +286,22 @@ namespace Hikigiwa.Battle
             turnBanner.gameObject.SetActive(false);
             resultPanel.SetActive(true);
             // 複数行の結果文を組み立てるバッファ。途中結果と最終勝敗を同じパネルにまとめる。
-            var text = new StringBuilder($"ラウンド {match.Round} 終了\n\n");
-            text.AppendLine(ResultLine("あなた", match.Player.Session.Result));
+            var text = new StringBuilder($"Round {match.Round} Over\n\n");
+            text.AppendLine(ResultLine("You", match.Player.Session.Result));
             text.AppendLine(ResultLine("CPU", match.Cpu.Session.Result));
-            text.AppendLine($"\n累計　あなた {match.Player.TotalScore} ／ CPU {match.Cpu.TotalScore}");
+            text.AppendLine($"\nTotal  You {match.Player.TotalScore} / CPU {match.Cpu.TotalScore}");
             if (match.IsMatchOver)
-                text.Append("\n" + (match.Player.TotalScore > match.Cpu.TotalScore ? "あなたの勝利！" : match.Player.TotalScore < match.Cpu.TotalScore ? "CPUの勝利" : "引き分け"));
+                text.Append("\n" + (match.Player.TotalScore > match.Cpu.TotalScore ? "You win!" : match.Player.TotalScore < match.Cpu.TotalScore ? "CPU wins" : "Draw"));
             summary.text = text.ToString();
         }
 
         /// <summary>1人分の得点と予感の有無を結果表示用に整形する。破綻時は0点だけを示す。</summary>
         private static string ResultLine(string name, ReadingResult r)
         {
-            if (r.IsBroken) return $"{name}：破綻　0点";
+            if (r.IsBroken) return $"{name}: Ruined  —  0 pts";
             // 予感判定なし・外れ・的中のどれかを示す結果文。
-            string bonus = r.ForesightCard.HasValue ? r.ForesightHit ? "予感的中 ×1.5" : "予感は外れ" : "予感判定なし";
-            return $"{name}：{r.Score}点　{bonus}";
+            string bonus = r.ForesightCard.HasValue ? r.ForesightHit ? "Premonition hit ×1.5" : "Premonition missed" : "No premonition";
+            return $"{name}: {r.Score} pts  {bonus}";
         }
 
         /// <summary>ボタンの処理をつなぎ、最初は隠しておくパネルを隠す（エディタで表示したまま保存しても大丈夫）。</summary>

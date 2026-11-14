@@ -8,5 +8,6 @@ namespace Hikigiwa.UI.Overlay
         None = 0,
         Title,
         Option,
+        Rules,
     }
 }

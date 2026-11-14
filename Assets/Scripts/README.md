@@ -34,6 +34,25 @@
 
 イベントは引いた瞬間に発生します。演出の後に表示を変えたい場合は、`ReadingGameController` のように演出が終わってから状態を読みます。
 
+## タイトルのボタン
+タイトル画面のボタンは上から **Solo・CPU・Options・Rules** の順です。
+- Solo：1人用（`Game` シーン）、CPU：CPU対戦（`CPUBattle` シーン）。移るシーンは `TitlePresenter` の `Solo Scene Name`・`Cpu Scene Name` で変えられます
+- メニューの **Hikigiwa → タイトルのボタンを並べる**（`Editor/TitleMenuLayout.cs`）で、CPU ボタンがなければ作り、4つを 120 間隔で縦に並べ直します。ボタンの見た目は変えません
+- 同じメニューで、ロゴにゲーム名 **Fortune or Fold**（`TitleMenuLayout.GameTitle`）を入れます。長い名前でも枠に収まるよう、文字の大きさは自動で縮みます（最大130）。仮置きのサブタイトル（Placeholder Title）は消します
+
+## タイトルのルール説明
+タイトル画面の **Rules** で、ルール説明（英語）をモーダルで出します。作りは設定画面（Option）と同じです。
+- 前半が **Solo**（1人用）、後半が **VS CPU**（CPU対戦。Soloとの違いだけを説明）
+- 用語：吉数＝Lucky Number、凶数＝Unlucky Number、凶の印（○○の表示）＝Omen Marks、運気＝Luck、倍率＝Multiplier、予感的中＝Foresight Bonus、霊力＝Spirit、破綻＝Ruined、ノルマ＝Quota（この2つはゲーム中の表示と同じ）、鑑定を終える＝Fold（ゲーム名「Fortune or Fold」に合わせる）
+- 次の2つは仕様の変更を先にルール説明へ書いたもので、ゲームの処理はまだ実装していません
+  - ノルマ達成で霊力+2
+  - Soloでも吉数・凶数を鑑定の最初から画面に出す（CPU対戦と同じ）
+- `UI/Rules/RulesPresenter`・`RulesView`：戻るボタンとスクロール。開くたびに先頭へ戻ります
+- 中身はメニューの **Hikigiwa → タイトルにルール画面を作成**（`Editor/TitleRulesBuilder.cs`）でシーンに書き出します。文章・カードの絵・配置はシーン上で直接編集できます
+- このメニューをもう一度実行すると RulesButton と RulesOverlay を作り直すため、シーン上で加えた変更は消えます
+- タイトルの英字フォント（Yeseva One）は ASCII の文字しか持たないため、「×」「→」などは使わず「x」で書きます
+- `RulesOverlay` はシーン上では透明（CanvasGroup の Alpha が 0）です。見た目を確認するときは Alpha を 1 にしてください
+
 ## メインシーン
 メニューの **Hikigiwa → メインシーンを作成** で `Assets/Scenes/Main.unity` を作り直します。
 カメラ・照明・仮のテーブルもここで作るので、部屋を作り込む段階になったらシーンを直接編集し、このメニューは使わないでください。
@@ -45,6 +64,8 @@
 - テーブル上の水晶玉はカメラから見て奥に向けます。マテリアルは `Assets/Art/room/Materials` のものを使います
 
 ## UI（HUD）をシーンで編集する
+- 画面の文言は英語、フォントは **Yeseva One**（`Assets/Art/Fonts/YesevaOne-Regular.ttf`）です。カードの数字も同じフォントです
+  - Yeseva One には日本語や ●○★ などの記号が入っていません。文言を足すときは英語と基本的な記号だけを使ってください（凶の印は「1 / 2」のように数で表示）
 ソロ（`Game.unity`）・CPU対戦（`CPUBattle.unity`）のUIは、メニューの **Hikigiwa → UIをシーンに配置** でHierarchyに書き出せます（`Editor/HudScenePlacer.cs`）。
 - 書き出したUIは、位置・大きさ・色・フォント・固定の文言をエディタで自由に変えられ、プレイ時もそのまま使われます
 - 数字やメッセージなど、プレイ中に変わる文字は実行時に上書きされます（エディタで入っている文字は配置確認用の仮の文字です）
