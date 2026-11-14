@@ -291,8 +291,8 @@ namespace Hikigiwa.EditorTools
                 "In each reading you draw cards to build up the customer's fortune, and every draw asks the same " +
                 "question: chase more fortune, or fold and keep what you have? Draw too greedily and the reading " +
                 "falls apart. Knowing when to fold is everything.\n" +
-                "Your final score is the total of all nine readings. Each night also has a target score: missing it " +
-                "does not end the game, but reaching it earns you 2 Spirit.");
+                "Your final score is the total of all nine readings. Each night also has a <b>Quota</b>: missing it " +
+                "does not end the game, but meeting it earns you 2 Spirit.");
 
             // 2. 山札
             Heading(content, "The Deck");
@@ -329,11 +329,11 @@ namespace Hikigiwa.EditorTools
                 $"- {Lucky("Lucky card")}: your <b>Multiplier</b> goes up by 1. It starts at 1.\n" +
                 $"- {Unlucky("Unlucky card")}: you receive an <b>Omen Mark</b>. Its number still adds to Luck " +
                 "(the Joker adds 0).\n" +
-                $"Collect 2 Omen Marks and the reading breaks: {Unlucky("this customer gives you 0 points")}.");
-            var breakRow = Row(content, "BreakCards", 16f);
-            Card(breakRow, 4, Omen.Unlucky, 110f, Unlucky("Mark 1"));
-            Card(breakRow, 0, Omen.Unlucky, 110f, Unlucky("Mark 2"));
-            Word(breakRow, Unlucky("Broken!\n0 points"), 220f, 110f);
+                $"Collect 2 Omen Marks and the reading is <b>Ruined</b>: {Unlucky("this customer gives you 0 points")}.");
+            var ruinRow = Row(content, "RuinedCards", 16f);
+            Card(ruinRow, 4, Omen.Unlucky, 110f, Unlucky("Mark 1"));
+            Card(ruinRow, 0, Omen.Unlucky, 110f, Unlucky("Mark 2"));
+            Word(ruinRow, Unlucky("Ruined!\n0 points"), 220f, 110f);
 
             // 5. 引き際
             Heading(content, TitleMenuLayout.GameTitle);
@@ -359,8 +359,8 @@ namespace Hikigiwa.EditorTools
             Heading(content, "Spirit and Fortune Tools");
             Body(content,
                 "Fortune tools let you peek at or change the deck, but each one costs <b>Spirit</b>.\n" +
-                "You start with 3 Spirit. You gain 1 after every reading that does not break, and 2 when you reach " +
-                "a night's target score. Spirit carries over between customers and nights.\n" +
+                "You start with 3 Spirit. You gain 1 after every reading that is not ruined, and 2 when you meet " +
+                "a night's Quota. Spirit carries over between customers and nights.\n" +
                 "Using a tool does not draw a card, so you can use several before you decide.");
             Tool(content, "Crystal Ball", 1, "Tells you whether the next card is unlucky.");
             Tool(content, "Tarot", 2, "Shows the numbers of the next 3 cards, but not their order.");
@@ -389,7 +389,7 @@ namespace Hikigiwa.EditorTools
                 "A match has 3 rounds. In each round, you and the CPU take turns drawing from one shared deck, " +
                 "which is freshly shuffled every round. Who goes first is decided at random each round.\n" +
                 "On your turn, either draw a card or fold. Using fortune tools does not end your turn.\n" +
-                "Once one of you folds or breaks, the other keeps drawing alone until they fold too.");
+                "Once one of you folds or is ruined, the other keeps drawing alone until they fold too.");
 
             // 2. 共通の数字
             Heading(content, "Shared Numbers");
@@ -414,16 +414,16 @@ namespace Hikigiwa.EditorTools
             Body(content,
                 "Only the one who folds <b>last</b> can get the Foresight Bonus. If you fold first, your score is " +
                 "fixed right away and no card is turned over.\n" +
-                "Wait until the CPU has folded or broken, then fold: the next card is turned over, and if it is " +
+                "Wait until the CPU has folded or been ruined, then fold: the next card is turned over, and if it is " +
                 "unlucky, your score is multiplied by 1.5.\n" +
                 "If the deck runs out, anyone still reading is scored without the bonus.");
 
             // 4. 霊力と勝敗
             Heading(content, "Spirit and Winning");
             Body(content,
-                "You and the CPU each start with 3 Spirit and gain 1 after every round that does not break. " +
+                "You and the CPU each start with 3 Spirit and gain 1 after every round that is not ruined. " +
                 "Spirit carries over between rounds. The CPU never uses fortune tools.\n" +
-                "There are no target scores. After 3 rounds, the higher total score wins. Equal scores are a draw.");
+                "There are no Quotas. After 3 rounds, the higher total score wins. Equal scores are a draw.");
 
             // 5. 操作
             Heading(content, "Controls");
@@ -544,7 +544,7 @@ namespace Hikigiwa.EditorTools
             AddLayout(NewRect("Spacer", row), preferredWidth: width, preferredHeight: 1f);
         }
 
-        /// <summary>行の中に置く文字（「Fold」「Broken!」など）。カードと同じ高さの中央に出します。</summary>
+        /// <summary>行の中に置く文字（「Fold」「Ruined!」など）。カードと同じ高さの中央に出します。</summary>
         private static void Word(RectTransform row, string text, float width, float cardWidth)
         {
             float height = CardHeight(cardWidth) + CaptionHeight;
