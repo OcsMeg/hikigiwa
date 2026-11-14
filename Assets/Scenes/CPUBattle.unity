@@ -292,7 +292,7 @@ MonoBehaviour:
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 42
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -320,6 +320,8 @@ GameObject:
   - component: {fileID: 111558181}
   - component: {fileID: 111558180}
   - component: {fileID: 111558182}
+  - component: {fileID: 111558184}
+  - component: {fileID: 111558183}
   m_Layer: 0
   m_Name: StopButton
   m_TagString: Untagged
@@ -344,9 +346,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -32, y: 32}
+  m_AnchoredPosition: {x: -202, y: 97}
   m_SizeDelta: {x: 340, y: 130}
-  m_Pivot: {x: 1, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &111558180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -429,6 +431,37 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &111558183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 111558178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &111558184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 111558178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1ff972b08232dc458b110e9a151b15b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonAnimation
+  target: {fileID: 0}
+  hoverScale: 1.06
+  pressedScale: 0.94
+  duration: 0.12
+  ease: 6
 --- !u!1 &144482927
 GameObject:
   m_ObjectHideFlags: 0
@@ -777,7 +810,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "Next Round\n(Enter)"
+  m_Text: 'Next Round
+
+    (Enter)'
 --- !u!1 &229004542
 GameObject:
   m_ObjectHideFlags: 0
@@ -1024,7 +1059,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "Reveals the next 3 numbers\n(order unknown)"
+  m_Text: 'Reveals the next 3 numbers
+
+    (order unknown)'
 --- !u!222 &297853142
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1103,7 +1140,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "Moves the top card\nto the bottom (unseen)"
+  m_Text: 'Moves the top card
+
+    to the bottom (unseen)'
 --- !u!222 &319775040
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1619,7 +1658,7 @@ MonoBehaviour:
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 42
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -1723,6 +1762,8 @@ GameObject:
   - component: {fileID: 542773351}
   - component: {fileID: 542773350}
   - component: {fileID: 542773352}
+  - component: {fileID: 542773354}
+  - component: {fileID: 542773353}
   m_Layer: 0
   m_Name: UseButton
   m_TagString: Untagged
@@ -1747,9 +1788,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 20}
+  m_AnchoredPosition: {x: 0, y: 60}
   m_SizeDelta: {x: 240, y: 80}
-  m_Pivot: {x: 0.5, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &542773350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1832,6 +1873,37 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &542773353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 542773348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &542773354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 542773348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1ff972b08232dc458b110e9a151b15b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonAnimation
+  target: {fileID: 0}
+  hoverScale: 1.06
+  pressedScale: 0.94
+  duration: 0.12
+  ease: 6
 --- !u!1 &553587575
 GameObject:
   m_ObjectHideFlags: 0
@@ -2298,6 +2370,8 @@ GameObject:
   - component: {fileID: 818148052}
   - component: {fileID: 818148051}
   - component: {fileID: 818148050}
+  - component: {fileID: 818148055}
+  - component: {fileID: 818148054}
   m_Layer: 0
   m_Name: TitleButton
   m_TagString: Untagged
@@ -2404,9 +2478,40 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -32, y: 178}
+  m_AnchoredPosition: {x: -202, y: 233}
   m_SizeDelta: {x: 340, y: 110}
-  m_Pivot: {x: 1, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &818148054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 818148049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &818148055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 818148049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1ff972b08232dc458b110e9a151b15b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonAnimation
+  target: {fileID: 0}
+  hoverScale: 1.06
+  pressedScale: 0.94
+  duration: 0.12
+  ease: 6
 --- !u!1 &818397861
 GameObject:
   m_ObjectHideFlags: 0
@@ -2552,7 +2657,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "Back to Title\n(Esc)"
+  m_Text: 'Back to Title
+
+    (Esc)'
 --- !u!222 &950248508
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2814,6 +2921,8 @@ GameObject:
   - component: {fileID: 963088584}
   - component: {fileID: 963088583}
   - component: {fileID: 963088585}
+  - component: {fileID: 963088587}
+  - component: {fileID: 963088586}
   m_Layer: 0
   m_Name: ToolsButton
   m_TagString: Untagged
@@ -2838,9 +2947,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 32, y: 32}
+  m_AnchoredPosition: {x: 202, y: 97}
   m_SizeDelta: {x: 340, y: 130}
-  m_Pivot: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &963088583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2923,6 +3032,37 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &963088586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963088581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &963088587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963088581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1ff972b08232dc458b110e9a151b15b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonAnimation
+  target: {fileID: 0}
+  hoverScale: 1.06
+  pressedScale: 0.94
+  duration: 0.12
+  ease: 6
 --- !u!1 &1013408898
 GameObject:
   m_ObjectHideFlags: 0
@@ -3566,7 +3706,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "Fortune Tools\n(T)"
+  m_Text: 'Fortune Tools
+
+    (T)'
 --- !u!222 &1286982164
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3879,7 +4021,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "Removes one unlucky card\n(once per reading)"
+  m_Text: 'Removes one unlucky card
+
+    (once per reading)'
 --- !u!222 &1471430418
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3976,6 +4120,8 @@ GameObject:
   - component: {fileID: 1535397082}
   - component: {fileID: 1535397081}
   - component: {fileID: 1535397083}
+  - component: {fileID: 1535397085}
+  - component: {fileID: 1535397084}
   m_Layer: 0
   m_Name: NextButton
   m_TagString: Untagged
@@ -4000,9 +4146,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -32, y: 32}
+  m_AnchoredPosition: {x: -202, y: 97}
   m_SizeDelta: {x: 340, y: 130}
-  m_Pivot: {x: 1, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1535397081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4085,6 +4231,37 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1535397084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1535397079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &1535397085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1535397079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1ff972b08232dc458b110e9a151b15b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonAnimation
+  target: {fileID: 0}
+  hoverScale: 1.06
+  pressedScale: 0.94
+  duration: 0.12
+  ease: 6
 --- !u!1 &1554407231
 GameObject:
   m_ObjectHideFlags: 0
@@ -4337,7 +4514,7 @@ MonoBehaviour:
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 42
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -4365,6 +4542,8 @@ GameObject:
   - component: {fileID: 1647479590}
   - component: {fileID: 1647479589}
   - component: {fileID: 1647479591}
+  - component: {fileID: 1647479593}
+  - component: {fileID: 1647479592}
   m_Layer: 0
   m_Name: CloseButton
   m_TagString: Untagged
@@ -4389,9 +4568,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -28, y: -24}
+  m_AnchoredPosition: {x: -168, y: -56}
   m_SizeDelta: {x: 280, y: 64}
-  m_Pivot: {x: 1, y: 1}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1647479589
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4474,6 +4653,37 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1647479592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647479587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &1647479593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647479587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1ff972b08232dc458b110e9a151b15b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonAnimation
+  target: {fileID: 0}
+  hoverScale: 1.06
+  pressedScale: 0.94
+  duration: 0.12
+  ease: 6
 --- !u!1 &1710438841
 GameObject:
   m_ObjectHideFlags: 0
@@ -4752,6 +4962,8 @@ GameObject:
   - component: {fileID: 1775233827}
   - component: {fileID: 1775233826}
   - component: {fileID: 1775233828}
+  - component: {fileID: 1775233830}
+  - component: {fileID: 1775233829}
   m_Layer: 0
   m_Name: UseButton
   m_TagString: Untagged
@@ -4776,9 +4988,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 20}
+  m_AnchoredPosition: {x: 0, y: 60}
   m_SizeDelta: {x: 240, y: 80}
-  m_Pivot: {x: 0.5, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1775233826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4861,6 +5073,37 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1775233829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1775233824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &1775233830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1775233824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1ff972b08232dc458b110e9a151b15b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonAnimation
+  target: {fileID: 0}
+  hoverScale: 1.06
+  pressedScale: 0.94
+  duration: 0.12
+  ease: 6
 --- !u!1 &1783590279
 GameObject:
   m_ObjectHideFlags: 0
@@ -4952,6 +5195,8 @@ GameObject:
   - component: {fileID: 1799146937}
   - component: {fileID: 1799146936}
   - component: {fileID: 1799146938}
+  - component: {fileID: 1799146940}
+  - component: {fileID: 1799146939}
   m_Layer: 0
   m_Name: UseButton
   m_TagString: Untagged
@@ -4976,9 +5221,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 20}
+  m_AnchoredPosition: {x: 0, y: 60}
   m_SizeDelta: {x: 240, y: 80}
-  m_Pivot: {x: 0.5, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1799146936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5061,6 +5306,37 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1799146939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799146934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &1799146940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799146934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1ff972b08232dc458b110e9a151b15b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonAnimation
+  target: {fileID: 0}
+  hoverScale: 1.06
+  pressedScale: 0.94
+  duration: 0.12
+  ease: 6
 --- !u!1 &1806174590
 GameObject:
   m_ObjectHideFlags: 0
@@ -5289,7 +5565,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "Reveals whether the next\ncard is unlucky"
+  m_Text: 'Reveals whether the next
+
+    card is unlucky'
 --- !u!222 &1860293244
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5717,7 +5995,7 @@ MonoBehaviour:
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 64
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -5764,6 +6042,8 @@ GameObject:
   - component: {fileID: 1994698077}
   - component: {fileID: 1994698076}
   - component: {fileID: 1994698078}
+  - component: {fileID: 1994698080}
+  - component: {fileID: 1994698079}
   m_Layer: 0
   m_Name: UseButton
   m_TagString: Untagged
@@ -5788,9 +6068,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 20}
+  m_AnchoredPosition: {x: 0, y: 60}
   m_SizeDelta: {x: 240, y: 80}
-  m_Pivot: {x: 0.5, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1994698076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5873,6 +6153,37 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1994698079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1994698074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &1994698080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1994698074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1ff972b08232dc458b110e9a151b15b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonAnimation
+  target: {fileID: 0}
+  hoverScale: 1.06
+  pressedScale: 0.94
+  duration: 0.12
+  ease: 6
 --- !u!1 &2001814805
 GameObject:
   m_ObjectHideFlags: 0
@@ -6015,7 +6326,7 @@ MonoBehaviour:
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 42
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -6172,7 +6483,7 @@ MonoBehaviour:
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 44
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -6419,7 +6730,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "End Reading\n(Enter)"
+  m_Text: 'End Reading
+
+    (Enter)'
 --- !u!222 &2143107065
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -4,6 +4,7 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using Hikigiwa.CardSystem;
 using Hikigiwa.Common;
+using Hikigiwa.Common.Audio;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -69,17 +70,27 @@ namespace Hikigiwa.Game
 
             if (hud.IsToolPanelOpen)
             {
-                if (keyboard.escapeKey.wasPressedThisFrame || keyboard.tKey.wasPressedThisFrame) hud.CloseToolPanel();
+                if (keyboard.tKey.wasPressedThisFrame)
+                {
+                    hud.CloseToolPanel();
+                    PlayKeyDecide();
+                }
+                else if (keyboard.escapeKey.wasPressedThisFrame) hud.CloseToolPanel();
                 return;
             }
 
+            // キーでの操作も、受け付けられたときだけボタンのクリックと同じ決定音を鳴らす
             if (keyboard.escapeKey.wasPressedThisFrame) RequestTitle();
-            if (keyboard.spaceKey.wasPressedThisFrame) RequestDraw();
-            if (keyboard.tKey.wasPressedThisFrame && phase == Phase.Reading && !busy) OpenTools();
+            if (keyboard.spaceKey.wasPressedThisFrame && TryDraw()) PlayKeyDecide();
+            if (keyboard.tKey.wasPressedThisFrame && phase == Phase.Reading && !busy)
+            {
+                OpenTools();
+                if (hud.IsToolPanelOpen) PlayKeyDecide();
+            }
             if (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame)
             {
-                if (phase == Phase.Reading) RequestStop();
-                else RequestNext();
+                bool accepted = phase == Phase.Reading ? TryStop() : TryNext();
+                if (accepted) PlayKeyDecide();
             }
         }
 
@@ -117,18 +128,32 @@ namespace Hikigiwa.Game
             hud.ToggleToolPanel();
         }
 
-        private void RequestDraw()
+        /// <summary>キー操作が受け付けられたときの決定音（ボタンのクリック音と同じ）。</summary>
+        private static void PlayKeyDecide()
         {
-            if (busy || phase != Phase.Reading || hud.IsToolPanelOpen || !session.CanDraw) return;
-            if (!session.TryDraw(out DrawResult draw)) return;
-            StartCoroutine(DrawRoutine(draw));
+            if (AudioManager.HasInstance) AudioManager.Instance.PlaySe(SeId.Decide);
         }
 
-        private void RequestStop()
+        private void RequestDraw() => TryDraw();
+
+        /// <summary>1枚引きます。受け付けたときは true。</summary>
+        private bool TryDraw()
         {
-            if (busy || phase != Phase.Reading || session.IsFinished) return;
-            if (!session.TryStop(out ReadingResult result)) return;
+            if (busy || phase != Phase.Reading || hud.IsToolPanelOpen || !session.CanDraw) return false;
+            if (!session.TryDraw(out DrawResult draw)) return false;
+            StartCoroutine(DrawRoutine(draw));
+            return true;
+        }
+
+        private void RequestStop() => TryStop();
+
+        /// <summary>鑑定を終えます。受け付けたときは true。</summary>
+        private bool TryStop()
+        {
+            if (busy || phase != Phase.Reading || session.IsFinished) return false;
+            if (!session.TryStop(out ReadingResult result)) return false;
             StartCoroutine(StopRoutine(result));
+            return true;
         }
 
         private void RequestTool(FortuneTool tool)
@@ -202,15 +227,18 @@ namespace Hikigiwa.Game
             hud.SetMemo(lines);
         }
 
-        private void RequestNext()
+        private void RequestNext() => TryNext();
+
+        /// <summary>結果を閉じて次へ進みます。受け付けたときは true。</summary>
+        private bool TryNext()
         {
-            if (busy) return;
+            if (busy) return false;
             switch (phase)
             {
                 case Phase.CustomerResult:
                     if (record.IsNightOver) ShowNightResult();
                     else StartCustomer();
-                    break;
+                    return true;
                 case Phase.NightResult:
                     if (record.IsFinished) StartRun();
                     else
@@ -218,7 +246,9 @@ namespace Hikigiwa.Game
                         record.StartNextNight();
                         StartCustomer();
                     }
-                    break;
+                    return true;
+                default:
+                    return false;
             }
         }
 

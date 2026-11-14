@@ -1,3 +1,4 @@
+using Hikigiwa.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -85,7 +86,43 @@ namespace Hikigiwa.Game
             label = Label(font, rect, caption, HudStyle.ButtonFontSize(size), HudStyle.ButtonText, Vector2.zero, size,
                 TextAnchor.MiddleCenter);
             label.rectTransform.anchorMin = label.rectTransform.anchorMax = label.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            AddButtonEffects(button);
             return button;
+        }
+
+        /// <summary>
+        /// ボタンに、触れたときの見た目の動き（ButtonAnimation）と効果音（ButtonSound）を付けます。タイトルのボタンと同じものです。
+        /// すでに付いていれば何もしません。何か変えたときは true を返します。
+        /// </summary>
+        /// <remarks>
+        /// ButtonAnimation は基準点（pivot）を中心に大きさを変えるので、基準点が角にあると角を起点にふくらんでしまいます。
+        /// そのため、見た目の位置を変えずに基準点を中央へ移してから付けます。
+        /// </remarks>
+        public static bool AddButtonEffects(Button button)
+        {
+            bool changed = CenterPivot((RectTransform)button.transform);
+            if (!button.TryGetComponent(out ButtonAnimation _))
+            {
+                button.gameObject.AddComponent<ButtonAnimation>();
+                changed = true;
+            }
+            if (!button.TryGetComponent(out ButtonSound _))
+            {
+                button.gameObject.AddComponent<ButtonSound>();
+                changed = true;
+            }
+            return changed;
+        }
+
+        /// <summary>見た目の位置と大きさを変えずに、基準点（pivot）を中央へ移します。移したときは true を返します。</summary>
+        public static bool CenterPivot(RectTransform rect)
+        {
+            var center = new Vector2(0.5f, 0.5f);
+            if (rect.pivot == center) return false;
+            // 基準点を動かした分だけ位置をずらすと、四角形そのものは同じ場所に残る
+            rect.anchoredPosition += Vector2.Scale(center - rect.pivot, rect.rect.size);
+            rect.pivot = center;
+            return true;
         }
     }
 }
