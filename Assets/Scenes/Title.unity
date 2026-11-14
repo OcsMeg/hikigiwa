@@ -1226,6 +1226,7 @@ GameObject:
   - component: {fileID: 96703772}
   - component: {fileID: 96703774}
   - component: {fileID: 96703775}
+  - component: {fileID: 667109616}
   m_Layer: 0
   m_Name: SoloButton
   m_TagString: Untagged
@@ -12341,6 +12342,7 @@ GameObject:
   - component: {fileID: 860121042}
   - component: {fileID: 860121041}
   - component: {fileID: 860121045}
+  - component: {fileID: 1139959944}
   m_Layer: 0
   m_Name: OptionButton
   m_TagString: Untagged
@@ -12617,6 +12619,7 @@ GameObject:
   - component: {fileID: 863145192}
   - component: {fileID: 863145191}
   - component: {fileID: 863145193}
+  - component: {fileID: 1075469575}
   m_Layer: 0
   m_Name: RulesButton
   m_TagString: Untagged
@@ -17166,6 +17169,7 @@ GameObject:
   - component: {fileID: 1185876628}
   - component: {fileID: 1185876627}
   - component: {fileID: 1185876629}
+  - component: {fileID: 1587440180}
   m_Layer: 0
   m_Name: BackButton
   m_TagString: Untagged
@@ -23892,6 +23896,7 @@ GameObject:
   - component: {fileID: 1624950583}
   - component: {fileID: 1624950582}
   - component: {fileID: 1624950586}
+  - component: {fileID: 886250786}
   m_Layer: 0
   m_Name: ResetButton
   m_TagString: Untagged
@@ -24527,6 +24532,7 @@ GameObject:
   - component: {fileID: 1653781184}
   - component: {fileID: 1653781186}
   - component: {fileID: 1653781187}
+  - component: {fileID: 221447433}
   m_Layer: 0
   m_Name: BackButton
   m_TagString: Untagged
@@ -31175,6 +31181,7 @@ GameObject:
   - component: {fileID: 2145774304}
   - component: {fileID: 2145774306}
   - component: {fileID: 2145774303}
+  - component: {fileID: 1399261304}
   m_Layer: 0
   m_Name: CpuButton
   m_TagString: Untagged
@@ -31301,6 +31308,104 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &667109616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96703770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &1139959944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860121040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &1075469575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 863145190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &1587440180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1185876626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &886250786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1624950581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &221447433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1653781182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
+--- !u!114 &1399261304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145774301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25e33eded23343e3a5f57c2ac9d82d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.UI.ButtonSound
+  hoverSe: 2
+  clickSe: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

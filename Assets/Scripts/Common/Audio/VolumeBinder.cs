@@ -6,6 +6,7 @@ namespace Hikigiwa.Common.Audio
     /// <summary>
     /// AudioSource の音量を、VolumeSettings の BGM か SE の値に追従させます。
     /// 全体（Master）は AudioListener に反映済みなので、ここでは選ばないでください（二重にかかります）。
+    /// 通常のBGM・効果音は AudioManager で鳴らしてください。これはシーンに直接置く音源（環境音など）用です。
     /// </summary>
     [RequireComponent(typeof(AudioSource))]
     public sealed class VolumeBinder : MonoBehaviour
