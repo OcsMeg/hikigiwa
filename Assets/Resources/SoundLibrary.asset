@@ -35,6 +35,12 @@ MonoBehaviour:
   - id: 4
     clip: {fileID: 8300000, guid: a2ac0c6426ab4cf69a1e46a13671db4a, type: 3}
     volume: 0.5
+  - id: 5
+    clip: {fileID: 8300000, guid: f17ea911ab174de680fcf8b729ece900, type: 3}
+    volume: 0.5
+  - id: 6
+    clip: {fileID: 8300000, guid: 95283f51ac24487e9d34174406f4de92, type: 3}
+    volume: 0.5
   sceneBgms:
   - sceneName: Title
     bgm: 1
