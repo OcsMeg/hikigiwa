@@ -3,6 +3,7 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using Hikigiwa.CardSystem;
 using Hikigiwa.Common;
+using Hikigiwa.Common.Audio;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -82,16 +83,27 @@ namespace Hikigiwa.Battle
             if (keyboard == null || Match == null) return;
             if (hud.IsToolPanelOpen)
             {
-                if (keyboard.escapeKey.wasPressedThisFrame || keyboard.tKey.wasPressedThisFrame) hud.CloseTools();
+                // T・Esc で閉じる（閉じるボタンと同じ決定音を鳴らす）
+                if (keyboard.tKey.wasPressedThisFrame || keyboard.escapeKey.wasPressedThisFrame)
+                {
+                    hud.CloseTools();
+                    PlayKeyDecide();
+                }
                 return;
             }
-            if (keyboard.escapeKey.wasPressedThisFrame) RequestTitle();
+            // ボタンと同じ操作をキーでしたときは、受け付けられたときだけボタンのクリックと同じ決定音を鳴らす
+            // （Space は山札をクリックするのと同じ操作で、ボタンではないので鳴らさない）
+            if (keyboard.escapeKey.wasPressedThisFrame && TryTitle()) PlayKeyDecide();
             if (keyboard.spaceKey.wasPressedThisFrame) RequestDraw();
-            if (keyboard.tKey.wasPressedThisFrame && !busy && Match.CanAct(BattleSide.Player)) hud.ToggleTools();
+            if (keyboard.tKey.wasPressedThisFrame && !busy && Match.CanAct(BattleSide.Player))
+            {
+                hud.ToggleTools();
+                if (hud.IsToolPanelOpen) PlayKeyDecide();
+            }
             if (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame)
             {
-                if (Match.IsRoundOver) RequestNext();
-                else RequestStop();
+                bool accepted = Match.IsRoundOver ? TryNext() : TryStop();
+                if (accepted) PlayKeyDecide();
             }
         }
 
@@ -119,26 +131,49 @@ namespace Hikigiwa.Battle
             StartCoroutine(ResolveAction(BattleSide.Player, false));
         }
 
-        /// <summary>停止要求を受け、操作可能なときだけ精算と予感演出を実行する。</summary>
-        public void RequestStop()
+        /// <summary>キー操作が受け付けられたときの決定音（ボタンのクリック音と同じ）。</summary>
+        private static void PlayKeyDecide()
         {
-            if (!CanPlayerAct() || hud.IsToolPanelOpen) return;
+            if (AudioManager.HasInstance) AudioManager.Instance.PlaySe(SeId.Decide);
+        }
+
+        /// <summary>停止要求を受け、操作可能なときだけ精算と予感演出を実行する。</summary>
+        public void RequestStop() => TryStop();
+
+        /// <summary>鑑定を終える。受け付けたときは true。</summary>
+        private bool TryStop()
+        {
+            if (!CanPlayerAct() || hud.IsToolPanelOpen) return false;
             StartCoroutine(ResolveAction(BattleSide.Player, true));
+            return true;
         }
 
         /// <summary>結果表示中の次へ操作。途中なら次ラウンド、対戦終了後なら初期状態から再戦する。</summary>
-        public void RequestNext()
+        public void RequestNext() => TryNext();
+
+        /// <summary>次のラウンドへ（対戦終了後は再戦）。受け付けたときは true。</summary>
+        private bool TryNext()
         {
-            if (busy || Match == null || !Match.IsRoundOver) return;
-            if (Match.IsMatchOver) StartMatch();
-            else if (Match.StartNextRound()) PrepareRound();
+            if (busy || Match == null || !Match.IsRoundOver) return false;
+            if (Match.IsMatchOver)
+            {
+                StartMatch();
+                return true;
+            }
+            if (!Match.StartNextRound()) return false;
+            PrepareRound();
+            return true;
         }
 
         /// <summary>対戦終了後だけ、タイトル画面へ戻る。</summary>
-        public void RequestTitle()
+        public void RequestTitle() => TryTitle();
+
+        /// <summary>対戦終了後だけ、タイトル画面へ戻る。受け付けたときは true。</summary>
+        private bool TryTitle()
         {
-            if (busy || Match == null || !Match.IsMatchOver) return;
+            if (busy || Match == null || !Match.IsMatchOver) return false;
             ReturnToTitle().Forget();
+            return true;
         }
 
         /// <summary>フェード付きでタイトルへ遷移する。遷移できなかったときは操作を戻す。</summary>

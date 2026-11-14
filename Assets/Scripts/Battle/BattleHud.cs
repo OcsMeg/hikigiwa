@@ -192,6 +192,9 @@ namespace Hikigiwa.Battle
                 BuildTurnBanner();
                 created = true;
             }
+            // 以前にシーンへ置いたボタンには、見た目の動きと効果音が付いていないので付ける
+            foreach (Button b in canvasRoot.GetComponentsInChildren<Button>(true))
+                created |= HudFactory.AddButtonEffects(b);
             return created;
         }
 
@@ -401,6 +404,8 @@ namespace Hikigiwa.Battle
             label = Label(rect, value, HudStyle.ButtonFontSize(size), HudStyle.ButtonText, Vector2.zero, size);
             label.rectTransform.anchorMin = label.rectTransform.anchorMax = label.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             label.alignment = TextAnchor.MiddleCenter;
+            // 触れたときの見た目の動きと効果音（ソロ・タイトルと共通）
+            HudFactory.AddButtonEffects(button);
             return button;
         }
     }
