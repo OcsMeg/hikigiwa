@@ -11,7 +11,7 @@ namespace Hikigiwa.Title
 {
     /// <summary>
     /// タイトル画面。「Solo」で1人用のシーンへ、「CPU」でCPU対戦のシーンへ、
-    /// 「Options」で設定画面へ、「Rules」でルール説明へ進みます。
+    /// 「Options」で設定画面へ、「Rules」でルール説明へ、「Credits」でクレジットへ進みます。
     /// </summary>
     public sealed class TitlePresenter : OverlayPresenterBase<TitleView>
     {
@@ -30,14 +30,20 @@ namespace Hikigiwa.Title
                 .Subscribe(_ => TitleCanvas.Instance.SwitchAsync(OverlayType.Option).Forget())
                 .AddTo(this);
 
-            // ルール画面をまだシーンに作っていなくても動くよう、ボタンがあるときだけつなぐ
-            if (View.RulesButton != null)
-            {
-                View.RulesButton.OnClickAsObservable()
-                    .ThrottleFirst(UiConstants.ButtonThrottle)
-                    .Subscribe(_ => TitleCanvas.Instance.SwitchAsync(OverlayType.Rules).Forget())
-                    .AddTo(this);
-            }
+            // ルール画面・クレジット画面をまだシーンに作っていなくても動くよう、ボタンがあるときだけつなぐ
+            BindOverlayButton(View.RulesButton, OverlayType.Rules);
+            BindOverlayButton(View.CreditsButton, OverlayType.Credits);
+        }
+
+        /// <summary>押すと type の画面へ切り替えるボタンにします。ボタンがシーンになければ何もしません。</summary>
+        private void BindOverlayButton(Button button, OverlayType type)
+        {
+            if (button == null) return;
+
+            button.OnClickAsObservable()
+                .ThrottleFirst(UiConstants.ButtonThrottle)
+                .Subscribe(_ => TitleCanvas.Instance.SwitchAsync(type).Forget())
+                .AddTo(this);
         }
 
         /// <summary>押すと sceneName のシーンへ移るボタンにします。ボタンがシーンになければ何もしません。</summary>

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Hikigiwa.UI;
+using Hikigiwa.UI.Credits;
 using Hikigiwa.UI.Option;
 using Hikigiwa.UI.Overlay;
 using Hikigiwa.UI.Rules;
@@ -15,6 +16,7 @@ namespace Hikigiwa.Title
         [SerializeField] private TitlePresenter title;
         [SerializeField] private OptionPresenter option;
         [SerializeField] private RulesPresenter rules;
+        [SerializeField] private CreditsPresenter credits;
 
         protected override OverlayType InitialOverlay => OverlayType.Title;
 
@@ -25,6 +27,7 @@ namespace Hikigiwa.Title
                 yield return title;
                 yield return option;
                 yield return rules;
+                yield return credits;
             }
         }
 
@@ -33,6 +36,7 @@ namespace Hikigiwa.Title
             OverlayType.Title => title,
             OverlayType.Option => option,
             OverlayType.Rules => rules,
+            OverlayType.Credits => credits,
             _ => null,
         };
 
@@ -40,21 +44,17 @@ namespace Hikigiwa.Title
         {
             base.Initialize();
 
-            // 設定画面を閉じたらタイトルへ戻る（設定画面はどこに戻るかを知らない）
-            if (option != null)
-            {
-                option.CloseRequested
-                    .Subscribe(_ => SwitchAsync(OverlayType.Title).Forget())
-                    .AddTo(this);
-            }
+            // 設定・ルール・クレジットの各画面は、閉じたらタイトルへ戻る（各画面はどこに戻るかを知らない）
+            if (option != null) ReturnToTitleOn(option.CloseRequested);
+            if (rules != null) ReturnToTitleOn(rules.CloseRequested);
+            if (credits != null) ReturnToTitleOn(credits.CloseRequested);
+        }
 
-            // ルール画面も同じく、閉じたらタイトルへ戻る
-            if (rules != null)
-            {
-                rules.CloseRequested
-                    .Subscribe(_ => SwitchAsync(OverlayType.Title).Forget())
-                    .AddTo(this);
-            }
+        private void ReturnToTitleOn(Observable<Unit> closeRequested)
+        {
+            closeRequested
+                .Subscribe(_ => SwitchAsync(OverlayType.Title).Forget())
+                .AddTo(this);
         }
     }
 }

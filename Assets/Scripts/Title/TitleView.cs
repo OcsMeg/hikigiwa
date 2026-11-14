@@ -14,10 +14,12 @@ namespace Hikigiwa.Title
         [SerializeField] private Button cpuButton;
         [SerializeField] private Button optionButton;
         [SerializeField] private Button rulesButton;
+        [SerializeField] private Button creditsButton;
 
         public Button SoloButton => soloButton;
         public Button CpuButton => cpuButton;
         public Button OptionButton => optionButton;
         public Button RulesButton => rulesButton;
+        public Button CreditsButton => creditsButton;
     }
 }

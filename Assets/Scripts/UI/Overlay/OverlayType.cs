@@ -9,5 +9,6 @@ namespace Hikigiwa.UI.Overlay
         Title,
         Option,
         Rules,
+        Credits,
     }
 }

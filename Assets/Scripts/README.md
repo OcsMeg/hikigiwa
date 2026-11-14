@@ -36,23 +36,32 @@
 イベントは引いた瞬間に発生します。演出の後に表示を変えたい場合は、`ReadingGameController` のように演出が終わってから状態を読みます。
 
 ## タイトルのボタン
-タイトル画面のボタンは上から **Solo・CPU・Options・Rules** の順です。
+タイトル画面のボタンは上から **Solo・CPU・Options・Rules** の順です。**Credits** は縦の並びに入れず、画面の右下の端に小さめに置きます。
 - Solo：1人用（`Game` シーン）、CPU：CPU対戦（`CPUBattle` シーン）。移るシーンは `TitlePresenter` の `Solo Scene Name`・`Cpu Scene Name` で変えられます
-- メニューの **Hikigiwa → タイトルのボタンを並べる**（`Editor/TitleMenuLayout.cs`）で、CPU ボタンがなければ作り、4つを 120 間隔で縦に並べ直します。ボタンの見た目は変えません
+- メニューの **Hikigiwa → タイトルのボタンを並べる**（`Editor/TitleMenuLayout.cs`）で、CPU ボタンがなければ作り、4つ（310×90）を 120 間隔で縦に並べ直し、Credits を右下に置きます
+- 同じメニューで、タイトルシーンのボタンすべて（各画面の Back・Reset も含む）の見た目を「濃い紫の板＋金の縁」にそろえます。触れると縁が明るくなり（Button の Color Tint）、文字が金色になります（`UI/Parts/ButtonLabelTint`）。大きさが変わる動きは `ButtonAnimation` のままです
+- ボタンの角の丸い板は `Assets/Art/UI/RoundedRect.png`（メニューの実行時に自動で作る白い画像。角の半径は `TitleMenuLayout.CornerRadius`）を9スライスで使います
 - 同じメニューで、ロゴにゲーム名 **Fortune or Fold**（`TitleMenuLayout.GameTitle`）を入れます。長い名前でも枠に収まるよう、文字の大きさは自動で縮みます（最大130）。仮置きのサブタイトル（Placeholder Title）は消します
 
 ## タイトルのルール説明
 タイトル画面の **Rules** で、ルール説明（英語）をモーダルで出します。作りは設定画面（Option）と同じです。
 - 前半が **Solo**（1人用）、後半が **VS CPU**（CPU対戦。Soloとの違いだけを説明）
 - 用語：吉数＝Lucky Number、凶数＝Unlucky Number、凶の印（○○の表示）＝Omen Marks、運気＝Luck、倍率＝Multiplier、予感的中＝Foresight Bonus、霊力＝Spirit、破綻＝Ruined、ノルマ＝Quota（この2つはゲーム中の表示と同じ）、鑑定を終える＝Fold（ゲーム名「Fortune or Fold」に合わせる）
-- 次の2つは仕様の変更を先にルール説明へ書いたもので、ゲームの処理はまだ実装していません
-  - ノルマ達成で霊力+2
-  - Soloでも吉数・凶数を鑑定の最初から画面に出す（CPU対戦と同じ）
-- `UI/Rules/RulesPresenter`・`RulesView`：戻るボタンとスクロール。開くたびに先頭へ戻ります
+- `UI/Rules/RulesPresenter`・`RulesView`：戻るボタンとスクロール。開くたびに先頭へ戻ります（処理は `UI/Overlay/ScrollOverlayPresenterBase`・`ScrollOverlayViewBase` にあり、クレジット画面と共通）
 - 中身はメニューの **Hikigiwa → タイトルにルール画面を作成**（`Editor/TitleRulesBuilder.cs`）でシーンに書き出します。文章・カードの絵・配置はシーン上で直接編集できます
 - このメニューをもう一度実行すると RulesButton と RulesOverlay を作り直すため、シーン上で加えた変更は消えます
 - タイトルの英字フォント（Yeseva One）は ASCII の文字しか持たないため、「×」「→」などは使わず「x」で書きます
 - `RulesOverlay` はシーン上では透明（CanvasGroup の Alpha が 0）です。見た目を確認するときは Alpha を 1 にしてください
+
+## タイトルのクレジット
+タイトル画面の **Credits** で、制作メンバーと使った素材のクレジット（英語）をモーダルで出します。作りはルール画面と同じです。
+- 中身はメニューの **Hikigiwa → タイトルにクレジット画面を作成**（`Editor/TitleCreditsBuilder.cs`）でシーンに書き出します。もう一度実行すると CreditsButton と CreditsOverlay を作り直します
+- 素材を足したり外したりしたら、`TitleCreditsBuilder.BuildContent` を直してからメニューを実行し直します
+- 素材の出どころ（どのサイトもクレジット表記は任意。規約は 2026-11-14 に確認）
+  - 音楽・効果音：OpenTracks（旧 DOVA-SYNDROME）。音源ファイルを単体で取り出せる形で配布しないこと
+  - ジョーカーの絵：チコデザ／トランプ裏面：イラストAC（素材を単体でダウンロードできる形で配信しないこと）
+  - フォント：Yeseva One（SIL Open Font License。ライセンス文は `Assets/Art/Fonts/OFL.txt`）
+- 曲名（Mahoutsukai no Heya）と作者名の一部（Jun AC100V）は、公式の英字表記がないため読みをローマ字にしたものです
 
 ## メインシーン
 メニューの **Hikigiwa → メインシーンを作成** で `Assets/Scenes/Main.unity` を作り直します。
