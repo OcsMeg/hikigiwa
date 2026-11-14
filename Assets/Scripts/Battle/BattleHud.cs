@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using DG.Tweening;
 using Hikigiwa.CardSystem;
 using Hikigiwa.Game;
 using UnityEngine;
@@ -17,9 +18,7 @@ namespace Hikigiwa.Battle
     {
         /// <summary>HUD内の日本語表示に共通で使うフォント。シーン生成時に割り当てる。</summary>
         [SerializeField] private Font font;
-        /// <summary>1枚引くボタンを押した通知。実際のドロー可否は進行側で判断する。</summary>
-        public event Action DrawClicked;
-        /// <summary>辞めるボタンを押した通知。得点の精算は進行側へ任せる。</summary>
+        /// <summary>鑑定を終えるボタンを押した通知。得点の精算は進行側へ任せる。</summary>
         public event Action StopClicked;
         /// <summary>次ラウンドまたは再戦ボタンを押した通知。</summary>
         public event Action NextClicked;
@@ -45,8 +44,6 @@ namespace Hikigiwa.Battle
         [SerializeField] private Text memo;
         /// <summary>中央の結果パネルに表示する二人分の精算と最終勝敗。</summary>
         [SerializeField] private Text summary;
-        /// <summary>ドローボタン。自分の操作可能な手番だけ押せる。</summary>
-        [SerializeField] private Button draw;
         /// <summary>停止ボタン。ラウンドの途中だけ表示する。</summary>
         [SerializeField] private Button stop;
         /// <summary>道具パネルを開閉するボタン。操作不可の手番は無効にする。</summary>
@@ -59,20 +56,36 @@ namespace Hikigiwa.Battle
         [SerializeField] private GameObject toolPanel;
         /// <summary>ラウンド結果表示の親。通常の鑑定中は非表示にする。</summary>
         [SerializeField] private GameObject resultPanel;
-        /// <summary>FortuneToolの列挙値に対応する4種類の使用ボタン。</summary>
-        [SerializeField] private Button[] toolButtons = new Button[4];
-        /// <summary>各道具の名前・必要霊力・効果・使えない理由を表示するラベル。</summary>
-        [SerializeField] private Text[] toolLabels = new Text[4];
+        /// <summary>道具パネル内の霊力表示。</summary>
+        [SerializeField] private Text toolPanelSpirit;
+        /// <summary>4種類の道具のタイル（ToolPanelView.Tools と同じ順：水晶・タロット・お香・手相）。</summary>
+        [SerializeField] private ToolTile[] toolTiles = new ToolTile[0];
         /// <summary>道具パネルを閉じるボタン。</summary>
         [SerializeField] private Button closeToolsButton;
         /// <summary>対戦終了後にだけ表示する、タイトルへ戻るボタン。</summary>
         [SerializeField] private Button titleButton;
+        /// <summary>手番が替わったときに画面中央に出す帯。</summary>
+        [SerializeField] private RectTransform turnBanner;
+        /// <summary>帯の文字（「あなたの番」など）。</summary>
+        [SerializeField] private Text turnBannerLabel;
+
+        [Header("手番の帯の演出")]
+        /// <summary>帯がX軸に回転して開く（閉じる）のにかける秒数。</summary>
+        [SerializeField, Min(0f), Tooltip("帯が回転して開く・閉じるのにかける秒数")] private float bannerFlipSeconds = 0.25f;
+        /// <summary>帯を開いたまま見せておく秒数。</summary>
+        [SerializeField, Min(0f), Tooltip("帯を開いたまま見せておく秒数")] private float bannerHoldSeconds = 0.6f;
+
+        /// <summary>帯の出し入れのアニメーション。次の帯を出すときは前のものを止める。</summary>
+        private Sequence bannerSequence;
         /// <summary>ボタンの処理をつないだか。二重につながないために使う。</summary>
         private bool wired;
-        /// <summary>本文やボタンの背景に使う紙色。</summary>
-        private static readonly Color Paper = new Color32(246, 229, 199, 255);
-        /// <summary>見出しや進行メッセージに使う強調色。</summary>
-        private static readonly Color Gold = new Color32(236, 196, 112, 255);
+
+        /// <summary>手番の帯を出してから消えるまでの秒数。CPUはこの間は動かない。</summary>
+        public float TurnBannerSeconds => bannerFlipSeconds * 2 + bannerHoldSeconds;
+        /// <summary>本文やボタンの背景に使う紙色（ソロと共通）。</summary>
+        private static readonly Color Paper = HudStyle.Paper;
+        /// <summary>見出し・進行メッセージ・主な操作ボタンに使う強調色（ソロと共通）。</summary>
+        private static readonly Color Gold = HudStyle.Gold;
         /// <summary>道具パネルが開いているか。キー入力や山札操作の制限にも使う。</summary>
         public bool IsToolPanelOpen => toolPanel != null && toolPanel.activeSelf;
 
@@ -118,61 +131,121 @@ namespace Hikigiwa.Battle
             RectTransform bottom = Panel(canvas, "MessagePanel", new Vector2(0.5f, 0), new Vector2(0, 22), new Vector2(1120, 130));
             message = Label(bottom, "メッセージ", 28, Gold, new Vector2(20, -14), new Vector2(1080, 45), "MessageLabel");
             memo = Label(bottom, "占いの結果", 25, Paper, new Vector2(20, -65), new Vector2(1080, 50), "MemoLabel");
-            draw = Button(canvas, "1枚引く（Space）", new Vector2(1, 0), new Vector2(-24, 280), new Vector2(350, 80), out _, "DrawButton");
-            stop = Button(canvas, "辞める（Enter）", new Vector2(1, 0), new Vector2(-24, 184), new Vector2(350, 80), out _, "StopButton");
-            tools = Button(canvas, "占い道具（T）", new Vector2(0, 0), new Vector2(24, 184), new Vector2(350, 80), out _, "ToolsButton");
-            next = Button(canvas, "次のラウンド（Enter）", new Vector2(1, 0), new Vector2(-24, 184), new Vector2(350, 80), out nextLabel, "NextButton");
+            // 鑑定を終える／次へは右下の同じ場所に入れ替わりで出る。位置と大きさはソロと共通（HudStyle）。
+            stop = Button(canvas, "鑑定を終える\n（Enter）", HudStyle.MainButtonAnchor, HudStyle.MainButtonPosition,
+                HudStyle.MainButtonSize, out _, "StopButton");
+            // 位置と大きさはソロと同じ（左下）。
+            tools = Button(canvas, "占い道具（T）", HudStyle.ToolsButtonAnchor, HudStyle.ToolsButtonPosition, HudStyle.ToolsButtonSize,
+                out _, "ToolsButton", Gold);
+            next = Button(canvas, "次のラウンド\n（Enter）", HudStyle.MainButtonAnchor, HudStyle.MainButtonPosition,
+                HudStyle.MainButtonSize, out nextLabel, "NextButton", Gold);
             next.gameObject.SetActive(false);
 
             // 二人の精算と最終勝敗を表示する中央パネル。背景を濃くして文字を読みやすくする。
             RectTransform result = Panel(canvas, "ResultPanel", new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(850, 500));
-            result.GetComponent<Image>().color = new Color32(18, 13, 29, 248);
+            result.GetComponent<Image>().color = HudStyle.ResultPanelColor;
             resultPanel = result.gameObject;
             summary = Label(result, "結果", 30, Paper, new Vector2(30, -24), new Vector2(790, 450), "SummaryLabel");
             resultPanel.SetActive(false);
             BuildTools(canvas);
             CreateMissingParts();
+            // 道具パネルの暗幕より手前に出し、開いている間も押して閉じられるようにする（ソロと同じ）。
+            tools.transform.SetAsLastSibling();
         }
 
-        /// <summary>後から追加した部品が、シーンに置いたUIに無ければ作る。作ったときは true を返す。</summary>
+        /// <summary>後から追加・変更した部品が、シーンに置いたUIに無ければ作る（廃止した部品は消す）。変えたときは true を返す。</summary>
         public bool CreateMissingParts()
         {
             bool created = false;
+            // 「1枚引く」ボタンは廃止した（山札クリック／Spaceで引く。ソロと同じ）。古いシーンに残っていれば消す。
+            Transform oldDraw = canvasRoot.transform.Find("DrawButton");
+            if (oldDraw != null)
+            {
+                if (Application.isPlaying) Destroy(oldDraw.gameObject);
+                else DestroyImmediate(oldDraw.gameObject);
+                created = true;
+            }
+            if (!ToolPanelView.IsComplete(toolTiles, toolPanelSpirit))
+            {
+                // 以前の縦並びの道具パネルが残っていれば消し、ソロと同じタイル型で作り直す。
+                if (toolPanel != null)
+                {
+                    if (Application.isPlaying) Destroy(toolPanel);
+                    else DestroyImmediate(toolPanel);
+                }
+                BuildTools(canvasRoot.transform);
+                tools.transform.SetAsLastSibling();
+                created = true;
+            }
             if (titleButton == null)
             {
-                // 対戦終了後に「もう一度対戦」の下に出す。
-                titleButton = Button(canvasRoot.transform, "タイトルに戻る（Esc）", new Vector2(1, 0), new Vector2(-24, 88),
-                    new Vector2(350, 80), out _, "TitleButton");
+                // 対戦終了後に「もう一度対戦」の上に出す。
+                titleButton = Button(canvasRoot.transform, "タイトルに戻る\n（Esc）", HudStyle.MainButtonAnchor,
+                    HudStyle.TitleButtonPosition, HudStyle.TitleButtonSize, out _, "TitleButton");
                 // 道具パネルの暗幕より後ろ（手前に描かれない位置）に置く。
                 titleButton.transform.SetSiblingIndex(toolPanel.transform.GetSiblingIndex());
                 titleButton.gameObject.SetActive(false);
                 created = true;
             }
+            if (turnBanner == null)
+            {
+                BuildTurnBanner();
+                created = true;
+            }
             return created;
         }
 
-        /// <summary>背景操作を遮る暗幕と、4種類の道具ボタン・閉じるボタンを生成する。</summary>
+        /// <summary>画面中央を横切る、手番を知らせる帯を作る。クリックは受け取らない（後ろの山札を押せる）。</summary>
+        private void BuildTurnBanner()
+        {
+            // 横幅いっぱい・高さ150の帯。
+            turnBanner = Panel(canvasRoot.transform, "TurnBanner", new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(0, 150));
+            turnBanner.anchorMin = new Vector2(0, 0.5f);
+            turnBanner.anchorMax = new Vector2(1, 0.5f);
+            turnBanner.GetComponent<Image>().color = HudStyle.ResultPanelColor;
+            // 上下の縁に引く金色の細い線。
+            BannerLine("TopLine", 1);
+            BannerLine("BottomLine", 0);
+            turnBannerLabel = HudFactory.Named(HudFactory.Label(font, turnBanner, "あなたの番", 64, Gold, new Vector2(0, -35),
+                new Vector2(1400, 80), TextAnchor.MiddleCenter), "BannerLabel");
+            // 道具パネルの暗幕より後ろに置く（道具を選んでいる間は暗幕の下になる）。
+            turnBanner.SetSiblingIndex(toolPanel.transform.GetSiblingIndex());
+            turnBanner.gameObject.SetActive(false);
+        }
+
+        /// <summary>帯の上端（y=1）または下端（y=0）に、横幅いっぱいの金色の線を引く。</summary>
+        private void BannerLine(string name, float y)
+        {
+            RectTransform line = Rect(turnBanner, name, new Vector2(0.5f, y), Vector2.zero, new Vector2(0, 4));
+            line.anchorMin = new Vector2(0, y);
+            line.anchorMax = new Vector2(1, y);
+            var image = line.gameObject.AddComponent<Image>();
+            image.color = Gold;
+            image.raycastTarget = false;
+        }
+
+        /// <summary>
+        /// 手番の帯を出す。X軸に90°倒れた状態から開いて見せ、少し置いてから反対側へ倒して消す。
+        /// 前の帯が残っていれば止めて出し直す。
+        /// </summary>
+        public void ShowTurnBanner(string text)
+        {
+            bannerSequence?.Kill();
+            turnBannerLabel.text = text;
+            turnBanner.gameObject.SetActive(true);
+            turnBanner.localRotation = Quaternion.Euler(90f, 0f, 0f);
+            bannerSequence = DOTween.Sequence()
+                .Append(turnBanner.DOLocalRotate(Vector3.zero, bannerFlipSeconds).SetEase(Ease.OutBack))
+                .AppendInterval(bannerHoldSeconds)
+                .Append(turnBanner.DOLocalRotate(new Vector3(-90f, 0f, 0f), bannerFlipSeconds).SetEase(Ease.InCubic))
+                .OnComplete(() => turnBanner.gameObject.SetActive(false))
+                .SetLink(gameObject);
+        }
+
+        /// <summary>背景操作を遮る暗幕と、4種類の道具のタイル・閉じるボタンを生成する。見た目はソロと共通（ToolPanelView）。</summary>
         private void BuildTools(Transform canvas)
         {
-            // 画面全体を覆う暗幕。道具を選んでいる間の背後のクリックを受け止める。
-            RectTransform blocker = Rect(canvas, "ToolOverlay", Vector2.zero, Vector2.zero, Vector2.zero);
-            blocker.anchorMax = Vector2.one;
-            blocker.offsetMin = blocker.offsetMax = Vector2.zero;
-            blocker.gameObject.AddComponent<Image>().color = new Color(0, 0, 0, 0.7f);
-            toolPanel = blocker.gameObject;
-            // 暗幕の手前に置く、道具一覧と閉じるボタンの背景。
-            RectTransform panel = Panel(blocker, "Panel", new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1000, 620));
-            Label(panel, "占い道具　使用後も引く／辞めるを選べます", 30, Gold, new Vector2(24, -20), new Vector2(950, 50), "Header");
-            // FortuneToolの並びに対応するボタン番号（0〜3）。
-            for (int i = 0; i < 4; i++)
-            {
-                // このボタンに対応する道具。ボタンのコールバックへ個別に保持する。
-                FortuneTool tool = (FortuneTool)i;
-                toolButtons[i] = Button(panel, ReadingHud.NameOf(tool), new Vector2(0.5f, 1), new Vector2(0, -90 - i * 105),
-                    new Vector2(930, 90), out toolLabels[i], tool + "Button");
-            }
-            closeToolsButton = Button(panel, "閉じる（Esc / T）", new Vector2(0.5f, 0), new Vector2(0, 20), new Vector2(420, 70), out _, "CloseButton");
-            CloseTools();
+            toolPanel = ToolPanelView.Build(canvas, font, out toolPanelSpirit, out closeToolsButton, out toolTiles);
         }
 
         /// <summary>対戦状態から表示と操作可否を更新する。得点や手番の状態そのものは変更しない。</summary>
@@ -184,24 +257,13 @@ namespace Hikigiwa.Battle
             cpu.text = Participant("CPU", match.Cpu, match.Turn == BattleSide.Cpu && !match.IsRoundOver);
             // 演出中ではなくプレイヤーの有効な手番か。操作ボタンの可否をまとめて揃える。
             bool canAct = !busy && match.CanAct(BattleSide.Player);
-            draw.gameObject.SetActive(!match.IsRoundOver);
             stop.gameObject.SetActive(!match.IsRoundOver);
-            draw.interactable = stop.interactable = tools.interactable = canAct;
+            stop.interactable = tools.interactable = canAct;
             next.gameObject.SetActive(match.IsRoundOver && !busy);
             titleButton.gameObject.SetActive(match.IsMatchOver && !busy);
-            nextLabel.text = match.IsMatchOver ? "もう一度対戦（Enter）" : "次のラウンド（Enter）";
+            nextLabel.text = match.IsMatchOver ? "もう一度対戦\n（Enter）" : "次のラウンド\n（Enter）";
             if (!canAct) CloseTools();
-            for (int i = 0; i < 4; i++)
-            {
-                FortuneTool tool = (FortuneTool)i;
-                // 現在の霊力・山札・使用回数から求めた、この道具を使えない理由。
-                ToolBlockReason reason = match.Player.Session.CheckTool(tool, match.Player.Spirit);
-                toolButtons[i].interactable = canAct && reason == ToolBlockReason.None;
-                // ボタンに表示する道具の短い効果説明。
-                string effect = i == 0 ? "次が凶か確認" : i == 1 ? "次の3枚を順不同で確認" : i == 2 ? "凶札を1枚除去（ラウンド1回）" : "一番上を一番下へ";
-                toolLabels[i].text = $"{ReadingHud.NameOf(tool)}　霊力 {match.Player.Session.CostOf(tool)}　{effect}" +
-                    (reason == ToolBlockReason.None ? "" : "\n" + Reason(reason));
-            }
+            ToolPanelView.Refresh(toolTiles, toolPanelSpirit, match.Player.Session, match.Player.Spirit, canAct);
         }
 
         /// <summary>対戦者1人分の状態を表示用文字列にする。鑑定中の基本売上と終了後の確定点を区別する。</summary>
@@ -219,6 +281,9 @@ namespace Hikigiwa.Battle
         /// <summary>二人の精算を表示する。最終ラウンドだけ累計を比較して勝敗・引き分けも表示する。</summary>
         public void ShowRoundResult(BattleMatch match)
         {
+            // 手番の帯が残っていれば、結果に重ならないようすぐ消す。
+            bannerSequence?.Kill();
+            turnBanner.gameObject.SetActive(false);
             resultPanel.SetActive(true);
             // 複数行の結果文を組み立てるバッファ。途中結果と最終勝敗を同じパネルにまとめる。
             var text = new StringBuilder($"ラウンド {match.Round} 終了\n\n");
@@ -243,20 +308,20 @@ namespace Hikigiwa.Battle
         private void Wire()
         {
             wired = true;
-            AddClick(draw, () => DrawClicked?.Invoke());
             AddClick(stop, () => StopClicked?.Invoke());
             AddClick(tools, ToggleTools);
             AddClick(next, () => NextClicked?.Invoke());
             AddClick(closeToolsButton, CloseTools);
             AddClick(titleButton, () => TitleClicked?.Invoke());
-            for (int i = 0; i < toolButtons.Length; i++)
+            for (int i = 0; i < toolTiles.Length; i++)
             {
-                // このボタンに対応する道具。ボタンのコールバックへ個別に保持する。
-                FortuneTool tool = (FortuneTool)i;
-                AddClick(toolButtons[i], () => ToolClicked?.Invoke(tool));
+                // このタイルに対応する道具。ボタンのコールバックへ個別に保持する。
+                FortuneTool tool = ToolPanelView.Tools[i];
+                AddClick(toolTiles[i].Button, () => ToolClicked?.Invoke(tool));
             }
             resultPanel.SetActive(false);
             titleButton.gameObject.SetActive(false);
+            turnBanner.gameObject.SetActive(false);
             CloseTools();
         }
 
@@ -281,19 +346,6 @@ namespace Hikigiwa.Battle
         public void ToggleTools() { if (IsToolPanelOpen) CloseTools(); else if (tools.interactable) toolPanel.SetActive(true); }
         /// <summary>道具パネルを閉じる。生成前でも安全に呼べる。</summary>
         public void CloseTools() { if (toolPanel != null) toolPanel.SetActive(false); }
-        /// <summary>道具を使えない理由の列挙値を短い日本語へ変換する。</summary>
-        private static string Reason(ToolBlockReason reason)
-        {
-            switch (reason)
-            {
-                case ToolBlockReason.NotEnoughSpirit: return "霊力不足";
-                case ToolBlockReason.LimitReached: return "使用済み";
-                case ToolBlockReason.NoBadCardLeft: return "凶札なし";
-                case ToolBlockReason.DeckTooSmall: return "山札不足";
-                default: return "今は使えません";
-            }
-        }
-
         /// <summary>親・基準点・位置・サイズを指定してUI用のRectTransformを生成する。</summary>
         /// <param name="anchor">親のどこを基準に配置するかを示す0〜1の座標。pivotにも同じ値を使う。</param>
         /// <param name="position">指定したアンカーからのUI上の相対位置。</param>
@@ -312,7 +364,7 @@ namespace Hikigiwa.Battle
         {
             RectTransform rect = Rect(parent, name, anchor, position, size);
             var image = rect.gameObject.AddComponent<Image>();
-            image.color = new Color32(18, 13, 29, 225);
+            image.color = HudStyle.PanelColor;
             image.raycastTarget = false;
             return rect;
         }
@@ -336,16 +388,17 @@ namespace Hikigiwa.Battle
         /// <summary>背景と中央ラベルを持つボタンを生成し、選択状態を解除してから指定の処理を呼ぶ。</summary>
         /// <param name="label">生成したボタンのラベル。文言を後から変えるための出力。</param>
         /// <param name="name">Hierarchyに表示する名前（英語）。</param>
+        /// <param name="color">ボタンの背景色。省略すると紙色。主な操作（次へ・占い道具）は金色にする。</param>
         private Button Button(Transform parent, string value, Vector2 anchor, Vector2 position, Vector2 size, out Text label,
-            string name = "Button")
+            string name = "Button", Color? color = null)
         {
             RectTransform rect = Rect(parent, name, anchor, position, size);
             var image = rect.gameObject.AddComponent<Image>();
-            image.color = Paper;
+            image.color = color ?? Paper;
             var button = rect.gameObject.AddComponent<Button>();
             button.targetGraphic = image;
             button.navigation = new Navigation { mode = Navigation.Mode.None };
-            label = Label(rect, value, 28, new Color32(25, 20, 34, 255), Vector2.zero, size);
+            label = Label(rect, value, HudStyle.ButtonFontSize(size), HudStyle.ButtonText, Vector2.zero, size);
             label.rectTransform.anchorMin = label.rectTransform.anchorMax = label.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             label.alignment = TextAnchor.MiddleCenter;
             return button;

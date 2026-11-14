@@ -36,6 +36,10 @@ namespace Hikigiwa.Battle
         private System.Random random;
         /// <summary>CPU待機・演出中の操作を禁止するフラグ。連打による二重進行を防ぐ。</summary>
         private bool busy;
+        /// <summary>最後に手番の帯を出した側。ラウンド開始時は null にして、必ず帯を出す。</summary>
+        private BattleSide? bannerSide;
+        /// <summary>直前に手番の帯を出したか。CPUは帯が消えるまで動かない。</summary>
+        private bool bannerShown;
         /// <summary>現在の対戦状態。得点や手番の正本はこのオブジェクトが持つ。</summary>
         public BattleMatch Match { get; private set; }
         /// <summary>外部から進行待ち・演出中かを確認するための読み取り専用の窓口。</summary>
@@ -49,7 +53,6 @@ namespace Hikigiwa.Battle
             cpu = new CpuBattleStrategy(new System.Random(random.Next()),
                 cpuStopProbabilityPercent / 100d, cpuBadRateThresholdPercent / 100d);
             hud.Build();
-            hud.DrawClicked += RequestDraw;
             hud.StopClicked += RequestStop;
             hud.NextClicked += RequestNext;
             hud.ToolClicked += RequestTool;
@@ -63,7 +66,6 @@ namespace Hikigiwa.Battle
         {
             if (hud != null)
             {
-                hud.DrawClicked -= RequestDraw;
                 hud.StopClicked -= RequestStop;
                 hud.NextClicked -= RequestNext;
                 hud.ToolClicked -= RequestTool;
@@ -106,10 +108,11 @@ namespace Hikigiwa.Battle
             dealer.ResetCards(Match.Deck.Remaining);
             hud.HideResult();
             hud.SetMemo("");
+            bannerSide = null;
             BeginTurn($"ラウンド {Match.Round} 開始。先手は{SideName(Match.FirstSide)}です。");
         }
 
-        /// <summary>ボタン・山札クリック・Spaceからのドロー要求を受け、操作可能なときだけ演出付きで実行する。</summary>
+        /// <summary>山札クリック・Spaceからのドロー要求を受け、操作可能なときだけ演出付きで実行する。</summary>
         public void RequestDraw()
         {
             if (!CanPlayerAct() || hud.IsToolPanelOpen) return;
@@ -168,7 +171,7 @@ namespace Hikigiwa.Battle
             hud.SetMemo(note);
             hud.Refresh(Match, false);
             if (Match.IsRoundOver) EndRound();
-            else hud.SetMessage("道具を使いました。引く／辞めるを選んでください。");
+            else hud.SetMessage("道具を使いました。引くか鑑定を終えるか選んでください。");
         }
 
         /// <summary>ラウンド終了を判定し、続行なら手番側に応じた入力受付またはCPU待機を開始する。</summary>
@@ -176,6 +179,7 @@ namespace Hikigiwa.Battle
         private void BeginTurn(string previous)
         {
             if (Match.IsRoundOver) { EndRound(); return; }
+            ShowTurnBannerIfChanged();
             if (Match.Turn == BattleSide.Cpu)
             {
                 busy = true;
@@ -186,14 +190,29 @@ namespace Hikigiwa.Battle
             else
             {
                 hud.Refresh(Match, false);
-                hud.SetMessage(previous + " あなたの手番です。");
+                hud.SetMessage(previous + " あなたの手番です（山札をクリックかSpaceで引く）。");
             }
+        }
+
+        /// <summary>
+        /// 手番が替わったとき（ラウンド開始時を含む）だけ、画面中央に手番の帯を出す。
+        /// 相手が先に終えて同じ側が続けて引くときは出さない。
+        /// </summary>
+        private void ShowTurnBannerIfChanged()
+        {
+            bannerShown = bannerSide != Match.Turn;
+            if (!bannerShown) return;
+            // ラウンドの最初の帯だけ、ラウンド番号も添える。
+            string round = bannerSide == null ? $"ラウンド {Match.Round}　" : "";
+            bannerSide = Match.Turn;
+            hud.ShowTurnBanner(round + (Match.Turn == BattleSide.Player ? "あなたの番" : "CPUの番"));
         }
 
         /// <summary>待ち時間の後にInspector設定を読み直し、CPUの判断を通常の行動処理へ渡す。</summary>
         private IEnumerator CpuTurn()
         {
-            yield return new WaitForSeconds(cpuThinkSeconds);
+            // 手番の帯を出したときは、帯が消えるまで待ってから動く。
+            yield return new WaitForSeconds(bannerShown ? Mathf.Max(cpuThinkSeconds, hud.TurnBannerSeconds) : cpuThinkSeconds);
             // 再生中にInspectorで変えた場合も、乱数の状態を保ったまま次の判断へ反映する。
             cpu.Configure(cpuStopProbabilityPercent / 100d, cpuBadRateThresholdPercent / 100d);
             yield return ResolveAction(BattleSide.Cpu, cpu.ShouldStop(Match.Cpu.Session));

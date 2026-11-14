@@ -10,7 +10,7 @@ namespace Hikigiwa.Game
 {
     /// <summary>
     /// 画面のUI。
-    /// 左上：夜・ノルマ・スコア・霊力／右上：山札／右：鑑定を終える／中央：結果／
+    /// 左上：夜・ノルマ・スコア・霊力／右上：山札／右下：鑑定を終える／中央：結果／
     /// 下：運気と凶の印／左下：占い道具のボタンと占いの結果
     /// メニュー「Hikigiwa/UIをシーンに配置」でシーンに置いておくと、それをそのまま使います（位置や見た目をエディタで変えられる）。
     /// 置かれていなければ、プレイ開始時にコードで組み立てます。
@@ -37,17 +37,15 @@ namespace Hikigiwa.Game
         /// <summary>占い道具のパネルが開いているか。</summary>
         public bool IsToolPanelOpen => toolPanel != null && toolPanel.activeSelf;
 
-        private static readonly Color Paper = new Color32(246, 229, 199, 255);
-        private static readonly Color Gold = new Color32(236, 196, 112, 255);
-        private static readonly Color Red = new Color32(236, 98, 98, 255);
-        private static readonly Color Green = new Color32(140, 214, 150, 255);
-        private static readonly Color Dim = new Color32(170, 160, 185, 255);
-        private static readonly Color PanelColor = new Color32(14, 10, 24, 215);
-        private static readonly Color TileColor = new Color32(36, 27, 54, 240);
-        private static readonly Color ButtonText = new Color32(25, 20, 34, 255);
+        // 色はCPU対戦と共通（HudStyle）
+        private static readonly Color Paper = HudStyle.Paper;
+        private static readonly Color Gold = HudStyle.Gold;
+        private static readonly Color Red = HudStyle.Red;
+        private static readonly Color Green = HudStyle.Green;
+        private static readonly Color Dim = HudStyle.Dim;
 
-        private static readonly FortuneTool[] Tools =
-            { FortuneTool.Crystal, FortuneTool.Tarot, FortuneTool.Incense, FortuneTool.Palm };
+        // 道具の並び順はCPU対戦と共通（ToolPanelView）
+        private static FortuneTool[] Tools => ToolPanelView.Tools;
 
         // シーンに置いたUIの各部品。「UIをシーンに配置」で自動で割り当てる。部品を消すと動かなくなるので、移動・変形・非表示にとどめる
         [Header("UIの部品（自動で割り当て）")]
@@ -78,57 +76,7 @@ namespace Hikigiwa.Game
         [SerializeField] private ToolTile[] toolTiles = new ToolTile[0];
         private bool wired;
 
-        [Serializable]
-        private sealed class ToolTile
-        {
-            public Button Button;
-            public Text ButtonLabel;
-            public Text Status;
-            public Text Cost;
-        }
-
-        private ToolTile TileOf(FortuneTool tool) => toolTiles[Array.IndexOf(Tools, tool)];
-
-        private static T Named<T>(T component, string name) where T : Component
-        {
-            component.gameObject.name = name;
-            return component;
-        }
-
-        public static string NameOf(FortuneTool tool)
-        {
-            switch (tool)
-            {
-                case FortuneTool.Crystal: return "水晶";
-                case FortuneTool.Tarot: return "タロット";
-                case FortuneTool.Incense: return "お香";
-                default: return "手相";
-            }
-        }
-
-        private static string DescriptionOf(FortuneTool tool)
-        {
-            switch (tool)
-            {
-                case FortuneTool.Crystal: return "次のカードが凶かどうかが分かる";
-                case FortuneTool.Tarot: return "次の3枚の数字が分かる\n（順番は分からない）";
-                case FortuneTool.Incense: return "山札から凶札を1枚取り除く\n（1人に1回まで）";
-                default: return "一番上のカードを一番下へ回す\n（中身は見えない）";
-            }
-        }
-
-        private static string ReasonOf(ToolBlockReason reason)
-        {
-            switch (reason)
-            {
-                case ToolBlockReason.NotEnoughSpirit: return "霊力が足りない";
-                case ToolBlockReason.DeckTooSmall: return "山札が足りない";
-                case ToolBlockReason.NoBadCardLeft: return "凶札が残っていない";
-                case ToolBlockReason.LimitReached: return "この客にはもう使えない";
-                case ToolBlockReason.NotReading: return "今は使えない";
-                default: return "";
-            }
-        }
+        private static T Named<T>(T component, string name) where T : Component => HudFactory.Named(component, name);
 
         /// <summary>プレイ開始時に呼びます。シーンにUIが無ければ作り、ボタンの処理をつなぎます。</summary>
         public void Build()
@@ -181,17 +129,20 @@ namespace Hikigiwa.Game
             marksText = Named(Label(bottom, "凶の印　○○", 32, Red, new Vector2(0, -122), new Vector2(860, 40),
                 TextAnchor.MiddleCenter), "MarksLabel");
 
-            // 右：鑑定を終える／次へ
-            stopButton = Named(MakeButton(root, "鑑定を終える\n（Enter）", Paper, new Vector2(1, 0.5f), new Vector2(-40, 0),
-                new Vector2(340, 130), out _), "StopButton");
-            nextButton = Named(MakeButton(root, "次の客へ\n（Enter）", Gold, new Vector2(1, 0.5f), new Vector2(-40, 0),
-                new Vector2(340, 130), out nextLabel), "NextButton");
+            // 右下：鑑定を終える／次へ
+            // 位置と大きさはCPU対戦と共通（HudStyle）
+            stopButton = Named(MakeButton(root, "鑑定を終える\n（Enter）", Paper, HudStyle.MainButtonAnchor,
+                HudStyle.MainButtonPosition, HudStyle.MainButtonSize, out _), "StopButton");
+            nextButton = Named(MakeButton(root, "次の客へ\n（Enter）", Gold, HudStyle.MainButtonAnchor,
+                HudStyle.MainButtonPosition, HudStyle.MainButtonSize, out nextLabel), "NextButton");
             nextButton.gameObject.SetActive(false);
 
             // 左下：占い道具と占いの結果
-            toolsButton = Named(MakeButton(root, "占い道具（T）", Gold, new Vector2(0, 0), new Vector2(32, 32),
-                new Vector2(320, 96), out _), "ToolsButton");
-            RectTransform memo = Panel(root, "MemoPanel", new Vector2(0, 0), new Vector2(32, 148), new Vector2(500, 230));
+            toolsButton = Named(MakeButton(root, "占い道具（T）", Gold, HudStyle.ToolsButtonAnchor, HudStyle.ToolsButtonPosition,
+                HudStyle.ToolsButtonSize, out _), "ToolsButton");
+            // 占い道具ボタンのすぐ上（20pxあける）
+            float memoY = HudStyle.ToolsButtonPosition.y + HudStyle.ToolsButtonSize.y + 20;
+            RectTransform memo = Panel(root, "MemoPanel", new Vector2(0, 0), new Vector2(32, memoY), new Vector2(500, 230));
             memoPanel = memo.gameObject;
             Named(Label(memo, "占いの結果", 24, Dim, new Vector2(20, -12), new Vector2(460, 34)), "Header");
             memoText = Named(Label(memo, "", 26, Paper, new Vector2(20, -52), new Vector2(460, 170)), "BodyLabel");
@@ -201,6 +152,7 @@ namespace Hikigiwa.Game
 
             // 中央：結果
             RectTransform result = Panel(root, "ResultPanel", new Vector2(0.5f, 0.5f), new Vector2(0, 70), new Vector2(660, 460));
+            result.GetComponent<Image>().color = HudStyle.ResultPanelColor;
             resultPanel = result.gameObject;
             resultTitle = Named(Label(result, "鑑定成功", 50, Gold, new Vector2(32, -24), new Vector2(600, 66)), "Header");
             resultBody = Named(Label(result, "", 30, Paper, new Vector2(32, -104), new Vector2(600, 340)), "BodyLabel");
@@ -213,55 +165,10 @@ namespace Hikigiwa.Game
             toolsButton.transform.SetAsLastSibling();
         }
 
+        /// <summary>占い道具パネルを作ります。見た目はCPU対戦と共通（ToolPanelView）。</summary>
         private void BuildToolPanel(Transform root)
         {
-            // 背景を薄く暗くし、後ろの山札をクリックできないようにする
-            var blocker = new GameObject("ToolOverlay", typeof(RectTransform)).GetComponent<RectTransform>();
-            blocker.SetParent(root, false);
-            blocker.anchorMin = Vector2.zero;
-            blocker.anchorMax = Vector2.one;
-            blocker.offsetMin = blocker.offsetMax = Vector2.zero;
-            var dim = blocker.gameObject.AddComponent<Image>();
-            dim.color = new Color(0, 0, 0, 0.35f);
-            toolPanel = blocker.gameObject;
-
-            RectTransform panel = Panel(blocker, "Panel", new Vector2(0.5f, 0.5f), new Vector2(0, 40),
-                new Vector2(1280, 560));
-            Named(Label(panel, "占い道具", 44, Gold, new Vector2(36, -24), new Vector2(600, 60)), "Header");
-            toolPanelSpirit = Named(Label(panel, "霊力　3", 34, Gold, new Vector2(-260, -30), new Vector2(400, 50),
-                TextAnchor.UpperRight), "SpiritLabel");
-            closeToolButton = Named(MakeButton(panel, "閉じる（Esc）", Paper, new Vector2(1, 1), new Vector2(-28, -24),
-                new Vector2(220, 64), out _), "CloseButton");
-
-            toolTiles = new ToolTile[Tools.Length];
-
-            for (int i = 0; i < Tools.Length; i++)
-            {
-                FortuneTool tool = Tools[i];
-                var tileRect = new GameObject(tool + "Tile", typeof(RectTransform)).GetComponent<RectTransform>();
-                tileRect.SetParent(panel, false);
-                tileRect.anchorMin = tileRect.anchorMax = tileRect.pivot = new Vector2(0, 1);
-                tileRect.anchoredPosition = new Vector2(36 + i * 306, -112);
-                tileRect.sizeDelta = new Vector2(288, 410);
-                tileRect.gameObject.AddComponent<Image>().color = TileColor;
-
-                Named(Label(tileRect, NameOf(tool), 42, Paper, new Vector2(0, -20), new Vector2(288, 56),
-                    TextAnchor.MiddleCenter), "NameLabel");
-                Text description = Named(Label(tileRect, DescriptionOf(tool), 24, Dim, new Vector2(0, -142),
-                    new Vector2(260, 120), TextAnchor.UpperCenter), "DescriptionLabel");
-                description.horizontalOverflow = HorizontalWrapMode.Wrap;
-
-                var tile = new ToolTile();
-                tile.Cost = Named(Label(tileRect, "霊力 1", 30, Gold, new Vector2(0, -84), new Vector2(288, 44),
-                    TextAnchor.MiddleCenter), "CostLabel");
-                tile.Status = Named(Label(tileRect, "", 22, Red, new Vector2(0, -268), new Vector2(260, 34),
-                    TextAnchor.MiddleCenter), "StatusLabel");
-                tile.Button = Named(MakeButton(tileRect, "使う", Gold, new Vector2(0.5f, 0), new Vector2(0, 20),
-                    new Vector2(240, 80), out tile.ButtonLabel), "UseButton");
-                toolTiles[i] = tile;
-            }
-
-            toolPanel.SetActive(false);
+            toolPanel = ToolPanelView.Build(root, font, out toolPanelSpirit, out closeToolButton, out toolTiles);
         }
 
         /// <summary>
@@ -272,9 +179,9 @@ namespace Hikigiwa.Game
             bool created = false;
             if (titleButton == null)
             {
-                // ゲームを最後まで遊んだあとに「次へ（もう一度遊ぶ）」の下に出す
-                titleButton = Named(MakeButton(canvasRoot.transform, "タイトルに戻る\n（Esc）", Paper, new Vector2(1, 0.5f),
-                    new Vector2(-40, -150), new Vector2(340, 110), out _), "TitleButton");
+                // ゲームを最後まで遊んだあとに「次へ（もう一度遊ぶ）」の上に出す
+                titleButton = Named(MakeButton(canvasRoot.transform, "タイトルに戻る\n（Esc）", Paper, HudStyle.MainButtonAnchor,
+                    HudStyle.TitleButtonPosition, HudStyle.TitleButtonSize, out _), "TitleButton");
                 // 道具パネルの暗幕より後ろ（手前に描かれない位置）に置く
                 titleButton.transform.SetSiblingIndex(toolPanel.transform.GetSiblingIndex());
                 titleButton.gameObject.SetActive(false);
@@ -353,19 +260,8 @@ namespace Hikigiwa.Game
         }
 
         /// <summary>道具の一覧の、コスト・使えるかどうかを更新します。</summary>
-        public void SetTools(ReadingSession session, int spirit)
-        {
-            toolPanelSpirit.text = $"霊力　{spirit}";
-            foreach (FortuneTool tool in Tools)
-            {
-                ToolTile tile = TileOf(tool);
-                tile.Cost.text = $"霊力 {session.CostOf(tool)}";
-                ToolBlockReason reason = session.CheckTool(tool, spirit);
-                tile.Button.interactable = reason == ToolBlockReason.None;
-                tile.ButtonLabel.text = reason == ToolBlockReason.None ? "使う" : "使えない";
-                tile.Status.text = ReasonOf(reason);
-            }
-        }
+        public void SetTools(ReadingSession session, int spirit) =>
+            ToolPanelView.Refresh(toolTiles, toolPanelSpirit, session, spirit, true);
 
         public void SetMessage(string message) => messageText.text = message;
 
@@ -457,74 +353,16 @@ namespace Hikigiwa.Game
             resultBody.text = body.ToString();
         }
 
-        private RectTransform Panel(Transform parent, string name, Vector2 anchor, Vector2 position, Vector2 size)
-        {
-            var rect = new GameObject(name, typeof(RectTransform)).GetComponent<RectTransform>();
-            rect.SetParent(parent, false);
-            rect.anchorMin = rect.anchorMax = rect.pivot = anchor;
-            rect.anchoredPosition = position;
-            rect.sizeDelta = size;
-            var image = rect.gameObject.AddComponent<Image>();
-            image.color = PanelColor;
-            image.raycastTarget = false;
-            return rect;
-        }
+        // 部品の作り方はCPU対戦と共通（HudFactory）
+        private RectTransform Panel(Transform parent, string name, Vector2 anchor, Vector2 position, Vector2 size) =>
+            HudFactory.Panel(parent, name, anchor, position, size);
 
-        /// <summary>
-        /// 親の上端を基準に置くラベル。左寄せは左上、右寄せは右上、中央寄せは上中央が基準。
-        /// </summary>
         private Text Label(Transform parent, string value, int size, Color color, Vector2 position, Vector2 box,
-            TextAnchor alignment = TextAnchor.UpperLeft)
-        {
-            var rect = new GameObject("Label", typeof(RectTransform)).GetComponent<RectTransform>();
-            rect.SetParent(parent, false);
-            Vector2 corner;
-            switch (alignment)
-            {
-                case TextAnchor.UpperRight:
-                case TextAnchor.MiddleRight:
-                    corner = new Vector2(1, 1);
-                    break;
-                case TextAnchor.UpperCenter:
-                case TextAnchor.MiddleCenter:
-                    corner = new Vector2(0.5f, 1);
-                    break;
-                default:
-                    corner = new Vector2(0, 1);
-                    break;
-            }
-            rect.anchorMin = rect.anchorMax = rect.pivot = corner;
-            rect.anchoredPosition = position;
-            rect.sizeDelta = box;
-            var text = rect.gameObject.AddComponent<Text>();
-            text.font = font;
-            text.fontSize = size;
-            text.text = value;
-            text.color = color;
-            text.alignment = alignment;
-            text.horizontalOverflow = HorizontalWrapMode.Overflow;
-            text.verticalOverflow = VerticalWrapMode.Overflow;
-            text.raycastTarget = false;
-            return text;
-        }
+            TextAnchor alignment = TextAnchor.UpperLeft) =>
+            HudFactory.Label(font, parent, value, size, color, position, box, alignment);
 
         private Button MakeButton(Transform parent, string caption, Color color, Vector2 anchor, Vector2 position,
-            Vector2 size, out Text label)
-        {
-            var rect = new GameObject(caption, typeof(RectTransform)).GetComponent<RectTransform>();
-            rect.SetParent(parent, false);
-            rect.anchorMin = rect.anchorMax = rect.pivot = anchor;
-            rect.anchoredPosition = position;
-            rect.sizeDelta = size;
-            var image = rect.gameObject.AddComponent<Image>();
-            image.color = color;
-            var button = rect.gameObject.AddComponent<Button>();
-            button.targetGraphic = image;
-            button.navigation = new Navigation { mode = Navigation.Mode.None };
-
-            label = Label(rect, caption, size.y >= 120 ? 34 : 30, ButtonText, Vector2.zero, size, TextAnchor.MiddleCenter);
-            label.rectTransform.anchorMin = label.rectTransform.anchorMax = label.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            return button;
-        }
+            Vector2 size, out Text label) =>
+            HudFactory.MakeButton(font, parent, caption, color, anchor, position, size, out label);
     }
 }
