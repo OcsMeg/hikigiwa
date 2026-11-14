@@ -17,6 +17,7 @@
 
 ## 夜と占い道具
 - `PlayRecord`：夜・ノルマ・スコア・霊力。1夜＝客3人×3夜。ノルマ未達でも最後の夜まで続き（`RunRules.QuotaFailEndsGame` で切り替え）、最後に夜ごとのスコアと合計を表示
+- ソロでは第1・2夜終了時、その夜のスコアがノルマ以上なら霊力+2。結果画面に `Quota Bonus: Spirit Power +2`（設定した加算量）を表示します。最終夜はボーナスの加算・表示を行いません。加算量は `Game.unity` の `ReadingGameController` の `Spirit On Quota Clear` で調整できます（0以上）。
 - 占い道具は `ReadingSession.TryUseTool` で使う（霊力は `PlayRecord` から払う）
   - 水晶（1）：次が凶か分かる／タロット（2）：次の3枚の数字（順不同）
   - お香（2）：凶札を1枚除く（1人1回）／手相（1）：一番上を一番下へ

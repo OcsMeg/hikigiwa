@@ -31,6 +31,8 @@ namespace Hikigiwa.Game
         [SerializeField] private int seed;
         [Tooltip("「タイトルに戻る」で移るシーン")]
         [SerializeField] private string titleSceneName = "Title";
+        [Tooltip("1夜のノルマ達成時に加算する霊力")]
+        [SerializeField, Min(0)] private int spiritOnQuotaClear = 2;
 
         private readonly ReadingRules rules = new ReadingRules();
         private readonly RunRules runRules = new RunRules();
@@ -283,7 +285,9 @@ namespace Hikigiwa.Game
         private void ShowNightResult()
         {
             phase = Phase.NightResult;
+            runRules.SpiritOnQuotaClear = Mathf.Max(0, spiritOnQuotaClear);
             NightSummary summary = record.EndNight();
+            RefreshHud();
             hud.ShowNightSummary(summary, record);
             hud.SetNextLabel(record.IsFinished ? "Play Again" : "Next Night");
             hud.SetTitleButtonVisible(record.IsFinished);

@@ -10,6 +10,7 @@ namespace Hikigiwa.CardSystem
         public int Score { get; internal set; }
         public int Quota { get; internal set; }
         public bool Passed => Score >= Quota;
+        public int SpiritGained { get; internal set; }
         public bool IsLastNight { get; internal set; }
     }
 
@@ -72,6 +73,10 @@ namespace Hikigiwa.CardSystem
         /// <summary>今夜を締めてノルマを判定します。</summary>
         public NightSummary EndNight()
         {
+            // 同じ夜を再度締めても、報酬や履歴を重複して加算しない。
+            if (nightHistory.Count > 0 && nightHistory[nightHistory.Count - 1].Night == Night)
+                return nightHistory[nightHistory.Count - 1];
+
             var summary = new NightSummary
             {
                 Night = Night,
@@ -80,6 +85,11 @@ namespace Hikigiwa.CardSystem
                 IsLastNight = Night >= rules.Nights,
             };
 
+            if (summary.Passed && !summary.IsLastNight)
+            {
+                summary.SpiritGained = Math.Max(0, rules.SpiritOnQuotaClear);
+                Spirit += summary.SpiritGained;
+            }
             nightHistory.Add(summary);
             if (!summary.Passed && rules.QuotaFailEndsGame) IsGameOver = true;
             else if (summary.IsLastNight) IsCleared = true;

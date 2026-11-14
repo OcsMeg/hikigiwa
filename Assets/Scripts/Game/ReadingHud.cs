@@ -333,6 +333,7 @@ namespace Hikigiwa.Game
 
             body.AppendLine($"Tonight's Score  {summary.Score}");
             body.AppendLine($"Quota  {summary.Quota}");
+            if (summary.Passed) body.AppendLine($"Quota Bonus: Spirit Power +{summary.SpiritGained}");
             body.AppendLine();
 
             if (record.IsGameOver)
