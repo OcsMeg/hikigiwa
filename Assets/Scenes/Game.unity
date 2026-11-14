@@ -4036,7 +4036,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "Unlucky 3 \xB7 Lucky 2"
+  m_Text: "Lucky: 1  Unlucky: 4 + Joker"
 --- !u!1 &1340039084
 GameObject:
   m_ObjectHideFlags: 0

@@ -117,7 +117,7 @@ namespace Hikigiwa.Game
             RectTransform deck = Panel(root, "DeckPanel", new Vector2(1, 1), new Vector2(-32, -32), new Vector2(460, 120));
             deckText = Named(Label(deck, "Deck: 19 left", 36, Paper, new Vector2(-24, -14), new Vector2(420, 52),
                 TextAnchor.UpperRight), "RemainingLabel");
-            deckDetailText = Named(Label(deck, "Unlucky 3 · Lucky 2", 26, Dim, new Vector2(-24, -68), new Vector2(420, 40),
+            deckDetailText = Named(Label(deck, "Lucky: 1  Unlucky: 4 + Joker", 26, Dim, new Vector2(-24, -68), new Vector2(420, 40),
                 TextAnchor.UpperRight), "BreakdownLabel");
 
             // 下：運気と凶の印
@@ -249,8 +249,9 @@ namespace Hikigiwa.Game
         public void SetSession(ReadingSession session)
         {
             deckText.text = $"Deck: {session.Deck.Remaining} left";
+            // この客の吉数・凶数（残り枚数ではなく数字そのもの）。山札の残り枚数は上の行に出す
             deckDetailText.text =
-                $"Unlucky {session.CountRemaining(CardOmen.Bad)} · Lucky {session.CountRemaining(CardOmen.Lucky)}";
+                $"Lucky: {session.Customer.LuckyNumber}  Unlucky: {string.Join(" · ", session.Customer.BadNumbers)} + Joker";
             luckText.text = $"Luck {session.Luck}  ×  Multiplier {session.Multiplier}  =  {session.CurrentSales}";
 
             // ●○はYeseva Oneに無いので、数で表す
