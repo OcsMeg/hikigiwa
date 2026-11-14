@@ -33,12 +33,12 @@ namespace Hikigiwa.EditorTools
 
         // 文中の色（ゲーム中のHUDと同じ）
         private const string LuckyHex = "#ECC470";
-        private const string IllHex = "#EC6262";
+        private const string UnluckyHex = "#EC6262";
 
         // カードの数字の色（ゲーム中のカードと同じ。CardAppearance を参照）
         private static readonly Color InkColor = new Color32(30, 26, 38, 255);
         private static readonly Color LuckyInk = new Color32(196, 140, 24, 255);
-        private static readonly Color IllInk = new Color32(184, 38, 46, 255);
+        private static readonly Color UnluckyInk = new Color32(184, 38, 46, 255);
 
         private const float PanelWidth = 1400f;
         private const float PanelHeight = 940f;
@@ -49,7 +49,7 @@ namespace Hikigiwa.EditorTools
         {
             Neutral,
             Lucky,
-            Ill,
+            Unlucky,
         }
 
         private static TMP_FontAsset font;
@@ -114,25 +114,25 @@ namespace Hikigiwa.EditorTools
 
             SetReference(titleView, "rulesButton", rulesButton);
             SetReference(canvas, "rules", rules);
+
+            // Rules ボタンを含めて、タイトルのボタンを決まった順番・間隔に並べ直す
+            TitleMenuLayout.Arrange(titleView);
             return true;
         }
 
         // ───────────── タイトルのボタン ─────────────
 
-        /// <summary>Option ボタンを複製し、Start と Option の間隔と同じだけ下に置きます。</summary>
+        /// <summary>Option ボタンを複製して Rules ボタンを作ります。位置は TitleMenuLayout が決めます。</summary>
         private static Button CreateRulesButton(TitleView titleView)
         {
             Transform parent = titleView.OptionButton.transform.parent;
             DestroyChild(parent, "RulesButton");
 
             var option = (RectTransform)titleView.OptionButton.transform;
-            var start = titleView.StartButton != null ? (RectTransform)titleView.StartButton.transform : null;
-            float step = start != null ? start.anchoredPosition.y - option.anchoredPosition.y : 140f;
-
             var rect = (RectTransform)Object.Instantiate(option.gameObject, parent).transform;
             rect.name = "RulesButton";
             rect.SetSiblingIndex(option.GetSiblingIndex() + 1);
-            rect.anchoredPosition = option.anchoredPosition - new Vector2(0f, step);
+            rect.anchoredPosition = option.anchoredPosition - new Vector2(0f, TitleMenuLayout.Step);
 
             var label = rect.GetComponentInChildren<TMP_Text>(true);
             if (label != null) label.text = "Rules";
@@ -270,10 +270,19 @@ namespace Hikigiwa.EditorTools
         // ───────────── 説明の中身 ─────────────
 
         private static string Lucky(string text) => $"<color={LuckyHex}>{text}</color>";
-        private static string Ill(string text) => $"<color={IllHex}>{text}</color>";
+        private static string Unlucky(string text) => $"<color={UnluckyHex}>{text}</color>";
 
         private static void BuildContent(RectTransform content)
         {
+            BuildSolo(content);
+            BuildVersusCpu(content);
+        }
+
+        /// <summary>1人用（タイトルの Solo）のルール。</summary>
+        private static void BuildSolo(RectTransform content)
+        {
+            PartTitle(content, "Solo", "Read the fortunes of nine customers over three nights.", first: true);
+
             // 1. 目的
             Heading(content, "Your Goal", first: true);
             Body(content,
@@ -281,8 +290,8 @@ namespace Hikigiwa.EditorTools
                 "nine readings in all.\n" +
                 "In each reading you draw cards to build up the customer's fortune. Draw too greedily and the reading " +
                 "falls apart. Knowing when to stop is everything.\n" +
-                "Your final score is the total of all nine readings. Each night also shows a target score, " +
-                "but missing it does not end the game.");
+                "Your final score is the total of all nine readings. Each night also has a target score: missing it " +
+                "does not end the game, but reaching it earns you 2 Spirit.");
 
             // 2. 山札
             Heading(content, "The Deck");
@@ -291,37 +300,38 @@ namespace Hikigiwa.EditorTools
                 "plus one Joker. Cards you draw are not put back.");
             var deckRow = Row(content, "DeckCards", 10f);
             for (int number = 1; number <= 9; number++) Card(deckRow, number, Omen.Neutral, 84f, null);
-            Card(deckRow, 0, Omen.Ill, 84f, null);
+            Card(deckRow, 0, Omen.Unlucky, 84f, null);
 
-            // 3. 吉と凶
-            Heading(content, "Lucky and Ill Cards");
+            // 3. 吉数と凶数
+            Heading(content, "Lucky and Unlucky Cards");
             Body(content,
-                $"Each customer has a secret {Lucky("Lucky Number")} and a secret {Ill("Ill Number")}. " +
+                $"Each customer has a secret {Lucky("Lucky Number")} and a secret {Unlucky("Unlucky Number")}. " +
                 "You will not know them until you draw them.\n" +
                 $"- {Lucky("Lucky Number")}: 2 cards in the deck.\n" +
-                $"- {Ill("Ill Number")}: 2 cards in the deck. The Joker is always ill too, so there are 3 ill cards in all.\n" +
-                "The screen shows how many lucky and ill cards are still left in the deck.");
-            Caption(content, "For example, a customer whose Lucky Number is 7 and Ill Number is 4:");
-            var omenRow = Row(content, "OmenCards", 16f);
-            Card(omenRow, 7, Omen.Lucky, 110f, Lucky("Lucky"));
-            Card(omenRow, 7, Omen.Lucky, 110f, Lucky("Lucky"));
-            Spacer(omenRow, 40f);
-            Card(omenRow, 4, Omen.Ill, 110f, Ill("Ill"));
-            Card(omenRow, 4, Omen.Ill, 110f, Ill("Ill"));
-            Card(omenRow, 0, Omen.Ill, 110f, Ill("Always ill"));
+                $"- {Unlucky("Unlucky Number")}: 2 cards in the deck. The Joker is always unlucky too, " +
+                "so there are 3 unlucky cards in all.\n" +
+                "The screen shows how many lucky and unlucky cards are still left in the deck.");
+            Caption(content, "For example, a customer whose Lucky Number is 7 and Unlucky Number is 4:");
+            var luckRow = Row(content, "LuckyUnluckyCards", 16f);
+            Card(luckRow, 7, Omen.Lucky, 110f, Lucky("Lucky"));
+            Card(luckRow, 7, Omen.Lucky, 110f, Lucky("Lucky"));
+            Spacer(luckRow, 40f);
+            Card(luckRow, 4, Omen.Unlucky, 110f, Unlucky("Unlucky"));
+            Card(luckRow, 4, Omen.Unlucky, 110f, Unlucky("Unlucky"));
+            Card(luckRow, 0, Omen.Unlucky, 110f, Unlucky("Unlucky"));
 
             // 4. 引く
             Heading(content, "Drawing Cards");
             Body(content,
                 "Each card you draw adds its number to the customer's <b>Luck</b>.\n" +
                 $"- {Lucky("Lucky card")}: your <b>Multiplier</b> goes up by 1. It starts at 1.\n" +
-                $"- {Ill("Ill card")}: you receive an <b>Ill Omen</b> mark. Its number still adds to Luck " +
+                $"- {Unlucky("Unlucky card")}: you receive an <b>Unlucky mark</b>. Its number still adds to Luck " +
                 "(the Joker adds 0).\n" +
-                $"Collect 2 Ill Omen marks and the reading breaks: {Ill("this customer gives you 0 points")}.");
+                $"Collect 2 Unlucky marks and the reading breaks: {Unlucky("this customer gives you 0 points")}.");
             var breakRow = Row(content, "BreakCards", 16f);
-            Card(breakRow, 4, Omen.Ill, 110f, Ill("Mark 1"));
-            Card(breakRow, 0, Omen.Ill, 110f, Ill("Mark 2"));
-            Word(breakRow, Ill("Broken!\n0 points"), 220f, 110f);
+            Card(breakRow, 4, Omen.Unlucky, 110f, Unlucky("Mark 1"));
+            Card(breakRow, 0, Omen.Unlucky, 110f, Unlucky("Mark 2"));
+            Word(breakRow, Unlucky("Broken!\n0 points"), 220f, 110f);
 
             // 5. 引き際
             Heading(content, "Knowing When to Stop");
@@ -329,8 +339,8 @@ namespace Hikigiwa.EditorTools
                 "You may stop at any time. This customer's score is:");
             Formula(content, "Luck  x  Multiplier");
             Body(content,
-                "When you stop, the next card in the deck is turned over. If it is an ill card, you stopped just in " +
-                "time: the <b>Foresight Bonus</b> multiplies your score by 1.5.\n" +
+                "When you stop, the next card in the deck is turned over. If it is an unlucky card, you stopped just " +
+                "in time: the <b>Foresight Bonus</b> multiplies your score by 1.5.\n" +
                 "If the deck runs out, you have to stop.");
             Caption(content, "Example (Lucky Number 7):");
             var stopRow = Row(content, "StopExample", 16f);
@@ -338,7 +348,7 @@ namespace Hikigiwa.EditorTools
             Card(stopRow, 7, Omen.Lucky, 110f, Lucky("+7, x2"));
             Card(stopRow, 3, Omen.Neutral, 110f, "+3");
             Word(stopRow, $"<color=#{ColorUtility.ToHtmlStringRGB(Gold)}>Stop</color>", 160f, 110f);
-            Card(stopRow, 0, Omen.Ill, 110f, "Next card");
+            Card(stopRow, 0, Omen.Unlucky, 110f, "Next card");
             Body(content,
                 "Luck 5 + 7 + 3 = 15 and Multiplier 2, so 15 x 2 = 30 points.\n" +
                 "The next card is the Joker, so the Foresight Bonus makes it 30 x 1.5 = 45 points.");
@@ -346,13 +356,13 @@ namespace Hikigiwa.EditorTools
             // 6. 霊力と占い道具
             Heading(content, "Spirit and Fortune Tools");
             Body(content,
-                "Fortune tools let you peek at or change the deck, but each one costs <b>Spirit</b>. " +
-                "You start with 3 Spirit and gain 1 after every reading that does not break. " +
-                "Spirit carries over between customers and nights.\n" +
+                "Fortune tools let you peek at or change the deck, but each one costs <b>Spirit</b>.\n" +
+                "You start with 3 Spirit. You gain 1 after every reading that does not break, and 2 when you reach " +
+                "a night's target score. Spirit carries over between customers and nights.\n" +
                 "Using a tool does not draw a card, so you can use several before you decide.");
-            Tool(content, "Crystal Ball", 1, "Tells you whether the next card is ill.");
+            Tool(content, "Crystal Ball", 1, "Tells you whether the next card is unlucky.");
             Tool(content, "Tarot", 2, "Shows the numbers of the next 3 cards, but not their order.");
-            Tool(content, "Incense", 2, "Removes one ill card from the deck. Once per customer.");
+            Tool(content, "Incense", 2, "Removes one unlucky card from the deck. Once per customer.");
             Tool(content, "Palm Reading", 1, "Moves the top card to the bottom of the deck without showing it.");
 
             // 7. 操作
@@ -365,7 +375,84 @@ namespace Hikigiwa.EditorTools
                 "You can also use the buttons on the screen.");
         }
 
+        /// <summary>CPU対戦（タイトルの CPU）のルール。1人用と違うところだけを説明します。</summary>
+        private static void BuildVersusCpu(RectTransform content)
+        {
+            PartTitle(content, "VS CPU",
+                "Cards, Luck, Multiplier and fortune tools work just like Solo. Here is what changes.");
+
+            // 1. 手番
+            Heading(content, "Taking Turns", first: true);
+            Body(content,
+                "A match has 3 rounds. In each round, you and the CPU take turns drawing from one shared deck, " +
+                "which is freshly shuffled every round. Who goes first is decided at random each round.\n" +
+                "On your turn, either draw a card or stop. Using fortune tools does not end your turn.\n" +
+                "Once one of you stops or breaks, the other keeps drawing alone until they stop too.");
+
+            // 2. 共通の数字
+            Heading(content, "Shared Numbers");
+            Body(content,
+                $"You and the CPU share the same secret numbers: one {Lucky("Lucky Number")} and " +
+                $"<b>two</b> {Unlucky("Unlucky Numbers")}. With the Joker, that makes 5 unlucky cards in the deck.\n" +
+                "Luck, Multiplier and Unlucky marks are kept separately for each of you.");
+            Caption(content, "For example, Lucky Number 7 and Unlucky Numbers 4 and 8:");
+            var sharedRow = Row(content, "SharedNumberCards", 14f);
+            Card(sharedRow, 7, Omen.Lucky, 100f, Lucky("Lucky"));
+            Card(sharedRow, 7, Omen.Lucky, 100f, Lucky("Lucky"));
+            Spacer(sharedRow, 30f);
+            Card(sharedRow, 4, Omen.Unlucky, 100f, Unlucky("Unlucky"));
+            Card(sharedRow, 4, Omen.Unlucky, 100f, Unlucky("Unlucky"));
+            Card(sharedRow, 8, Omen.Unlucky, 100f, Unlucky("Unlucky"));
+            Card(sharedRow, 8, Omen.Unlucky, 100f, Unlucky("Unlucky"));
+            Card(sharedRow, 0, Omen.Unlucky, 100f, Unlucky("Unlucky"));
+
+            // 3. 予感
+            Heading(content, "Who Gets the Foresight Bonus");
+            Body(content,
+                "Only the one who stops <b>last</b> can get the Foresight Bonus. If you stop first, your score is " +
+                "fixed right away and no card is turned over.\n" +
+                "Wait until the CPU has stopped or broken, then stop: the next card is turned over, and if it is " +
+                "unlucky, your score is multiplied by 1.5.\n" +
+                "If the deck runs out, anyone still reading is scored without the bonus.");
+
+            // 4. 霊力と勝敗
+            Heading(content, "Spirit and Winning");
+            Body(content,
+                "You and the CPU each start with 3 Spirit and gain 1 after every round that does not break. " +
+                "Spirit carries over between rounds. The CPU never uses fortune tools.\n" +
+                "There are no target scores. After 3 rounds, the higher total score wins. Equal scores are a draw.");
+
+            // 5. 操作
+            Heading(content, "Controls");
+            Body(content,
+                "The same as Solo. Press Enter to go to the next round.");
+        }
+
         // ───────────── 部品 ─────────────
+
+        /// <summary>
+        /// 部の見出し（Solo / VS CPU）。章の見出しより大きく中央に出し、その下に一言の説明を添えます。
+        /// 最初の部以外は、上に余白と太めの金色の線を入れて、前の部と区切ります。
+        /// </summary>
+        private static void PartTitle(RectTransform parent, string title, string subtitle, bool first = false)
+        {
+            if (!first)
+            {
+                var divider = NewRect("PartDivider", parent);
+                AddLayout(divider, preferredHeight: 90f);
+                var line = NewRect("Line", divider);
+                line.anchorMin = new Vector2(0.1f, 0.5f);
+                line.anchorMax = new Vector2(0.9f, 0.5f);
+                line.sizeDelta = new Vector2(0f, 3f);
+                var image = line.gameObject.AddComponent<Image>();
+                image.color = new Color(Gold.r, Gold.g, Gold.b, 0.6f);
+                image.raycastTarget = false;
+            }
+
+            var label = MakeText(parent, $"Part ({title})", title, 60f, Gold, TextAlignmentOptions.Center);
+            label.fontStyle = FontStyles.Bold;
+            MakeText(parent, "PartSubtitle", subtitle, 28f, CreamDim, TextAlignmentOptions.Center);
+        }
 
         /// <summary>章の見出し。最初の章以外は、上に金色の細い線を引きます。</summary>
         private static void Heading(RectTransform parent, string text, bool first = false)
@@ -495,7 +582,7 @@ namespace Hikigiwa.EditorTools
 
             if (number != 0)
             {
-                Color ink = omen == Omen.Lucky ? LuckyInk : omen == Omen.Ill ? IllInk : InkColor;
+                Color ink = omen == Omen.Lucky ? LuckyInk : omen == Omen.Unlucky ? UnluckyInk : InkColor;
                 string value = number.ToString();
                 // 中央の大きな数字と、左上・右下の小さな数字（ゲーム中のカードと同じ配置）
                 CardText(face, value, height * 0.42f, ink, Vector2.zero, new Vector2(width, height * 0.5f), 0f);
@@ -505,7 +592,7 @@ namespace Hikigiwa.EditorTools
                     new Vector2(width * 0.25f, height * 0.16f), 180f);
                 if (omen != Omen.Neutral)
                 {
-                    CardText(face, omen == Omen.Lucky ? "LUCKY" : "ILL", height * 0.1f, ink,
+                    CardText(face, omen == Omen.Lucky ? "LUCKY" : "UNLUCKY", height * 0.09f, ink,
                         new Vector2(0f, -height * 0.3f), new Vector2(width, height * 0.14f), 0f);
                 }
             }

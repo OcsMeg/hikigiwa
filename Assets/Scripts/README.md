@@ -34,8 +34,16 @@
 
 イベントは引いた瞬間に発生します。演出の後に表示を変えたい場合は、`ReadingGameController` のように演出が終わってから状態を読みます。
 
+## タイトルのボタン
+タイトル画面のボタンは上から **Solo・CPU・Options・Rules** の順です。
+- Solo：1人用（`Game` シーン）、CPU：CPU対戦（`CPUBattle` シーン）。移るシーンは `TitlePresenter` の `Solo Scene Name`・`Cpu Scene Name` で変えられます
+- メニューの **Hikigiwa → タイトルのボタンを並べる**（`Editor/TitleMenuLayout.cs`）で、CPU ボタンがなければ作り、4つを 120 間隔で縦に並べ直します。ボタンの見た目は変えません
+
 ## タイトルのルール説明
-タイトル画面の **Rules** で、1人用のルール説明（英語）をモーダルで出します。作りは設定画面（Option）と同じです。
+タイトル画面の **Rules** で、ルール説明（英語）をモーダルで出します。作りは設定画面（Option）と同じです。
+- 前半が **Solo**（1人用）、後半が **VS CPU**（CPU対戦。Soloとの違いだけを説明）
+- 用語：吉数＝Lucky Number、凶数＝Unlucky Number、凶の印＝Unlucky mark、運気＝Luck、倍率＝Multiplier、予感的中＝Foresight Bonus、霊力＝Spirit
+- 「ノルマ達成で霊力+2」はルール説明にだけ書いてあり、ゲームの処理はまだ実装していません
 - `UI/Rules/RulesPresenter`・`RulesView`：戻るボタンとスクロール。開くたびに先頭へ戻ります
 - 中身はメニューの **Hikigiwa → タイトルにルール画面を作成**（`Editor/TitleRulesBuilder.cs`）でシーンに書き出します。文章・カードの絵・配置はシーン上で直接編集できます
 - このメニューをもう一度実行すると RulesButton と RulesOverlay を作り直すため、シーン上で加えた変更は消えます
