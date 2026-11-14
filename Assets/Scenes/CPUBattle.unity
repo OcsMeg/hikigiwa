@@ -208,7 +208,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -220,7 +220,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u9589\u3058\u308B\uFF08Esc / T\uFF09"
+  m_Text: Close (Esc / T)
 --- !u!222 &44098327
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -287,7 +287,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 42
     m_FontStyle: 0
     m_BestFit: 0
@@ -299,7 +299,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u304A\u9999"
+  m_Text: Incense
 --- !u!222 &74041057
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -569,7 +569,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74332aa888e04a6cbbbb1399e860a293, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.Battle.BattleHud
-  font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+  font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
   canvasRoot: {fileID: 791122144}
   heading: {fileID: 229004545}
   conditions: {fileID: 1554407234}
@@ -765,7 +765,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 34
     m_FontStyle: 0
     m_BestFit: 0
@@ -777,7 +777,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u6B21\u306E\u30E9\u30A6\u30F3\u30C9\n\uFF08Enter\uFF09"
+  m_Text: "Next Round\n(Enter)"
 --- !u!1 &229004542
 GameObject:
   m_ObjectHideFlags: 0
@@ -844,7 +844,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 35
     m_FontStyle: 0
     m_BestFit: 0
@@ -856,7 +856,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u898B\u51FA\u3057"
+  m_Text: Round
 --- !u!1 &274444315
 GameObject:
   m_ObjectHideFlags: 0
@@ -1012,7 +1012,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
@@ -1024,7 +1024,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u6B21\u306E3\u679A\u306E\u6570\u5B57\u304C\u5206\u304B\u308B\n\uFF08\u9806\u756A\u306F\u5206\u304B\u3089\u306A\u3044\uFF09"
+  m_Text: "Reveals the next 3 numbers\n(order unknown)"
 --- !u!222 &297853142
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1091,7 +1091,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
@@ -1103,7 +1103,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u4E00\u756A\u4E0A\u306E\u30AB\u30FC\u30C9\u3092\u4E00\u756A\u4E0B\u3078\u56DE\u3059\n\uFF08\u4E2D\u8EAB\u306F\u898B\u3048\u306A\u3044\uFF09"
+  m_Text: "Moves the top card\nto the bottom (unseen)"
 --- !u!222 &319775040
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1178,7 +1178,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 34
     m_FontStyle: 0
     m_BestFit: 0
@@ -1190,7 +1190,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u970A\u529B\u30003"
+  m_Text: Spirit Power  3
 --- !u!1 &404320017
 GameObject:
   m_ObjectHideFlags: 0
@@ -1309,7 +1309,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -1321,7 +1321,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u970A\u529B 1"
+  m_Text: 1 SP
 --- !u!1 &450457860
 GameObject:
   m_ObjectHideFlags: 0
@@ -1464,7 +1464,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -1476,7 +1476,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u970A\u529B 1"
+  m_Text: 1 SP
 --- !u!1 &503984431
 GameObject:
   m_ObjectHideFlags: 0
@@ -1543,7 +1543,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -1555,7 +1555,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u4F7F\u3046"
+  m_Text: Use
 --- !u!1 &508780439
 GameObject:
   m_ObjectHideFlags: 0
@@ -1614,7 +1614,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 42
     m_FontStyle: 0
     m_BestFit: 0
@@ -1626,7 +1626,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u624B\u76F8"
+  m_Text: Palm Reading
 --- !u!222 &508780442
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2540,7 +2540,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -2552,7 +2552,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u30BF\u30A4\u30C8\u30EB\u306B\u623B\u308B\n\uFF08Esc\uFF09"
+  m_Text: "Back to Title\n(Esc)"
 --- !u!222 &950248508
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3243,7 +3243,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 28
     m_FontStyle: 0
     m_BestFit: 0
@@ -3255,7 +3255,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u30E1\u30C3\u30BB\u30FC\u30B8"
+  m_Text: Message
 --- !u!1 &1087512917
 GameObject:
   m_ObjectHideFlags: 0
@@ -3322,7 +3322,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 22
     m_FontStyle: 0
     m_BestFit: 0
@@ -3483,7 +3483,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -3495,7 +3495,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u970A\u529B 1"
+  m_Text: 1 SP
 --- !u!1 &1286982161
 GameObject:
   m_ObjectHideFlags: 0
@@ -3554,7 +3554,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 34
     m_FontStyle: 0
     m_BestFit: 0
@@ -3566,7 +3566,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u5360\u3044\u9053\u5177\uFF08T\uFF09"
+  m_Text: "Fortune Tools\n(T)"
 --- !u!222 &1286982164
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3641,7 +3641,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 28
     m_FontStyle: 0
     m_BestFit: 0
@@ -3653,7 +3653,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u30D7\u30EC\u30A4\u30E4\u30FC\u306E\u72B6\u614B"
+  m_Text: You
 --- !u!1 &1421574510
 GameObject:
   m_ObjectHideFlags: 0
@@ -3796,7 +3796,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -3808,7 +3808,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u4F7F\u3046"
+  m_Text: Use
 --- !u!1 &1471430415
 GameObject:
   m_ObjectHideFlags: 0
@@ -3867,7 +3867,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
@@ -3879,7 +3879,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u5C71\u672D\u304B\u3089\u51F6\u672D\u30921\u679A\u53D6\u308A\u9664\u304F\n\uFF081\u56DE\u306E\u9451\u5B9A\u30671\u56DE\u307E\u3067\uFF09"
+  m_Text: "Removes one unlucky card\n(once per reading)"
 --- !u!222 &1471430418
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4151,7 +4151,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 28
     m_FontStyle: 0
     m_BestFit: 0
@@ -4163,7 +4163,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u5171\u901A\u6761\u4EF6"
+  m_Text: Conditions
 --- !u!1 &1579115473
 GameObject:
   m_ObjectHideFlags: 0
@@ -4261,7 +4261,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -4273,7 +4273,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u4F7F\u3046"
+  m_Text: Use
 --- !u!1 &1634274239
 GameObject:
   m_ObjectHideFlags: 0
@@ -4332,7 +4332,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 42
     m_FontStyle: 0
     m_BestFit: 0
@@ -4344,7 +4344,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u30BF\u30ED\u30C3\u30C8"
+  m_Text: Tarot
 --- !u!222 &1634274242
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4571,7 +4571,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -4583,7 +4583,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u7D50\u679C"
+  m_Text: Result
 --- !u!1 &1742600455
 GameObject:
   m_ObjectHideFlags: 0
@@ -4650,7 +4650,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 28
     m_FontStyle: 0
     m_BestFit: 0
@@ -4662,7 +4662,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "CPU\u306E\u72B6\u614B"
+  m_Text: CPU
 --- !u!1 &1770282258
 GameObject:
   m_ObjectHideFlags: 0
@@ -4927,7 +4927,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 22
     m_FontStyle: 0
     m_BestFit: 0
@@ -5127,7 +5127,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -5139,7 +5139,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u970A\u529B 1"
+  m_Text: 1 SP
 --- !u!1 &1847239521
 GameObject:
   m_ObjectHideFlags: 0
@@ -5206,7 +5206,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 22
     m_FontStyle: 0
     m_BestFit: 0
@@ -5277,7 +5277,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
@@ -5289,7 +5289,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u6B21\u306E\u30AB\u30FC\u30C9\u304C\u51F6\u304B\u3069\u3046\u304B\u304C\u5206\u304B\u308B"
+  m_Text: "Reveals whether the next\ncard is unlucky"
 --- !u!222 &1860293244
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5660,7 +5660,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 22
     m_FontStyle: 0
     m_BestFit: 0
@@ -5712,7 +5712,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 64
     m_FontStyle: 0
     m_BestFit: 0
@@ -5724,7 +5724,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u3042\u306A\u305F\u306E\u756A"
+  m_Text: Your Turn
 --- !u!222 &1918898583
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5939,7 +5939,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 25
     m_FontStyle: 0
     m_BestFit: 0
@@ -5951,7 +5951,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u5360\u3044\u306E\u7D50\u679C"
+  m_Text: Reading Notes
 --- !u!1 &2019668590
 GameObject:
   m_ObjectHideFlags: 0
@@ -6010,7 +6010,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 42
     m_FontStyle: 0
     m_BestFit: 0
@@ -6022,7 +6022,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u6C34\u6676"
+  m_Text: Crystal Ball
 --- !u!222 &2019668593
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6167,7 +6167,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 44
     m_FontStyle: 0
     m_BestFit: 0
@@ -6179,7 +6179,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u5360\u3044\u9053\u5177"
+  m_Text: Fortune Tools
 --- !u!222 &2044077216
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6336,7 +6336,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -6348,7 +6348,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u4F7F\u3046"
+  m_Text: Use
 --- !u!1 &2143107062
 GameObject:
   m_ObjectHideFlags: 0
@@ -6407,7 +6407,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 34
     m_FontStyle: 0
     m_BestFit: 0
@@ -6419,7 +6419,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u9451\u5B9A\u3092\u7D42\u3048\u308B\n\uFF08Enter\uFF09"
+  m_Text: "End Reading\n(Enter)"
 --- !u!222 &2143107065
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6463,7 +6463,7 @@ MonoBehaviour:
     backImageMaterial: {fileID: 2100000, guid: 79899b038e2ad46bdaabf8a63c9cc6a9, type: 2}
     faceMaterial: {fileID: 2100000, guid: fb91a1b6ecd41498a82f55cf302f67bc, type: 2}
     jokerMaterial: {fileID: 2100000, guid: 96928a13dd88d4b04a38eb6a903fc713, type: 2}
-    font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     cardHeight: 0.55
     inkColor: {r: 0.11764706, g: 0.101960786, b: 0.14901961, a: 1}
     luckyColor: {r: 0.76862746, g: 0.54901963, b: 0.09411765, a: 1}

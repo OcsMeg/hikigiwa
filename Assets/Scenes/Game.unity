@@ -185,7 +185,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 22
     m_FontStyle: 0
     m_BestFit: 0
@@ -570,7 +570,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 34
     m_FontStyle: 0
     m_BestFit: 0
@@ -582,7 +582,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u9451\u5B9A\u3092\u7D42\u3048\u308B\n\uFF08Enter\uFF09"
+  m_Text: "End Reading\n(Enter)"
 --- !u!222 &95120052
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -688,7 +688,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 50
     m_FontStyle: 0
     m_BestFit: 0
@@ -700,7 +700,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u9451\u5B9A\u6210\u529F"
+  m_Text: Reading Complete
 --- !u!1 &247173073
 GameObject:
   m_ObjectHideFlags: 0
@@ -759,7 +759,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
@@ -771,7 +771,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u4E00\u756A\u4E0A\u306E\u30AB\u30FC\u30C9\u3092\u4E00\u756A\u4E0B\u3078\u56DE\u3059\n\uFF08\u4E2D\u8EAB\u306F\u898B\u3048\u306A\u3044\uFF09"
+  m_Text: "Moves the top card\nto the bottom (unseen)"
 --- !u!222 &247173076
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1133,7 +1133,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
@@ -1145,7 +1145,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u5C71\u672D\u304B\u3089\u51F6\u672D\u30921\u679A\u53D6\u308A\u9664\u304F\n\uFF081\u56DE\u306E\u9451\u5B9A\u30671\u56DE\u307E\u3067\uFF09"
+  m_Text: "Removes one unlucky card\n(once per reading)"
 --- !u!222 &309972672
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1212,7 +1212,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 44
     m_FontStyle: 0
     m_BestFit: 0
@@ -1224,7 +1224,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u5360\u3044\u9053\u5177"
+  m_Text: Fortune Tools
 --- !u!222 &321137886
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1420,7 +1420,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -1432,7 +1432,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u5408\u8A08\u30B9\u30B3\u30A2\u30000"
+  m_Text: Total Score  0
 --- !u!1 &457115910
 GameObject:
   m_ObjectHideFlags: 0
@@ -1491,7 +1491,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 42
     m_FontStyle: 0
     m_BestFit: 0
@@ -1503,7 +1503,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u624B\u76F8"
+  m_Text: Palm Reading
 --- !u!222 &457115913
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1768,7 +1768,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
@@ -1780,7 +1780,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u5360\u3044\u306E\u7D50\u679C"
+  m_Text: Reading Notes
 --- !u!222 &511662353
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1855,7 +1855,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 22
     m_FontStyle: 0
     m_BestFit: 0
@@ -1934,7 +1934,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 54
     m_FontStyle: 0
     m_BestFit: 0
@@ -1946,7 +1946,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u904B\u6C17 0\u3000\xD7\u3000\u500D\u7387 1\u3000\uFF1D\u30000"
+  m_Text: "Luck 0  \xD7  Multiplier 1  =  0"
 --- !u!1 &594285535
 GameObject:
   m_ObjectHideFlags: 0
@@ -2013,7 +2013,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -2025,7 +2025,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u970A\u529B\u30003"
+  m_Text: Spirit Power  3
 --- !u!1 &619883776
 GameObject:
   m_ObjectHideFlags: 0
@@ -2092,7 +2092,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
@@ -2104,7 +2104,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u7B2C1\u591C\u30001 / 3 \u4EBA\u76EE"
+  m_Text: "Night 1  \u2014  Client 1 / 3"
 --- !u!1 &626941049
 GameObject:
   m_ObjectHideFlags: 0
@@ -2171,7 +2171,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 22
     m_FontStyle: 0
     m_BestFit: 0
@@ -2547,7 +2547,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -2559,7 +2559,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u970A\u529B 1"
+  m_Text: 1 SP
 --- !u!222 &835293545
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2757,7 +2757,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 42
     m_FontStyle: 0
     m_BestFit: 0
@@ -2769,7 +2769,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u30BF\u30ED\u30C3\u30C8"
+  m_Text: Tarot
 --- !u!222 &873611821
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2844,7 +2844,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -2856,7 +2856,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u4F7F\u3046"
+  m_Text: Use
 --- !u!1 &921258761
 GameObject:
   m_ObjectHideFlags: 0
@@ -3126,7 +3126,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -3138,7 +3138,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u30CE\u30EB\u30DE\u30000 / 180"
+  m_Text: Quota  0 / 180
 --- !u!1 &1009067670
 GameObject:
   m_ObjectHideFlags: 0
@@ -3205,7 +3205,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -3217,7 +3217,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u4F7F\u3046"
+  m_Text: Use
 --- !u!1 &1027317363
 GameObject:
   m_ObjectHideFlags: 0
@@ -3276,7 +3276,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
@@ -3288,7 +3288,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u6B21\u306E\u30AB\u30FC\u30C9\u304C\u51F6\u304B\u3069\u3046\u304B\u304C\u5206\u304B\u308B"
+  m_Text: "Reveals whether the next\ncard is unlucky"
 --- !u!222 &1027317366
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3363,7 +3363,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -3375,7 +3375,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u4F7F\u3046"
+  m_Text: Use
 --- !u!1 &1104543031
 GameObject:
   m_ObjectHideFlags: 0
@@ -3586,7 +3586,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
@@ -3598,7 +3598,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u6B21\u306E3\u679A\u306E\u6570\u5B57\u304C\u5206\u304B\u308B\n\uFF08\u9806\u756A\u306F\u5206\u304B\u3089\u306A\u3044\uFF09"
+  m_Text: "Reveals the next 3 numbers\n(order unknown)"
 --- !u!222 &1222637886
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4024,7 +4024,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 26
     m_FontStyle: 0
     m_BestFit: 0
@@ -4036,7 +4036,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u3046\u3061 \u51F6 3\u679A\u30FB\u5409 2\u679A"
+  m_Text: "Unlucky 3 \xB7 Lucky 2"
 --- !u!1 &1340039084
 GameObject:
   m_ObjectHideFlags: 0
@@ -4310,7 +4310,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 32
     m_FontStyle: 0
     m_BestFit: 0
@@ -4322,7 +4322,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u51F6\u306E\u5370\u3000\u25CB\u25CB"
+  m_Text: Omen Marks  0 / 2
 --- !u!1 &1516482180
 GameObject:
   m_ObjectHideFlags: 0
@@ -4389,7 +4389,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -4401,7 +4401,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u970A\u529B 1"
+  m_Text: 1 SP
 --- !u!1 &1517485993
 GameObject:
   m_ObjectHideFlags: 0
@@ -4431,7 +4431,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97bfb3f7523fe47f1bb7e329bc61f08b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hikigiwa.Game.ReadingHud
-  font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+  font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
   canvasRoot: {fileID: 1604210973}
   nightText: {fileID: 619883779}
   quotaText: {fileID: 1002001636}
@@ -4888,7 +4888,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -4900,7 +4900,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u30BF\u30A4\u30C8\u30EB\u306B\u623B\u308B\n\uFF08Esc\uFF09"
+  m_Text: "Back to Title\n(Esc)"
 --- !u!222 &1651412631
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4967,7 +4967,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 42
     m_FontStyle: 0
     m_BestFit: 0
@@ -4979,7 +4979,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u6C34\u6676"
+  m_Text: Crystal Ball
 --- !u!222 &1685104218
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5133,7 +5133,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -5145,7 +5145,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u970A\u529B 1"
+  m_Text: 1 SP
 --- !u!1 &1774547956
 GameObject:
   m_ObjectHideFlags: 0
@@ -5292,7 +5292,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -5304,7 +5304,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u4F7F\u3046"
+  m_Text: Use
 --- !u!1 &1866676639
 GameObject:
   m_ObjectHideFlags: 0
@@ -5542,7 +5542,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 26
     m_FontStyle: 0
     m_BestFit: 0
@@ -5621,7 +5621,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -5692,7 +5692,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 42
     m_FontStyle: 0
     m_BestFit: 0
@@ -5704,7 +5704,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u304A\u9999"
+  m_Text: Incense
 --- !u!222 &1898751297
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5779,7 +5779,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 34
     m_FontStyle: 0
     m_BestFit: 0
@@ -5791,7 +5791,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u970A\u529B\u30003"
+  m_Text: Spirit Power  3
 --- !u!1 &1951013965
 GameObject:
   m_ObjectHideFlags: 0
@@ -5850,7 +5850,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -5862,7 +5862,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u9589\u3058\u308B\uFF08Esc / T\uFF09"
+  m_Text: Close (Esc / T)
 --- !u!222 &1951013968
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5929,7 +5929,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 34
     m_FontStyle: 0
     m_BestFit: 0
@@ -5941,7 +5941,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u5360\u3044\u9053\u5177\uFF08T\uFF09"
+  m_Text: "Fortune Tools\n(T)"
 --- !u!222 &1989242247
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6016,7 +6016,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 36
     m_FontStyle: 0
     m_BestFit: 0
@@ -6028,7 +6028,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u5C71\u672D \u6B8B\u308A 19 \u679A"
+  m_Text: "Deck: 19 left"
 --- !u!1 &2039790912
 GameObject:
   m_ObjectHideFlags: 0
@@ -6223,7 +6223,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -6235,7 +6235,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u970A\u529B 1"
+  m_Text: 1 SP
 --- !u!1 &2102967338
 GameObject:
   m_ObjectHideFlags: 0
@@ -6302,7 +6302,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 34
     m_FontStyle: 0
     m_BestFit: 0
@@ -6314,7 +6314,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u6B21\u306E\u5BA2\u3078\n\uFF08Enter\uFF09"
+  m_Text: "Next Client\n(Enter)"
 --- !u!1 &2109900336
 GameObject:
   m_ObjectHideFlags: 0
@@ -6381,7 +6381,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 28
     m_FontStyle: 0
     m_BestFit: 0
@@ -6393,7 +6393,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u5C71\u672D\u3092\u30AF\u30EA\u30C3\u30AF\uFF08\u307E\u305F\u306FSpace\uFF09\u3067\u30AB\u30FC\u30C9\u3092\u3081\u304F\u308A\u307E\u3059"
+  m_Text: Click the deck (or press Space) to draw a card
 --- !u!1 &2123536999
 GameObject:
   m_ObjectHideFlags: 0
@@ -6537,7 +6537,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    m_Font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     m_FontSize: 22
     m_FontStyle: 0
     m_BestFit: 0
@@ -6585,7 +6585,7 @@ MonoBehaviour:
     backImageMaterial: {fileID: 2100000, guid: 79899b038e2ad46bdaabf8a63c9cc6a9, type: 2}
     faceMaterial: {fileID: 2100000, guid: fb91a1b6ecd41498a82f55cf302f67bc, type: 2}
     jokerMaterial: {fileID: 2100000, guid: 96928a13dd88d4b04a38eb6a903fc713, type: 2}
-    font: {fileID: 12800000, guid: 8618a1aa2ce52415ebd98aba012eba22, type: 3}
+    font: {fileID: 12800000, guid: 4d1199bafde8c1e4f96145b08a713e32, type: 3}
     cardHeight: 0.9
     inkColor: {r: 0.11764706, g: 0.101960786, b: 0.14901961, a: 1}
     luckyColor: {r: 0.76862746, g: 0.54901963, b: 0.09411765, a: 1}

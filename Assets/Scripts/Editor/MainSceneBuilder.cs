@@ -21,7 +21,7 @@ namespace Hikigiwa.EditorTools
         private const string ScenePath = "Assets/Scenes/Main.unity";
         private const string CardsFolder = "Assets/Art/Cards";
         private const string MaterialsFolder = "Assets/Art/Cards/Materials";
-        private const string FontPath = "Assets/Art/Fonts/NotoSansJP-Medium-Subset.ttf";
+        private const string FontPath = "Assets/Art/Fonts/YesevaOne-Regular.ttf";
 
         [MenuItem("Hikigiwa/メインシーンを作成")]
         public static void Build()

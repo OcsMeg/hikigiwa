@@ -108,43 +108,43 @@ namespace Hikigiwa.Game
 
             // 左上：夜・ノルマ・スコア・霊力
             RectTransform status = Panel(root, "StatusPanel", new Vector2(0, 1), new Vector2(32, -32), new Vector2(500, 228));
-            nightText = Named(Label(status, "第1夜　1 / 3 人目", 40, Gold, new Vector2(24, -14), new Vector2(460, 52)), "NightLabel");
-            quotaText = Named(Label(status, "ノルマ　0 / 180", 30, Paper, new Vector2(24, -74), new Vector2(460, 44)), "QuotaLabel");
-            scoreText = Named(Label(status, "合計スコア　0", 30, Paper, new Vector2(24, -122), new Vector2(460, 44)), "ScoreLabel");
-            spiritText = Named(Label(status, "霊力　3", 30, Gold, new Vector2(24, -170), new Vector2(460, 44)), "SpiritLabel");
+            nightText = Named(Label(status, "Night 1  —  Client 1 / 3", 40, Gold, new Vector2(24, -14), new Vector2(460, 52)), "NightLabel");
+            quotaText = Named(Label(status, "Quota  0 / 180", 30, Paper, new Vector2(24, -74), new Vector2(460, 44)), "QuotaLabel");
+            scoreText = Named(Label(status, "Total Score  0", 30, Paper, new Vector2(24, -122), new Vector2(460, 44)), "ScoreLabel");
+            spiritText = Named(Label(status, "Spirit Power  3", 30, Gold, new Vector2(24, -170), new Vector2(460, 44)), "SpiritLabel");
 
             // 右上：山札
             RectTransform deck = Panel(root, "DeckPanel", new Vector2(1, 1), new Vector2(-32, -32), new Vector2(460, 120));
-            deckText = Named(Label(deck, "山札 残り 19 枚", 36, Paper, new Vector2(-24, -14), new Vector2(420, 52),
+            deckText = Named(Label(deck, "Deck: 19 left", 36, Paper, new Vector2(-24, -14), new Vector2(420, 52),
                 TextAnchor.UpperRight), "RemainingLabel");
-            deckDetailText = Named(Label(deck, "うち 凶 3枚・吉 2枚", 26, Dim, new Vector2(-24, -68), new Vector2(420, 40),
+            deckDetailText = Named(Label(deck, "Unlucky 3 · Lucky 2", 26, Dim, new Vector2(-24, -68), new Vector2(420, 40),
                 TextAnchor.UpperRight), "BreakdownLabel");
 
             // 下：運気と凶の印
             RectTransform bottom = Panel(root, "LuckPanel", new Vector2(0.5f, 0), new Vector2(0, 32), new Vector2(900, 170));
-            messageText = Named(Label(bottom, "山札をクリック（またはSpace）でカードをめくります", 28, Paper, new Vector2(0, -12),
+            messageText = Named(Label(bottom, "Click the deck (or press Space) to draw a card", 28, Paper, new Vector2(0, -12),
                 new Vector2(860, 40), TextAnchor.MiddleCenter), "MessageLabel");
-            luckText = Named(Label(bottom, "運気 0　×　倍率 1　＝　0", 54, Gold, new Vector2(0, -58), new Vector2(860, 64),
+            luckText = Named(Label(bottom, "Luck 0  ×  Multiplier 1  =  0", 54, Gold, new Vector2(0, -58), new Vector2(860, 64),
                 TextAnchor.MiddleCenter), "LuckLabel");
-            marksText = Named(Label(bottom, "凶の印　○○", 32, Red, new Vector2(0, -122), new Vector2(860, 40),
+            marksText = Named(Label(bottom, "Omen Marks  0 / 2", 32, Red, new Vector2(0, -122), new Vector2(860, 40),
                 TextAnchor.MiddleCenter), "MarksLabel");
 
             // 右下：鑑定を終える／次へ
             // 位置と大きさはCPU対戦と共通（HudStyle）
-            stopButton = Named(MakeButton(root, "鑑定を終える\n（Enter）", Paper, HudStyle.MainButtonAnchor,
+            stopButton = Named(MakeButton(root, "End Reading\n(Enter)", Paper, HudStyle.MainButtonAnchor,
                 HudStyle.MainButtonPosition, HudStyle.MainButtonSize, out _), "StopButton");
-            nextButton = Named(MakeButton(root, "次の客へ\n（Enter）", Gold, HudStyle.MainButtonAnchor,
+            nextButton = Named(MakeButton(root, "Next Client\n(Enter)", Gold, HudStyle.MainButtonAnchor,
                 HudStyle.MainButtonPosition, HudStyle.MainButtonSize, out nextLabel), "NextButton");
             nextButton.gameObject.SetActive(false);
 
             // 左下：占い道具と占いの結果
-            toolsButton = Named(MakeButton(root, "占い道具（T）", Gold, HudStyle.ToolsButtonAnchor, HudStyle.ToolsButtonPosition,
+            toolsButton = Named(MakeButton(root, "Fortune Tools\n(T)", Gold, HudStyle.ToolsButtonAnchor, HudStyle.ToolsButtonPosition,
                 HudStyle.ToolsButtonSize, out _), "ToolsButton");
             // 占い道具ボタンのすぐ上（20pxあける）
             float memoY = HudStyle.ToolsButtonPosition.y + HudStyle.ToolsButtonSize.y + 20;
             RectTransform memo = Panel(root, "MemoPanel", new Vector2(0, 0), new Vector2(32, memoY), new Vector2(500, 230));
             memoPanel = memo.gameObject;
-            Named(Label(memo, "占いの結果", 24, Dim, new Vector2(20, -12), new Vector2(460, 34)), "Header");
+            Named(Label(memo, "Reading Notes", 24, Dim, new Vector2(20, -12), new Vector2(460, 34)), "Header");
             memoText = Named(Label(memo, "", 26, Paper, new Vector2(20, -52), new Vector2(460, 170)), "BodyLabel");
             memoText.horizontalOverflow = HorizontalWrapMode.Wrap;
             memoText.lineSpacing = 1.1f;
@@ -154,7 +154,7 @@ namespace Hikigiwa.Game
             RectTransform result = Panel(root, "ResultPanel", new Vector2(0.5f, 0.5f), new Vector2(0, 70), new Vector2(660, 460));
             result.GetComponent<Image>().color = HudStyle.ResultPanelColor;
             resultPanel = result.gameObject;
-            resultTitle = Named(Label(result, "鑑定成功", 50, Gold, new Vector2(32, -24), new Vector2(600, 66)), "Header");
+            resultTitle = Named(Label(result, "Reading Complete", 50, Gold, new Vector2(32, -24), new Vector2(600, 66)), "Header");
             resultBody = Named(Label(result, "", 30, Paper, new Vector2(32, -104), new Vector2(600, 340)), "BodyLabel");
             resultBody.lineSpacing = 1.15f;
             resultPanel.SetActive(false);
@@ -180,7 +180,7 @@ namespace Hikigiwa.Game
             if (titleButton == null)
             {
                 // ゲームを最後まで遊んだあとに「次へ（もう一度遊ぶ）」の上に出す
-                titleButton = Named(MakeButton(canvasRoot.transform, "タイトルに戻る\n（Esc）", Paper, HudStyle.MainButtonAnchor,
+                titleButton = Named(MakeButton(canvasRoot.transform, "Back to Title\n(Esc)", Paper, HudStyle.MainButtonAnchor,
                     HudStyle.TitleButtonPosition, HudStyle.TitleButtonSize, out _), "TitleButton");
                 // 道具パネルの暗幕より後ろ（手前に描かれない位置）に置く
                 titleButton.transform.SetSiblingIndex(toolPanel.transform.GetSiblingIndex());
@@ -234,29 +234,27 @@ namespace Hikigiwa.Game
         /// <summary>「タイトルに戻る」ボタンを出すか。ゲームを最後まで遊んだときだけ出します。</summary>
         public void SetTitleButtonVisible(bool visible) => titleButton.gameObject.SetActive(visible);
 
-        public void SetNextLabel(string label) => nextLabel.text = $"{label}\n（Enter）";
+        public void SetNextLabel(string label) => nextLabel.text = $"{label}\n(Enter)";
 
         public void SetRecord(PlayRecord record)
         {
-            nightText.text = $"第{record.Night}夜　{Mathf.Min(record.CustomersThisNight + 1, record.CustomersPerNight)} / {record.CustomersPerNight} 人目";
+            nightText.text = $"Night {record.Night}  —  Client {Mathf.Min(record.CustomersThisNight + 1, record.CustomersPerNight)} / {record.CustomersPerNight}";
             bool reached = record.NightScore >= record.Quota;
-            quotaText.text = $"ノルマ　{record.NightScore} / {record.Quota}" + (reached ? "　達成" : "");
+            quotaText.text = $"Quota  {record.NightScore} / {record.Quota}" + (reached ? "  Cleared" : "");
             quotaText.color = reached ? Green : Paper;
-            scoreText.text = $"合計スコア　{record.TotalScore}";
-            spiritText.text = $"霊力　{record.Spirit}";
+            scoreText.text = $"Total Score  {record.TotalScore}";
+            spiritText.text = $"Spirit Power  {record.Spirit}";
         }
 
         public void SetSession(ReadingSession session)
         {
-            deckText.text = $"山札 残り {session.Deck.Remaining} 枚";
+            deckText.text = $"Deck: {session.Deck.Remaining} left";
             deckDetailText.text =
-                $"うち 凶 {session.CountRemaining(CardOmen.Bad)}枚・吉 {session.CountRemaining(CardOmen.Lucky)}枚";
-            luckText.text = $"運気 {session.Luck}　×　倍率 {session.Multiplier}　＝　{session.CurrentSales}";
+                $"Unlucky {session.CountRemaining(CardOmen.Bad)} · Lucky {session.CountRemaining(CardOmen.Lucky)}";
+            luckText.text = $"Luck {session.Luck}  ×  Multiplier {session.Multiplier}  =  {session.CurrentSales}";
 
-            var marks = new StringBuilder("凶の印　");
-            for (int i = 0; i < session.BadMarksToBreak; i++)
-                marks.Append(i < session.BadMarks ? "●" : "○");
-            marksText.text = marks.ToString();
+            // ●○はYeseva Oneに無いので、数で表す
+            marksText.text = $"Omen Marks  {session.BadMarks} / {session.BadMarksToBreak}";
         }
 
         /// <summary>道具の一覧の、コスト・使えるかどうかを更新します。</summary>
@@ -290,27 +288,27 @@ namespace Hikigiwa.Game
             resultPanel.SetActive(true);
             if (result.IsBroken)
             {
-                resultTitle.text = "破綻……";
+                resultTitle.text = "Ruined…";
                 resultTitle.color = Red;
-                resultBody.text = "凶の印が2つそろいました。\nこの客の売上は 0 です。\n霊力は回復しません。";
+                resultBody.text = "Two Omen Marks.\nNo earnings from this client.\nNo Spirit Power recovered.";
                 return;
             }
 
-            resultTitle.text = "鑑定成功";
+            resultTitle.text = "Reading Complete";
             resultTitle.color = Gold;
             var body = new StringBuilder();
-            body.AppendLine($"運気 {result.Luck} × 倍率 {result.Multiplier} ＝ {result.BaseSales}");
+            body.AppendLine($"Luck {result.Luck} × Multiplier {result.Multiplier} = {result.BaseSales}");
             if (result.ForesightCard.HasValue)
             {
                 Card top = result.ForesightCard.Value;
-                string name = top.IsJoker ? "ジョーカー" : top.Number.ToString();
+                string name = top.IsJoker ? "Joker" : top.Number.ToString();
                 body.AppendLine(result.ForesightHit
-                    ? $"予感的中！（次は {name}）　売上 ×1.5"
-                    : $"予感は外れ（次は {name}）");
+                    ? $"Premonition hit! (Next: {name})  Earnings ×1.5"
+                    : $"Premonition missed (Next: {name})");
             }
-            body.AppendLine($"売上 {result.Sales}");
-            body.AppendLine($"霊力 +{result.SpiritGained}");
-            body.Append($"この客のスコア {result.Score}");
+            body.AppendLine($"Earnings {result.Sales}");
+            body.AppendLine($"Spirit Power +{result.SpiritGained}");
+            body.Append($"Client Score {result.Score}");
             resultBody.text = body.ToString();
         }
 
@@ -322,33 +320,33 @@ namespace Hikigiwa.Game
             if (record.IsCleared)
             {
                 // 最後の夜：夜ごとのスコアと3夜の合計
-                resultTitle.text = "すべての夜を終えた";
+                resultTitle.text = "All Nights Complete";
                 resultTitle.color = Gold;
                 foreach (NightSummary night in record.NightHistory)
-                    body.AppendLine($"第{night.Night}夜　{night.Score}");
+                    body.AppendLine($"Night {night.Night}  {night.Score}");
                 body.AppendLine();
-                body.AppendLine($"破綻した客　{record.BrokenCount}人");
-                body.Append($"最終スコア　{record.TotalScore}");
+                body.AppendLine($"Ruined Readings  {record.BrokenCount}");
+                body.Append($"Final Score  {record.TotalScore}");
                 resultBody.text = body.ToString();
                 return;
             }
 
-            body.AppendLine($"今夜のスコア　{summary.Score}");
-            body.AppendLine($"ノルマ　{summary.Quota}");
+            body.AppendLine($"Tonight's Score  {summary.Score}");
+            body.AppendLine($"Quota  {summary.Quota}");
             body.AppendLine();
 
             if (record.IsGameOver)
             {
-                resultTitle.text = $"第{summary.Night}夜　ノルマ未達";
+                resultTitle.text = $"Night {summary.Night}  —  Quota Missed";
                 resultTitle.color = Red;
-                body.AppendLine("店をたたむことになった……");
-                body.Append($"最終スコア　{record.TotalScore}");
+                body.AppendLine("You had to close up shop…");
+                body.Append($"Final Score  {record.TotalScore}");
             }
             else
             {
-                resultTitle.text = $"第{summary.Night}夜　" + (summary.Passed ? "ノルマ達成" : "ノルマ未達");
+                resultTitle.text = $"Night {summary.Night}  —  " + (summary.Passed ? "Quota Met" : "Quota Missed");
                 resultTitle.color = summary.Passed ? Green : Red;
-                body.Append($"合計スコア　{record.TotalScore}");
+                body.Append($"Total Score  {record.TotalScore}");
             }
             resultBody.text = body.ToString();
         }

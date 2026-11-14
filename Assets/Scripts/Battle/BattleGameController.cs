@@ -109,7 +109,7 @@ namespace Hikigiwa.Battle
             hud.HideResult();
             hud.SetMemo("");
             bannerSide = null;
-            BeginTurn($"ラウンド {Match.Round} 開始。先手は{SideName(Match.FirstSide)}です。");
+            BeginTurn($"Round {Match.Round} begins. " + (Match.FirstSide == BattleSide.Player ? "You go first." : "CPU goes first."));
         }
 
         /// <summary>山札クリック・Spaceからのドロー要求を受け、操作可能なときだけ演出付きで実行する。</summary>
@@ -162,16 +162,16 @@ namespace Hikigiwa.Battle
             string note;
             switch (tool)
             {
-                case FortuneTool.Crystal: note = result.NextIsBad ? "水晶：次の札は凶です" : "水晶：次の札は凶ではありません"; break;
-                case FortuneTool.Tarot: note = "タロット（順不同）：" + string.Join("・", result.RevealedCards.Select(CardName)); break;
-                case FortuneTool.Incense: note = $"お香：凶札 {CardName(result.RemovedCard)} を除去しました"; break;
-                default: note = "手相：一番上の札を一番下へ回しました"; break;
+                case FortuneTool.Crystal: note = result.NextIsBad ? "Crystal Ball: The next card is unlucky" : "Crystal Ball: The next card is not unlucky"; break;
+                case FortuneTool.Tarot: note = "Tarot (any order): " + string.Join(" · ", result.RevealedCards.Select(CardName)); break;
+                case FortuneTool.Incense: note = $"Incense: Removed unlucky card {CardName(result.RemovedCard)}"; break;
+                default: note = "Palm Reading: Moved the top card to the bottom"; break;
             }
             // 山札を変える道具を使った場合、古い予測は残さない。
             hud.SetMemo(note);
             hud.Refresh(Match, false);
             if (Match.IsRoundOver) EndRound();
-            else hud.SetMessage("道具を使いました。引くか鑑定を終えるか選んでください。");
+            else hud.SetMessage("Tool used. Draw a card or end the reading.");
         }
 
         /// <summary>ラウンド終了を判定し、続行なら手番側に応じた入力受付またはCPU待機を開始する。</summary>
@@ -184,13 +184,13 @@ namespace Hikigiwa.Battle
             {
                 busy = true;
                 hud.Refresh(Match, true);
-                hud.SetMessage(previous + " CPUが考えています……");
+                hud.SetMessage(previous + " CPU is thinking…");
                 StartCoroutine(CpuTurn());
             }
             else
             {
                 hud.Refresh(Match, false);
-                hud.SetMessage(previous + " あなたの手番です（山札をクリックかSpaceで引く）。");
+                hud.SetMessage(previous + " Your turn (click the deck or press Space to draw).");
             }
         }
 
@@ -203,9 +203,9 @@ namespace Hikigiwa.Battle
             bannerShown = bannerSide != Match.Turn;
             if (!bannerShown) return;
             // ラウンドの最初の帯だけ、ラウンド番号も添える。
-            string round = bannerSide == null ? $"ラウンド {Match.Round}　" : "";
+            string round = bannerSide == null ? $"Round {Match.Round}  —  " : "";
             bannerSide = Match.Turn;
-            hud.ShowTurnBanner(round + (Match.Turn == BattleSide.Player ? "あなたの番" : "CPUの番"));
+            hud.ShowTurnBanner(round + (Match.Turn == BattleSide.Player ? "Your Turn" : "CPU's Turn"));
         }
 
         /// <summary>待ち時間の後にInspector設定を読み直し、CPUの判断を通常の行動処理へ渡す。</summary>
@@ -230,19 +230,19 @@ namespace Hikigiwa.Battle
             if (stop)
             {
                 if (!Match.TryStop(side, out ReadingResult result)) { busy = false; yield break; }
-                hud.SetMessage($"{SideName(side)}が鑑定を終えます。");
+                hud.SetMessage($"{SideName(side)}: ending the reading.");
                 yield return dealer.Reveal(result, Match.Conditions);
-                message = $"{SideName(side)}は{result.Score}点で確定。" + (result.ForesightHit ? "予感的中！" : "");
+                message = $"{SideName(side)}: settled at {result.Score} pts." + (result.ForesightHit ? " Premonition hit!" : "");
             }
             else
             {
                 // ルール側で確定した1枚の結果。状態を再度変更せず、そのまま演出へ渡す。
                 if (!Match.TryDraw(side, out DrawResult draw)) { busy = false; yield break; }
-                hud.SetMessage($"{SideName(side)}がカードをめくります……");
+                hud.SetMessage($"{SideName(side)}: drawing…");
                 yield return dealer.Draw(side, draw, Match.Deck.Remaining);
                 // 引いた結果の吉凶を、メッセージ内で使う短い表示名に変換したもの。
-                string omen = draw.Omen == CardOmen.Bad ? "凶" : draw.Omen == CardOmen.Lucky ? "吉" : "通常";
-                message = $"{SideName(side)}：{CardName(draw.Card)}（{omen}）。" + (draw.CausedBreak ? "破綻しました。" : "");
+                string omen = draw.Omen == CardOmen.Bad ? "Unlucky" : draw.Omen == CardOmen.Lucky ? "Lucky" : "Normal";
+                message = $"{SideName(side)}: {CardName(draw.Card)} ({omen})." + (draw.CausedBreak ? " Ruined." : "");
             }
             busy = false;
             BeginTurn(message);
@@ -253,12 +253,12 @@ namespace Hikigiwa.Battle
         {
             hud.Refresh(Match, false);
             hud.ShowRoundResult(Match);
-            hud.SetMessage(Match.Deck.Remaining == 0 ? "山札が空になりました。予感ボーナスなしで精算します。" : "二人の鑑定が終了しました。");
+            hud.SetMessage(Match.Deck.Remaining == 0 ? "The deck is empty. Settling without the premonition bonus." : "Both readings are over.");
         }
 
         /// <summary>対戦者の識別子を画面表示用の名前へ変換する。</summary>
-        private static string SideName(BattleSide side) => side == BattleSide.Player ? "あなた" : "CPU";
+        private static string SideName(BattleSide side) => side == BattleSide.Player ? "You" : "CPU";
         /// <summary>数字札は数字、0のカードはジョーカーという表示名へ変換する。</summary>
-        private static string CardName(Card card) => card.IsJoker ? "ジョーカー" : card.Number.ToString();
+        private static string CardName(Card card) => card.IsJoker ? "Joker" : card.Number.ToString();
     }
 }

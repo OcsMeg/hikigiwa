@@ -113,7 +113,7 @@ namespace Hikigiwa.EditorTools
             // 実行時に対戦UIを作るコンポーネント。
             var hud = new GameObject("BattleHUD").AddComponent<BattleHud>();
             var hudData = new SerializedObject(hud);
-            hudData.FindProperty("font").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Font>("Assets/Art/Fonts/NotoSansJP-Medium-Subset.ttf");
+            hudData.FindProperty("font").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Font>("Assets/Art/Fonts/YesevaOne-Regular.ttf");
             hudData.ApplyModifiedPropertiesWithoutUndo();
             // 入力・CPU・ルール・表示をつなぐ対戦進行コンポーネント。
             var controller = new GameObject("CPU対戦進行").AddComponent<BattleGameController>();
