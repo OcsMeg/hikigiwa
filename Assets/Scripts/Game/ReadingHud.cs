@@ -55,6 +55,7 @@ namespace Hikigiwa.Game
         [SerializeField] private Text scoreText;
         [SerializeField] private Text spiritText;
         [SerializeField] private Text deckText;
+        // 名前は「山札の内訳」のままだが、中身はこの客の吉数・凶数（名前を変えるとシーンの割り当てが外れるため据え置き）
         [SerializeField] private Text deckDetailText;
         [SerializeField] private Text luckText;
         [SerializeField] private Text marksText;
@@ -114,10 +115,10 @@ namespace Hikigiwa.Game
             spiritText = Named(Label(status, "Spirit Power  3", 30, Gold, new Vector2(24, -170), new Vector2(460, 44)), "SpiritLabel");
 
             // 右上：山札
-            RectTransform deck = Panel(root, "DeckPanel", new Vector2(1, 1), new Vector2(-32, -32), new Vector2(460, 120));
-            deckText = Named(Label(deck, "Deck: 19 left", 36, Paper, new Vector2(-24, -14), new Vector2(420, 52),
+            RectTransform deck = Panel(root, "DeckPanel", new Vector2(1, 1), new Vector2(-32, -32), new Vector2(640, 120));
+            deckText = Named(Label(deck, "Deck: 19 left", 36, Paper, new Vector2(-24, -14), new Vector2(600, 52),
                 TextAnchor.UpperRight), "RemainingLabel");
-            deckDetailText = Named(Label(deck, "Unlucky 3 · Lucky 2", 26, Dim, new Vector2(-24, -68), new Vector2(420, 40),
+            deckDetailText = Named(Label(deck, "Lucky Number 1    Unlucky Number 4 + Joker", 26, Paper, new Vector2(-24, -68), new Vector2(600, 40),
                 TextAnchor.UpperRight), "BreakdownLabel");
 
             // 下：運気と凶の印
@@ -252,8 +253,8 @@ namespace Hikigiwa.Game
         public void SetSession(ReadingSession session)
         {
             deckText.text = $"Deck: {session.Deck.Remaining} left";
-            deckDetailText.text =
-                $"Unlucky {session.CountRemaining(CardOmen.Bad)} · Lucky {session.CountRemaining(CardOmen.Lucky)}";
+            // この客の吉数・凶数（残り枚数ではなく数字そのもの）。山札の残り枚数は上の行に出す
+            deckDetailText.text = HudStyle.NumbersText(session.Customer.LuckyNumber, session.Customer.BadNumbers);
             luckText.text = $"Luck {session.Luck}  ×  Multiplier {session.Multiplier}  =  {session.CurrentSales}";
 
             // ●○はYeseva Oneに無いので、数で表す

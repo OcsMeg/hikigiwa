@@ -255,7 +255,7 @@ namespace Hikigiwa.Battle
         public void Refresh(BattleMatch match, bool busy)
         {
             heading.text = $"VS CPU  —  Round {match.Round} / {BattleMatch.RoundCount}  —  Deck: {match.Deck.Remaining} left";
-            conditions.text = $"Lucky Number {match.Conditions.LuckyNumber}    Unlucky Numbers {string.Join(" · ", match.Conditions.BadNumbers)} + Joker";
+            conditions.text = HudStyle.NumbersText(match.Conditions.LuckyNumber, match.Conditions.BadNumbers);
             player.text = Participant("You", match.Player, match.Turn == BattleSide.Player && !match.IsRoundOver);
             cpu.text = Participant("CPU", match.Cpu, match.Turn == BattleSide.Cpu && !match.IsRoundOver);
             // 演出中ではなくプレイヤーの有効な手番か。操作ボタンの可否をまとめて揃える。
