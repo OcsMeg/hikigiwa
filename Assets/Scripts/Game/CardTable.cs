@@ -158,6 +158,8 @@ namespace Hikigiwa.Game
             SetStackCount(remainingAfter, total);
 
             yield return card.MoveTo(revealAnchor.position, FacingCamera, 0.55f, 0.35f);
+            // ジョーカーは、表が見えたところで専用の音を重ねる
+            if (draw.Card.IsJoker) PlaySe(SeId.JokerDraw);
             FlashOmen(draw.Omen, draw.CausedBreak);
             yield return new WaitForSeconds(draw.Omen == CardOmen.Neutral ? 0.35f : 0.7f);
 
@@ -183,9 +185,11 @@ namespace Hikigiwa.Game
         /// カードをめくる音（SeId.CardDraw）を鳴らします。山札から1枚取り、めくり始めるときに呼びます。
         /// ソロ・CPU対戦の両方、鑑定終了時の予感のカードでも鳴ります。
         /// </summary>
-        private static void PlayCardDrawSound()
+        private static void PlayCardDrawSound() => PlaySe(SeId.CardDraw);
+
+        private static void PlaySe(SeId id)
         {
-            if (AudioManager.HasInstance) AudioManager.Instance.PlaySe(SeId.CardDraw);
+            if (AudioManager.HasInstance) AudioManager.Instance.PlaySe(id);
         }
 
         private CardView SpawnFromStack(Card value, CardOmen omen, string name)
