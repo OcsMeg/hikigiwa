@@ -85,7 +85,7 @@ namespace Hikigiwa.CardSystem
                 IsLastNight = Night >= rules.Nights,
             };
 
-            if (summary.Passed)
+            if (summary.Passed && !summary.IsLastNight)
             {
                 summary.SpiritGained = Math.Max(0, rules.SpiritOnQuotaClear);
                 Spirit += summary.SpiritGained;
