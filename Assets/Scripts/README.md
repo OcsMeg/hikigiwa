@@ -45,7 +45,6 @@
 タイトル画面の **Rules** で、ルール説明（英語）をモーダルで出します。作りは設定画面（Option）と同じです。
 - 前半が **Solo**（1人用）、後半が **VS CPU**（CPU対戦。Soloとの違いだけを説明）
 - 用語：吉数＝Lucky Number、凶数＝Unlucky Number、凶の印（○○の表示）＝Omen Marks、運気＝Luck、倍率＝Multiplier、予感的中＝Foresight Bonus、霊力＝Spirit、破綻＝Ruined、ノルマ＝Quota（この2つはゲーム中の表示と同じ）、鑑定を終える＝Fold（ゲーム名「Fortune or Fold」に合わせる）
-- 「Soloでも吉数・凶数を鑑定の最初から画面に出す（CPU対戦と同じ）」は、仕様の変更を先にルール説明へ書いたもので、ゲームの処理はまだ実装していません
 - `UI/Rules/RulesPresenter`・`RulesView`：戻るボタンとスクロール。開くたびに先頭へ戻ります（処理は `UI/Overlay/ScrollOverlayPresenterBase`・`ScrollOverlayViewBase` にあり、クレジット画面と共通）
 - 中身はメニューの **Hikigiwa → タイトルにルール画面を作成**（`Editor/TitleRulesBuilder.cs`）でシーンに書き出します。文章・カードの絵・配置はシーン上で直接編集できます
 - このメニューをもう一度実行すると RulesButton と RulesOverlay を作り直すため、シーン上で加えた変更は消えます
