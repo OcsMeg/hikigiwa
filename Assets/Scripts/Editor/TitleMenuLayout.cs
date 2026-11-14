@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace Hikigiwa.EditorTools
 {
     /// <summary>
-    /// タイトル画面のロゴにゲーム名を入れ、ボタンを「Solo・CPU・Options・Rules」の順に縦に並べます。
+    /// タイトル画面のロゴにゲーム名を入れ（仮置きのサブタイトルは消す）、ボタンを「Solo・CPU・Options・Rules」の順に縦に並べます。
     /// CPU ボタンがまだなければ Solo ボタンを複製して作り、TitleView に割り当てます。
     /// </summary>
     /// <remarks>
@@ -19,17 +19,23 @@ namespace Hikigiwa.EditorTools
     public static class TitleMenuLayout
     {
         /// <summary>ゲーム名。タイトルのロゴとルール説明に使います。</summary>
-        public const string GameTitle = "Fortune OR Fold";
+        public const string GameTitle = "Fortune or Fold";
 
         private const string Title = "タイトルのボタンを並べる";
         private const string ScenePath = "Assets/Scenes/Title.unity";
 
         /// <summary>ロゴの文字の大きさの上限と下限。ゲーム名が長くても枠からはみ出さないよう自動で縮めます。</summary>
-        private const float LogoMaxSize = 160f;
-        private const float LogoMinSize = 80f;
+        private const float LogoMaxSize = 130f;
+        private const float LogoMinSize = 70f;
+
+        /// <summary>ロゴの高さ（画面中央が 0）。</summary>
+        private const float LogoY = 290f;
+
+        /// <summary>ボタンの文字の大きさ。4つともこの大きさにそろえます。</summary>
+        private const float ButtonFontSize = 50f;
 
         /// <summary>一番上のボタンの高さ（画面中央が 0）。</summary>
-        public const float FirstY = -100f;
+        public const float FirstY = -60f;
 
         /// <summary>ボタンの縦の間隔。</summary>
         public const float Step = 120f;
@@ -102,6 +108,7 @@ namespace Hikigiwa.EditorTools
                 Undo.RecordObject(rect, Title);
                 rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, FirstY - Step * i);
                 rect.SetSiblingIndex(firstIndex + i);
+                SetFontSize(order[i], ButtonFontSize);
             }
             return true;
         }
@@ -120,9 +127,34 @@ namespace Hikigiwa.EditorTools
                 logo.enableAutoSizing = true;
                 logo.fontSizeMax = LogoMaxSize;
                 logo.fontSizeMin = LogoMinSize;
+
+                var rect = (RectTransform)child;
+                Undo.RecordObject(rect, Title);
+                rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, LogoY);
+
+                RemoveSubtitle(view);
                 return;
             }
             Debug.LogWarning($"{Title}: タイトル画面にロゴ（名前が Logo で始まる文字）が見つかりません。");
+            RemoveSubtitle(view);
+        }
+
+        /// <summary>仮置きのサブタイトル（名前が Subtitle で始まるもの）を消します。なければ何もしません。</summary>
+        private static void RemoveSubtitle(TitleView view)
+        {
+            for (int i = view.transform.childCount - 1; i >= 0; i--)
+            {
+                Transform child = view.transform.GetChild(i);
+                if (child.name.StartsWith("Subtitle")) Undo.DestroyObjectImmediate(child.gameObject);
+            }
+        }
+
+        private static void SetFontSize(Button button, float size)
+        {
+            var label = button.GetComponentInChildren<TMP_Text>(true);
+            if (label == null) return;
+            Undo.RecordObject(label, Title);
+            label.fontSize = size;
         }
 
         private static void SetLabel(Button button, string text)
