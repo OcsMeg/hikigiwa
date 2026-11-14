@@ -6062,6 +6062,7 @@ MonoBehaviour:
   hud: {fileID: 1517485994}
   seed: 0
   titleSceneName: Title
+  spiritOnQuotaClear: 2
 --- !u!4 &2039790914
 Transform:
   m_ObjectHideFlags: 0

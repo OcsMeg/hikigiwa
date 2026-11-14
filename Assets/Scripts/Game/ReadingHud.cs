@@ -326,6 +326,7 @@ namespace Hikigiwa.Game
                     body.AppendLine($"Night {night.Night}  {night.Score}");
                 body.AppendLine();
                 body.AppendLine($"Ruined Readings  {record.BrokenCount}");
+                if (summary.Passed) body.AppendLine($"Quota Bonus: Spirit Power +{summary.SpiritGained}");
                 body.Append($"Final Score  {record.TotalScore}");
                 resultBody.text = body.ToString();
                 return;
@@ -333,6 +334,7 @@ namespace Hikigiwa.Game
 
             body.AppendLine($"Tonight's Score  {summary.Score}");
             body.AppendLine($"Quota  {summary.Quota}");
+            if (summary.Passed) body.AppendLine($"Quota Bonus: Spirit Power +{summary.SpiritGained}");
             body.AppendLine();
 
             if (record.IsGameOver)

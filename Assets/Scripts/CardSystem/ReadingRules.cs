@@ -59,6 +59,9 @@ namespace Hikigiwa.CardSystem
         /// <summary>ゲーム開始時の霊力。</summary>
         public int StartSpirit = 3;
 
+        /// <summary>1夜のノルマ達成時に加算する霊力。</summary>
+        public int SpiritOnQuotaClear = 2;
+
         /// <summary>ノルマ未達でゲームオーバーにするか。falseなら最後の夜まで続く。</summary>
         public bool QuotaFailEndsGame = false;
 
