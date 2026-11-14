@@ -48,7 +48,7 @@ namespace Hikigiwa.Game
         public static readonly Vector2 TitleButtonSize = new Vector2(340, 110);
 
         /// <summary>道具パネルを閉じるボタンの文言。どちらのモードも Esc と T で閉じられる。</summary>
-        public const string CloseToolsCaption = "閉じる（Esc / T）";
+        public const string CloseToolsCaption = "Close (Esc / T)";
 
         /// <summary>ボタンの文字サイズ。背の高いボタン（2行表示など）は大きくする。</summary>
         public static int ButtonFontSize(Vector2 size) => size.y >= 120 ? 34 : 30;
@@ -58,10 +58,10 @@ namespace Hikigiwa.Game
         {
             switch (tool)
             {
-                case FortuneTool.Crystal: return "水晶";
-                case FortuneTool.Tarot: return "タロット";
-                case FortuneTool.Incense: return "お香";
-                default: return "手相";
+                case FortuneTool.Crystal: return "Crystal Ball";
+                case FortuneTool.Tarot: return "Tarot";
+                case FortuneTool.Incense: return "Incense";
+                default: return "Palm Reading";
             }
         }
 
@@ -70,11 +70,11 @@ namespace Hikigiwa.Game
         {
             switch (reason)
             {
-                case ToolBlockReason.NotEnoughSpirit: return "霊力が足りない";
-                case ToolBlockReason.DeckTooSmall: return "山札が足りない";
-                case ToolBlockReason.NoBadCardLeft: return "凶札が残っていない";
-                case ToolBlockReason.LimitReached: return "この鑑定ではもう使えない";
-                case ToolBlockReason.NotReading: return "今は使えない";
+                case ToolBlockReason.NotEnoughSpirit: return "Not enough SP";
+                case ToolBlockReason.DeckTooSmall: return "Not enough cards";
+                case ToolBlockReason.NoBadCardLeft: return "No unlucky cards";
+                case ToolBlockReason.LimitReached: return "Already used";
+                case ToolBlockReason.NotReading: return "Can't use now";
                 default: return "";
             }
         }

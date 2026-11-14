@@ -13,7 +13,7 @@ namespace Hikigiwa.EditorTools
     public static class HudScenePlacer
     {
         private const string Title = "UIをシーンに配置";
-        private const string FontPath = "Assets/Art/Fonts/NotoSansJP-Medium-Subset.ttf";
+        private const string FontPath = "Assets/Art/Fonts/YesevaOne-Regular.ttf";
 
         [MenuItem("Hikigiwa/UIをシーンに配置")]
         public static void Place()
@@ -61,7 +61,7 @@ namespace Hikigiwa.EditorTools
                 if (old != null) Undo.DestroyObjectImmediate(old);
             }
 
-            // フォントが未設定なら、ゲームで使っている日本語フォントを入れる
+            // フォントが未設定なら、ゲームで使っているフォント（Yeseva One）を入れる
             SerializedProperty font = data.FindProperty("font");
             if (font.objectReferenceValue == null)
             {

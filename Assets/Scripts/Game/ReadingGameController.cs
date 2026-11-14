@@ -98,7 +98,7 @@ namespace Hikigiwa.Game
             hud.HideResult();
             ClearMemo(true);
             RefreshHud();
-            hud.SetMessage("山札をクリック（またはSpace）でカードをめくります");
+            hud.SetMessage("Click the deck (or press Space) to draw a card");
             hud.SetMode(ReadingHud.Mode.Reading);
         }
 
@@ -190,10 +190,10 @@ namespace Hikigiwa.Game
             var lines = new List<string>();
             if (tarotLeft != null)
             {
-                string cards = string.Join("・", tarotLeft.Select(ColoredName));
+                string cards = string.Join(" · ", tarotLeft.Select(ColoredName));
                 lines.Add(tarotLeft.Count == tarotTotal
-                    ? $"タロット：次の{tarotTotal}枚は {cards}（順不同）"
-                    : $"タロット：残りは {cards}（順不同）");
+                    ? $"Tarot: Next {tarotTotal} are {cards} (any order)"
+                    : $"Tarot: Still to come: {cards} (any order)");
             }
             if (crystalNextIsBad.HasValue) lines.Add(CrystalMemo(crystalNextIsBad.Value));
             lines.AddRange(toolNotes);
@@ -238,7 +238,7 @@ namespace Hikigiwa.Game
         {
             busy = true;
             hud.SetMode(ReadingHud.Mode.Busy);
-            hud.SetMessage("カードをめくっています……");
+            hud.SetMessage("Drawing…");
             ClearMemo(false);
 
             yield return table.PlayDraw(draw, session.Deck.Remaining, Deck.TotalCards);
@@ -257,7 +257,7 @@ namespace Hikigiwa.Game
         {
             busy = true;
             hud.SetMode(ReadingHud.Mode.Busy);
-            hud.SetMessage("鑑定を終えます。最後に次の1枚を占うと……");
+            hud.SetMessage("Ending the reading. One last glimpse at the next card…");
             ClearMemo(true);
 
             if (result.ForesightCard.HasValue)
@@ -266,7 +266,7 @@ namespace Hikigiwa.Game
                 yield return table.PlayForesight(top, session.Customer.Judge(top));
             }
 
-            hud.SetMessage(result.ForesightHit ? "予感的中！ 売上が1.5倍になりました" : "鑑定が確定しました");
+            hud.SetMessage(result.ForesightHit ? "Premonition hit! Earnings ×1.5" : "Reading complete");
             FinishCustomer(result);
             busy = false;
         }
@@ -276,7 +276,7 @@ namespace Hikigiwa.Game
             phase = Phase.CustomerResult;
             RefreshHud();
             hud.ShowResult(result);
-            hud.SetNextLabel(record.IsNightOver ? "夜を終える" : "次の客へ");
+            hud.SetNextLabel(record.IsNightOver ? "End Night" : "Next Client");
             hud.SetMode(ReadingHud.Mode.Finished);
         }
 
@@ -285,21 +285,21 @@ namespace Hikigiwa.Game
             phase = Phase.NightResult;
             NightSummary summary = record.EndNight();
             hud.ShowNightSummary(summary, record);
-            hud.SetNextLabel(record.IsFinished ? "もう一度遊ぶ" : "次の夜へ");
+            hud.SetNextLabel(record.IsFinished ? "Play Again" : "Next Night");
             hud.SetTitleButtonVisible(record.IsFinished);
-            hud.SetMessage(summary.Passed ? "ノルマを達成しました" : "ノルマに届きませんでした");
+            hud.SetMessage(summary.Passed ? "Quota met" : "Quota not reached");
         }
 
         private string DrawMessage(DrawResult draw)
         {
             string name = CardName(draw.Card);
-            if (draw.CausedBreak) return $"{name}……凶の印が{session.BadMarksToBreak}つ。破綻しました";
+            if (draw.CausedBreak) return $"{name}… {session.BadMarksToBreak} Omen Marks. The reading is ruined";
             switch (draw.Omen)
             {
-                case CardOmen.Lucky: return $"吉数 {name}！ 倍率が ×{draw.MultiplierAfter} に上がりました";
+                case CardOmen.Lucky: return $"Lucky {name}! Multiplier is now ×{draw.MultiplierAfter}";
                 case CardOmen.Bad:
-                    return $"凶 {name}……凶の印が付きました（あと{session.BadMarksToBreak - draw.BadMarksAfter}つで破綻）";
-                default: return $"{name}　運気 +{draw.LuckGained}";
+                    return $"Unlucky {name}… An Omen Mark appears ({session.BadMarksToBreak - draw.BadMarksAfter} more means ruin)";
+                default: return $"{name}  —  Luck +{draw.LuckGained}";
             }
         }
 
@@ -310,17 +310,17 @@ namespace Hikigiwa.Game
                 case FortuneTool.Crystal:
                     return CrystalMemo(result.NextIsBad);
                 case FortuneTool.Tarot:
-                    return "タロット：次の" + result.RevealedCards.Count + "枚は " +
-                           string.Join("・", result.RevealedCards.Select(ColoredName)) + "（順不同）";
+                    return "Tarot: Next " + result.RevealedCards.Count + " are " +
+                           string.Join(" · ", result.RevealedCards.Select(ColoredName)) + " (any order)";
                 case FortuneTool.Incense:
-                    return $"お香：凶札（{CardName(result.RemovedCard)}）を1枚取り除いた";
+                    return $"Incense: Removed an unlucky card ({CardName(result.RemovedCard)})";
                 default:
-                    return "手相：一番上のカードを一番下へ回した";
+                    return "Palm Reading: Moved the top card to the bottom";
             }
         }
 
         private static string CrystalMemo(bool nextIsBad) =>
-            nextIsBad ? "水晶：次のカードは <color=#EC6262>凶</color>" : "水晶：次のカードは凶ではない";
+            nextIsBad ? "Crystal Ball: The next card is <color=#EC6262>unlucky</color>" : "Crystal Ball: The next card is not unlucky";
 
         private string ColoredName(Card card)
         {
@@ -333,6 +333,6 @@ namespace Hikigiwa.Game
             }
         }
 
-        private static string CardName(Card card) => card.IsJoker ? "ジョーカー" : card.Number.ToString();
+        private static string CardName(Card card) => card.IsJoker ? "Joker" : card.Number.ToString();
     }
 }

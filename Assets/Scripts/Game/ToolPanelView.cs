@@ -30,10 +30,10 @@ namespace Hikigiwa.Game
         {
             switch (tool)
             {
-                case FortuneTool.Crystal: return "次のカードが凶かどうかが分かる";
-                case FortuneTool.Tarot: return "次の3枚の数字が分かる\n（順番は分からない）";
-                case FortuneTool.Incense: return "山札から凶札を1枚取り除く\n（1回の鑑定で1回まで）";
-                default: return "一番上のカードを一番下へ回す\n（中身は見えない）";
+                case FortuneTool.Crystal: return "Reveals whether the next\ncard is unlucky";
+                case FortuneTool.Tarot: return "Reveals the next 3 numbers\n(order unknown)";
+                case FortuneTool.Incense: return "Removes one unlucky card\n(once per reading)";
+                default: return "Moves the top card\nto the bottom (unseen)";
             }
         }
 
@@ -53,9 +53,9 @@ namespace Hikigiwa.Game
 
             RectTransform panel = HudFactory.Panel(blocker, "Panel", new Vector2(0.5f, 0.5f), new Vector2(0, 40),
                 new Vector2(1280, 560));
-            HudFactory.Named(HudFactory.Label(font, panel, "占い道具", 44, HudStyle.Gold, new Vector2(36, -24),
+            HudFactory.Named(HudFactory.Label(font, panel, "Fortune Tools", 44, HudStyle.Gold, new Vector2(36, -24),
                 new Vector2(600, 60)), "Header");
-            spiritLabel = HudFactory.Named(HudFactory.Label(font, panel, "霊力　3", 34, HudStyle.Gold,
+            spiritLabel = HudFactory.Named(HudFactory.Label(font, panel, "Spirit Power  3", 34, HudStyle.Gold,
                 new Vector2(-330, -30), new Vector2(400, 50), TextAnchor.UpperRight), "SpiritLabel");
             closeButton = HudFactory.Named(HudFactory.MakeButton(font, panel, HudStyle.CloseToolsCaption, HudStyle.Paper,
                 new Vector2(1, 1), new Vector2(-28, -24), new Vector2(280, 64), out _), "CloseButton");
@@ -78,11 +78,11 @@ namespace Hikigiwa.Game
                 description.horizontalOverflow = HorizontalWrapMode.Wrap;
 
                 var tile = new ToolTile();
-                tile.Cost = HudFactory.Named(HudFactory.Label(font, tileRect, "霊力 1", 30, HudStyle.Gold,
+                tile.Cost = HudFactory.Named(HudFactory.Label(font, tileRect, "1 SP", 30, HudStyle.Gold,
                     new Vector2(0, -84), new Vector2(288, 44), TextAnchor.MiddleCenter), "CostLabel");
                 tile.Status = HudFactory.Named(HudFactory.Label(font, tileRect, "", 22, HudStyle.Red,
                     new Vector2(0, -268), new Vector2(260, 34), TextAnchor.MiddleCenter), "StatusLabel");
-                tile.Button = HudFactory.Named(HudFactory.MakeButton(font, tileRect, "使う", HudStyle.Gold,
+                tile.Button = HudFactory.Named(HudFactory.MakeButton(font, tileRect, "Use", HudStyle.Gold,
                     new Vector2(0.5f, 0), new Vector2(0, 20), new Vector2(240, 80), out tile.ButtonLabel), "UseButton");
                 tiles[i] = tile;
             }
@@ -108,16 +108,16 @@ namespace Hikigiwa.Game
         /// </summary>
         public static void Refresh(ToolTile[] tiles, Text spiritLabel, ReadingSession session, int spirit, bool canAct)
         {
-            spiritLabel.text = $"霊力　{spirit}";
+            spiritLabel.text = $"Spirit Power  {spirit}";
             for (int i = 0; i < Tools.Length; i++)
             {
                 FortuneTool tool = Tools[i];
                 ToolTile tile = tiles[i];
-                tile.Cost.text = $"霊力 {session.CostOf(tool)}";
+                tile.Cost.text = $"{session.CostOf(tool)} SP";
                 ToolBlockReason reason = canAct ? session.CheckTool(tool, spirit) : ToolBlockReason.NotReading;
                 bool usable = reason == ToolBlockReason.None;
                 tile.Button.interactable = usable;
-                tile.ButtonLabel.text = usable ? "使う" : "使えない";
+                tile.ButtonLabel.text = usable ? "Use" : "Unavailable";
                 tile.Status.text = HudStyle.ReasonOf(reason);
             }
         }

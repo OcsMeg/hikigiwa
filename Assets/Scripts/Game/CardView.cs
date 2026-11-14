@@ -90,8 +90,8 @@ namespace Hikigiwa.Game
             AddText(rect, number, 130, color, new Vector2(-268, 400), new Vector2(150, 150), 0);
             AddText(rect, number, 130, color, new Vector2(268, -400), new Vector2(150, 150), 180);
             if (omen != CardOmen.Neutral)
-                AddText(rect, omen == CardOmen.Lucky ? "吉" : "凶", 150, color, new Vector2(0, -330),
-                    new Vector2(200, 200), 0);
+                AddText(rect, omen == CardOmen.Lucky ? "LUCKY" : "UNLUCKY", 95, color, new Vector2(0, -330),
+                    new Vector2(600, 160), 0);
 
             void AddText(RectTransform parent, string value, int size, Color textColor, Vector2 position,
                 Vector2 box, float angle)
