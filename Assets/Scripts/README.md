@@ -38,7 +38,9 @@
 ## タイトルのボタン
 タイトル画面のボタンは上から **Solo・CPU・Options・Rules** の順です。**Credits** は縦の並びに入れず、画面の右下の端に小さめに置きます。
 - Solo：1人用（`Game` シーン）、CPU：CPU対戦（`CPUBattle` シーン）。移るシーンは `TitlePresenter` の `Solo Scene Name`・`Cpu Scene Name` で変えられます
-- メニューの **Hikigiwa → タイトルのボタンを並べる**（`Editor/TitleMenuLayout.cs`）で、CPU ボタンがなければ作り、4つを 120 間隔で縦に並べ直し、Credits を右下に置きます。ボタンの見た目は変えません
+- メニューの **Hikigiwa → タイトルのボタンを並べる**（`Editor/TitleMenuLayout.cs`）で、CPU ボタンがなければ作り、4つ（310×90）を 120 間隔で縦に並べ直し、Credits を右下に置きます
+- 同じメニューで、タイトルシーンのボタンすべて（各画面の Back・Reset も含む）の見た目を「濃い紫の板＋金の縁」にそろえます。触れると縁が明るくなり（Button の Color Tint）、文字が金色になります（`UI/Parts/ButtonLabelTint`）。大きさが変わる動きは `ButtonAnimation` のままです
+- ボタンの角の丸い板は `Assets/Art/UI/RoundedRect.png`（メニューの実行時に自動で作る白い画像。角の半径は `TitleMenuLayout.CornerRadius`）を9スライスで使います
 - 同じメニューで、ロゴにゲーム名 **Fortune or Fold**（`TitleMenuLayout.GameTitle`）を入れます。長い名前でも枠に収まるよう、文字の大きさは自動で縮みます（最大130）。仮置きのサブタイトル（Placeholder Title）は消します
 
 ## タイトルのルール説明
